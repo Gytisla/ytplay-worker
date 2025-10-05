@@ -1,0 +1,39 @@
+{
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    // Maximum strictness for constitutional compliance
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedSideEffectImports": true,
+    "exactOptionalPropertyTypes": true,
+
+    // Additional safety settings
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    // Path mapping for clean imports
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./*"],
+      "@/*": ["./*"],
+      "~~/*": ["./*"],
+      "@@/*": ["./*"],
+      "#shared/*": ["./shared/*"]
+    },
+
+    // Type definitions
+    "types": ["node"]
+  },
+  "include": ["**/*", ".nuxt/nuxt.d.ts"],
+  "exclude": ["node_modules", ".nuxt", ".output", "dist", "coverage"]
+}

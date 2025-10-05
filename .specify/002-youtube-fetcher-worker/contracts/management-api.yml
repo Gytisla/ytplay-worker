@@ -1,0 +1,347 @@
+openapi: 3.0.3
+info:
+  title: YouTube Fetcher Worker Management API
+  description: Private API for managing YouTube channel tracking and monitoring system health
+  version: 1.0.0
+  contact:
+    name: API Support
+    
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+
+security:
+  - ApiKeyAuth: []
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      
+  schemas:
+    Channel:
+      type: object
+      required:
+        - channelId
+      properties:
+        channelId:
+          type: string
+          pattern: '^UC[a-zA-Z0-9_-]{22}$'
+          description: YouTube channel ID starting with UC
+          example: UCXuqSBlHAE6Xw-yeJA0Tunw
+          
+    ChannelRegistrationResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        channelId:
+          type: string
+        message:
+          type: string
+        jobId:
+          type: string
+          description: ID of the backfill job that was enqueued
+          
+    ChannelStatusUpdate:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [paused, active]
+          
+    SystemHealth:
+      type: object
+      properties:
+        queueDepth:
+          type: integer
+          description: Number of pending jobs in queue
+        running:
+          type: integer
+          description: Number of currently running jobs
+        failed24h:
+          type: integer
+          description: Number of jobs that failed in last 24 hours
+        dead:
+          type: integer
+          description: Number of jobs in dead letter queue
+        workersOk:
+          type: boolean
+          description: Whether worker processes are healthy
+        lastWorkerHeartbeat:
+          type: string
+          format: date-time
+          description: Timestamp of last worker activity
+          
+    JobEnqueueRequest:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: 
+            - BACKFILL_CHANNEL
+            - REFRESH_CHANNEL_STATS  
+            - REFRESH_HOT_VIDEOS
+            - REFRESH_VIDEO_STATS
+            - RSS_POLL_CHANNEL
+        channelId:
+          type: string
+          description: Required for channel-specific jobs
+        videoIds:
+          type: array
+          items:
+            type: string
+          description: Array of video IDs for batch processing
+        priority:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 5
+          description: Job priority (higher = more important)
+        scheduledAt:
+          type: string
+          format: date-time
+          description: When to execute the job (defaults to now)
+          
+    JobEnqueueResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        jobId:
+          type: string
+        message:
+          type: string
+        
+    SystemMetrics:
+      type: object
+      properties:
+        queue:
+          type: object
+          properties:
+            depth:
+              type: integer
+            avgWaitTime:
+              type: number
+              description: Average wait time in minutes
+            throughput:
+              type: number
+              description: Jobs per hour
+        api:
+          type: object
+          properties:
+            quotaUsed:
+              type: integer
+            quotaLimit:
+              type: integer
+            quotaRemaining:
+              type: integer
+            resetTime:
+              type: string
+              format: date-time
+        workers:
+          type: object
+          properties:
+            active:
+              type: integer
+            successRate:
+              type: number
+              description: Success rate as percentage
+            avgDuration:
+              type: number
+              description: Average job duration in seconds
+        database:
+          type: object
+          properties:
+            connectionPool:
+              type: integer
+              description: Active database connections
+            queryLatency:
+              type: number
+              description: Average query latency in milliseconds
+              
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        code:
+          type: string
+          description: Error code
+        details:
+          type: object
+          description: Additional error details
+
+paths:
+  /channels:
+    post:
+      summary: Register a new YouTube channel for tracking
+      description: |
+        Registers a YouTube channel for monitoring and triggers initial backfill.
+        Creates channel record and enqueues BACKFILL_CHANNEL job.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Channel'
+      responses:
+        '201':
+          description: Channel registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelRegistrationResponse'
+        '400':
+          description: Invalid channel ID format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Channel already registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+  /channels/{channelId}/pause:
+    post:
+      summary: Pause channel tracking
+      description: |
+        Pauses all data collection for the specified channel.
+        In-flight jobs will complete but no new jobs will be scheduled.
+      parameters:
+        - name: channelId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^UC[a-zA-Z0-9_-]{22}$'
+      responses:
+        '200':
+          description: Channel paused successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '404':
+          description: Channel not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Invalid or missing API key
+          
+  /channels/{channelId}/resume:
+    post:
+      summary: Resume channel tracking
+      description: |
+        Resumes data collection for a paused channel.
+        Schedules catch-up jobs as needed.
+      parameters:
+        - name: channelId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^UC[a-zA-Z0-9_-]{22}$'
+      responses:
+        '200':
+          description: Channel resumed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '404':
+          description: Channel not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Invalid or missing API key
+          
+  /health:
+    get:
+      summary: Get system health status
+      description: |
+        Returns current system health including queue status,
+        worker health, and recent error counts.
+      responses:
+        '200':
+          description: System health information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemHealth'
+        '401':
+          description: Invalid or missing API key
+          
+  /metrics:
+    get:
+      summary: Get detailed system metrics
+      description: |
+        Returns comprehensive metrics for monitoring and alerting.
+        Includes queue performance, API usage, worker stats, and DB metrics.
+      responses:
+        '200':
+          description: System metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemMetrics'
+        '401':
+          description: Invalid or missing API key
+          
+  /jobs/enqueue:
+    post:
+      summary: Manually enqueue a job
+      description: |
+        Administrative endpoint to manually enqueue jobs for testing
+        or recovery scenarios. Use with caution in production.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobEnqueueRequest'
+      responses:
+        '201':
+          description: Job enqueued successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobEnqueueResponse'
+        '400':
+          description: Invalid job parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Invalid or missing API key

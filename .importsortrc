@@ -1,0 +1,10 @@
+{
+  "importOrder": [
+    "^@/(.*)$",
+    "^~/(.*)$",
+    "^#shared/(.*)$",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
+}

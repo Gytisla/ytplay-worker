@@ -1,0 +1,110 @@
+{
+  "name": "ytplay-worker",
+  "version": "0.1.0",
+  "description": "YouTube data collection worker with Nuxt 3 + Supabase backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint . --ext .js,.ts,.vue,.tsx --max-warnings 0",
+    "lint:fix": "eslint . --ext .js,.ts,.vue,.tsx --fix",
+    "lint:ci": "eslint . --ext .js,.ts,.vue,.tsx --max-warnings 0 --no-error-on-unmatched-pattern",
+    "typecheck": "nuxt typecheck",
+    "typecheck:ci": "nuxt typecheck",
+    "test": "vitest --run --exclude '**/database/**'",
+    "test:watch": "vitest --watch --exclude '**/database/**'",
+    "test:coverage": "vitest --coverage --exclude '**/database/**'",
+    "test:ci": "vitest --run --coverage --exclude '**/database/**'",
+    "test:ui": "vitest --ui --exclude '**/database/**'",
+    "test:db": "vitest --run --config vitest.database.config.ts",
+    "test:db:watch": "vitest --watch --config vitest.database.config.ts",
+    "test:all": "pnpm test && pnpm test:db",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "format:ci": "prettier --check . --no-error-on-unmatched-pattern",
+    "types:generate": "supabase gen types typescript --local > types/supabase.ts",
+    "ci": "pnpm lint:ci && pnpm typecheck:ci && pnpm format:ci && pnpm test:all",
+    "ci:quick": "pnpm lint:ci && pnpm typecheck:ci && pnpm test:ci",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:reset": "supabase db reset",
+    "supabase:types": "supabase gen types typescript --local > types/supabase.ts",
+    "migrate": "supabase migration up",
+    "migrate:new": "supabase migration new",
+    "prepare": "husky",
+    "lint-staged": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue,tsx}": [
+      "eslint --fix",
+      "vitest related --run"
+    ],
+    "*.{json,yml,yaml,md}": [
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "@nuxt/devtools": "latest",
+    "@supabase/supabase-js": "^2.38.5",
+    "nuxt": "^3.8.4",
+    "vue": "^3.3.13",
+    "vue-router": "^4.2.5",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@nuxt/eslint-config": "^1.9.0",
+    "@nuxt/test-utils": "^3.19.2",
+    "@nuxtjs/tailwindcss": "^6.14.0",
+    "@tailwindcss/typography": "^0.5.19",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/node": "^20.10.6",
+    "@types/pg": "^8.15.5",
+    "@typescript-eslint/eslint-plugin": "^8.45.0",
+    "@typescript-eslint/parser": "^8.45.0",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
+    "dotenv": "^17.2.3",
+    "eslint": "^9.37.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-vue": "^10.5.0",
+    "happy-dom": "^12.10.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.3",
+    "msw": "^2.0.11",
+    "pg": "^8.16.3",
+    "prettier": "^3.6.2",
+    "tailwindcss": "^4.1.14",
+    "typescript": "^5.3.3",
+    "vite": "^7.1.9",
+    "vitest": "^3.2.4",
+    "vue-tsc": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "keywords": [
+    "youtube",
+    "data-collection",
+    "nuxt3",
+    "supabase",
+    "typescript",
+    "worker"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/user/ytplay-worker"
+  },
+  "license": "MIT",
+  "volta": {
+    "node": "20.10.0",
+    "pnpm": "8.15.0"
+  }
+}

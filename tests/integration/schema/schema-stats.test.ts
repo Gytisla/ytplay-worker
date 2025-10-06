@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { Client } from 'pg'
+import type { Database } from '../../../types/supabase'
 import dotenv from 'dotenv'
 
 dotenv.config({ path: '.env.local' })
@@ -45,9 +46,9 @@ describe('Stats Tables Validation', () => {
       251
     ])
     expect(result.rows).toHaveLength(1)
-    const insertedStats = result.rows[0]
+    const insertedStats = result.rows[0] as Database['public']['Tables']['channel_stats']['Row']
     expect(insertedStats.channel_id).toBe(channelId)
-    expect(insertedStats.view_count).toBe('5001000')
-    expect(insertedStats.subscriber_count).toBe('100500')
+    expect(Number(insertedStats.view_count)).toBe(5001000)
+    expect(Number(insertedStats.subscriber_count)).toBe(100500)
   })
 })

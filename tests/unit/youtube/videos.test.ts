@@ -51,7 +51,7 @@ beforeAll(() => {
   // Close the global server if it's running
   try {
     server.close()
-  } catch (e) {
+  } catch (_) {
     // Ignore if not running
   }
 
@@ -75,7 +75,7 @@ afterAll(() => {
 const handlers = [
   http.get('https://www.googleapis.com/youtube/v3/videos', ({ request }) => {
     const url = new URL(request.url)
-    const ids = url.searchParams.get('id')?.split(',') || []
+    const ids = url.searchParams.get('id')?.split(',') ?? []
 
     console.log('MSW intercepted request for IDs:', ids)
 

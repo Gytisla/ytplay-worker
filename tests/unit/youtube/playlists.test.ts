@@ -10,7 +10,7 @@ beforeAll(() => {
   // Close the global server if it's running
   try {
     server.close()
-  } catch (e) {
+  } catch (_e) {
     // Ignore if not running
   }
 
@@ -66,7 +66,7 @@ const handlers = [
     const url = new URL(request.url)
     const playlistId = url.searchParams.get('playlistId')
     const pageToken = url.searchParams.get('pageToken')
-    const maxResults = parseInt(url.searchParams.get('maxResults') || '50')
+    const maxResults = parseInt(url.searchParams.get('maxResults') ?? '50')
 
     console.log('MSW intercepted request for playlist:', playlistId, 'pageToken:', pageToken, 'maxResults:', maxResults)
 

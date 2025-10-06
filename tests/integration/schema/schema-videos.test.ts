@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { Client } from 'pg'
+import type { Database } from '../../../types/supabase'
 import dotenv from 'dotenv'
 
 dotenv.config({ path: '.env.local' })
@@ -51,11 +52,11 @@ describe('Videos Table Validation', () => {
       'active'
     ])
     expect(result.rows).toHaveLength(1)
-    const insertedVideo = result.rows[0]
+    const insertedVideo = result.rows[0] as Database['public']['Tables']['videos']['Row']
     expect(insertedVideo.youtube_video_id).toBe(uniqueVideoId)
     expect(insertedVideo.channel_id).toBe(channelId)
     expect(insertedVideo.title).toBe('Test Video Title')
-    expect(insertedVideo.view_count).toBe('50000')
+    expect(Number(insertedVideo.view_count)).toBe(50000)
   // videoId assignment removed (unused)
   })
 

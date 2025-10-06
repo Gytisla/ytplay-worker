@@ -46,9 +46,9 @@ export async function handleRefreshChannelStats(
     const statsData = {
       channel_id: channelId,
       captured_at: new Date().toISOString(),
-      view_count: channel.statistics.viewCount || 0,
-      subscriber_count: channel.statistics.subscriberCount || 0,
-      video_count: channel.statistics.videoCount || 0,
+      view_count: channel.statistics.viewCount ?? 0,
+      subscriber_count: channel.statistics.subscriberCount ?? 0,
+      video_count: channel.statistics.videoCount ?? 0,
       // Additional stats that might be available in the future:
       // estimated_minutes_watched: channel.statistics.estimatedMinutesWatched || 0,
       // average_view_duration: channel.statistics.averageViewDuration || null

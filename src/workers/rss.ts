@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '../../types/supabase'
 import type { FeedState } from '../lib/rss/state'
 
 /**
@@ -37,8 +38,8 @@ export class RSSPollingOperations {
     return {
       channelId,
       feedUrl: feedData.feed_url,
-      pollIntervalMinutes: feedData.poll_interval_minutes || 10,
-      consecutiveErrors: feedData.consecutive_failures || 0,
+      pollIntervalMinutes: feedData.poll_interval_minutes ?? 10,
+      consecutiveErrors: feedData.consecutive_failures ?? 0,
       status: feedData.is_active ? 'active' : 'paused',
       ...(feedData.etag && { lastETag: feedData.etag }),
       ...(feedData.last_modified && { lastModified: feedData.last_modified }),
@@ -106,7 +107,7 @@ export class RSSPollingOperations {
       .eq('channel_id', channel.id)
       .single()
 
-    const currentFailures = (currentFeed?.consecutive_failures || 0) + 1
+    const currentFailures = (currentFeed?.consecutive_failures ?? 0) + 1
     const shouldDeactivate = currentFailures >= 5
 
     const now = new Date()
@@ -156,52 +157,71 @@ export class RSSPollingOperations {
    * Get channels that are due for RSS polling
    */
   async getChannelsDueForPolling(): Promise<Array<{ channelId: string; feedUrl: string }>> {
+    type ChannelFeedResponse = {
+      feed_url: string
+      last_polled_at: string | null
+      poll_interval_minutes: number
+      channels: { youtube_channel_id: string }
+    }
+
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString()
 
+    interface ChannelFeedData {
+      feed_url: string
+      last_polled_at: string | null
+      poll_interval_minutes: number | null
+      channels: {
+        youtube_channel_id: string
+      }[]
+    }
+
     // Get channels that have never been polled (last_polled_at is null)
-    const { data: neverPolled, error: neverPolledError } = await this.supabase
+    const { data: neverPolledFeeds, error: neverPolledError } = await this.supabase
       .from('channel_feeds')
       .select(`
-        channel_id,
         feed_url,
         last_polled_at,
         poll_interval_minutes,
-        channels!inner(youtube_channel_id)
+        channels:channels!channel_feeds_channel_id_fkey(youtube_channel_id)
       `)
       .eq('is_active', true)
       .filter('last_polled_at', 'is', null)
+      .returns<ChannelFeedResponse[]>()
 
     if (neverPolledError) {
       throw new Error(`Failed to get never polled channels: ${neverPolledError.message}`)
     }
 
     // Get channels polled more than 10 minutes ago
-    const { data: overduePolled, error: overduePolledError } = await this.supabase
+    const { data: overduePolledFeeds, error: overduePolledError } = await this.supabase
       .from('channel_feeds')
       .select(`
-        channel_id,
         feed_url,
         last_polled_at,
         poll_interval_minutes,
-        channels!inner(youtube_channel_id)
+        channels:channels!channel_feeds_channel_id_fkey(youtube_channel_id)
       `)
       .eq('is_active', true)
       .lt('last_polled_at', tenMinutesAgo)
+      .returns<ChannelFeedResponse[]>()
 
     if (overduePolledError) {
       throw new Error(`Failed to get overdue polled channels: ${overduePolledError.message}`)
     }
 
-    // Combine and deduplicate results
-    const allChannels = [...(neverPolled || []), ...(overduePolled || [])]
-    const uniqueChannels = allChannels.filter((channel, index, self) => 
-      index === self.findIndex(c => c.channel_id === channel.channel_id)
-    )
+    // Combine, filter out feeds with missing youtube_channel_id, and deduplicate
+    const allFeeds = [...(neverPolledFeeds || []), ...(overduePolledFeeds || [])]
+    console.log('DEBUG getChannelsDueForPolling allFeeds:', JSON.stringify(allFeeds, null, 2))
 
-    return uniqueChannels.map(row => ({
-      channelId: (row.channels as any).youtube_channel_id,
-      feedUrl: row.feed_url,
-    }))
+    return allFeeds
+      .filter(feed => !!feed.channels && !!feed.channels.youtube_channel_id)
+      .filter((feed, index, self) =>
+        index === self.findIndex(f => f.channels.youtube_channel_id === feed.channels.youtube_channel_id)
+      )
+      .map(feed => ({
+        channelId: feed.channels.youtube_channel_id,
+        feedUrl: feed.feed_url,
+      }))
   }
 
   /**
@@ -244,8 +264,8 @@ export class RSSPollingOperations {
       .upsert({
         channel_id: channelUuid,
         feed_url: feedUrl,
-        feed_type: options?.feedType || 'youtube_rss',
-        poll_interval_minutes: options?.pollIntervalMinutes || 10,
+        feed_type: options?.feedType ?? 'youtube_rss',
+        poll_interval_minutes: options?.pollIntervalMinutes ?? 10,
         is_active: true,
         updated_at: new Date().toISOString(),
       }, {

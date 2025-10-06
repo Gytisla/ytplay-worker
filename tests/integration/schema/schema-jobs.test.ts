@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { Client } from 'pg'
+import type { Database } from '../../../types/supabase'
 import dotenv from 'dotenv'
 
 dotenv.config({ path: '.env.local' })
@@ -42,7 +43,7 @@ describe('Jobs Table Validation', () => {
       'test_backfill_job'
     ])
     expect(result.rows).toHaveLength(1)
-    const insertedJob = result.rows[0]
+    const insertedJob = result.rows[0] as Database['public']['Tables']['jobs']['Row']
     expect(insertedJob.job_type).toBe('BACKFILL_CHANNEL')
     expect(insertedJob.priority).toBe(5)
     expect(insertedJob.status).toBe('pending')

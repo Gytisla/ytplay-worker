@@ -10,7 +10,7 @@ beforeAll(() => {
   // Close the global server if it's running
   try {
     server.close()
-  } catch (e) {
+  } catch (_) {
     // Ignore if not running
   }
 
@@ -101,7 +101,7 @@ beforeEach(() => {
   // Close the global server if it's running
   try {
     server.close()
-  } catch (e) {
+  } catch (_e) {
     // Ignore if not running
   }
 
@@ -220,7 +220,7 @@ describe('YouTubeChannelsClient', () => {
       server.use(
         http.get('https://www.googleapis.com/youtube/v3/channels', ({ request }) => {
           const url = new URL(request.url)
-          const ids = url.searchParams.get('id')?.split(',') || []
+          const ids = url.searchParams.get('id')?.split(',') ?? []
 
           if (ids.length === 50) {
             // First batch

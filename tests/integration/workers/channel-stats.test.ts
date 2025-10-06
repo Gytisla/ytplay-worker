@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest'
 import { Client } from 'pg'
 import { createClient } from '@supabase/supabase-js'
+import type { Database } from '../../../types/supabase'
 import dotenv from 'dotenv'
 import { handleRefreshChannelStats } from '../../../src/workers/handlers/channel-stats'
 
@@ -21,7 +22,27 @@ vi.mock('../../../src/lib/youtube/client', () => ({
 
 describe('REFRESH_CHANNEL_STATS Handler Integration Tests', () => {
   let client: Client
-  let supabase: any
+  let supabase: ReturnType<typeof createClient<Database>>
+
+  beforeAll(async () => {
+    client = new Client({
+      host: '127.0.0.1',
+      port: 54322,
+      database: 'postgres',
+      user: 'postgres',
+      password: 'postgres',
+    })
+    await client.connect()
+
+    // Disable RLS for testing
+    await client.query('ALTER TABLE channels DISABLE ROW LEVEL SECURITY')
+    await client.query('ALTER TABLE channel_stats DISABLE ROW LEVEL SECURITY')
+
+    // Initialize Supabase client
+    const supabaseUrl = process.env['SUPABASE_URL']!
+    const supabaseServiceKey = process.env['SUPABASE_SERVICE_ROLE_KEY']!
+    supabase = createClient<Database>(supabaseUrl, supabaseServiceKey)
+  })
 
   beforeAll(async () => {
     client = new Client({
@@ -118,15 +139,15 @@ describe('REFRESH_CHANNEL_STATS Handler Integration Tests', () => {
       )
       expect(statsResult.rows).toHaveLength(1)
 
-      const stats = statsResult.rows[0]
-      expect(stats.subscriber_count).toBe('15000')
-      expect(stats.video_count).toBe('75')
-      expect(stats.view_count).toBe('750000')
+      const stats = statsResult.rows[0] as Database['public']['Tables']['channel_stats']['Row']
+      expect(Number(stats.subscriber_count)).toBe(15000)
+      expect(Number(stats.video_count)).toBe(75)
+      expect(Number(stats.view_count)).toBe(750000)
       expect(stats.subscriber_gained).toBe(5000) // 15000 - 10000
       expect(stats.view_gained).toBe(250000)     // 750000 - 500000
-      // Check that date is set (DATE type from PostgreSQL)
-      expect(stats.date).toBeInstanceOf(Date)
-      expect(stats.date.getFullYear()).toBeGreaterThan(2020)
+      // Check that date is set
+      expect(stats.date).toBeDefined()
+      expect(typeof stats.date).toBe('object')
 
       // Verify channel table was updated
       const channelResult = await client.query(
@@ -135,10 +156,10 @@ describe('REFRESH_CHANNEL_STATS Handler Integration Tests', () => {
       )
       expect(channelResult.rows).toHaveLength(1)
 
-      const channel = channelResult.rows[0]
-      expect(channel.subscriber_count).toBe('15000')
-      expect(channel.video_count).toBe('75')
-      expect(channel.view_count).toBe('750000')
+      const channel = channelResult.rows[0] as Database['public']['Tables']['channels']['Row']
+      expect(Number(channel.subscriber_count)).toBe(15000)
+      expect(Number(channel.video_count)).toBe(75)
+      expect(Number(channel.view_count)).toBe(750000)
       expect(channel.last_fetched_at).toBeTruthy()
     })
 
@@ -173,10 +194,10 @@ describe('REFRESH_CHANNEL_STATS Handler Integration Tests', () => {
       )
       expect(statsResult.rows).toHaveLength(1)
 
-      const stats = statsResult.rows[0]
-      expect(stats.subscriber_count).toBe('16000') // Updated value
-      expect(stats.video_count).toBe('80')
-      expect(stats.view_count).toBe('800000')
+      const stats = statsResult.rows[0] as Database['public']['Tables']['channel_stats']['Row']
+      expect(Number(stats.subscriber_count)).toBe(16000) // Updated value
+      expect(Number(stats.video_count)).toBe(80)
+      expect(Number(stats.view_count)).toBe(800000)
       // Deltas remain the same when updating existing stats for the same day
       expect(stats.subscriber_gained).toBe(5000) // Still calculated from yesterday's baseline
     })

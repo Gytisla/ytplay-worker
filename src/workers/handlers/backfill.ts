@@ -50,8 +50,8 @@ export async function handleBackfillChannel(
     console.log(`Storing channel data for ${channelId}`)
     const channelData = {
       youtube_channel_id: channel.id,
-      title: channel.snippet?.title || '',
-      description: channel.snippet?.description || '',
+      title: channel.snippet?.title ?? '',
+      description: channel.snippet?.description ?? '',
       published_at: channel.snippet?.publishedAt || new Date().toISOString(),
       country: channel.snippet?.country || null,
       default_language: channel.snippet?.defaultLanguage || null,
@@ -59,7 +59,7 @@ export async function handleBackfillChannel(
       video_count: Number(channel.statistics?.videoCount) || 0,
       view_count: Number(channel.statistics?.viewCount) || 0,
       keywords: null, // TODO: Extract from channel branding or description
-      privacy_status: channel.status?.privacyStatus || 'public',
+      privacy_status: channel.status?.privacyStatus ?? 'public',
       is_linked: channel.status?.isLinked || false,
       long_uploads_status: channel.status?.longUploadsStatus || null,
       made_for_kids: channel.status?.madeForKids || false,
@@ -125,8 +125,8 @@ export async function handleBackfillChannel(
         const videoData = allVideos.map(video => ({
           youtube_video_id: video.id,
           channel_id: channelUuid,
-          title: video.snippet?.title || '',
-          description: video.snippet?.description || '',
+          title: video.snippet?.title ?? '',
+          description: video.snippet?.description ?? '',
           published_at: video.snippet?.publishedAt || new Date().toISOString(),
           duration: video.contentDetails?.duration || null,
           view_count: Number(video.statistics?.viewCount) || 0,
@@ -148,7 +148,7 @@ export async function handleBackfillChannel(
           caption: video.contentDetails?.caption || false,
           allowed_regions: video.contentDetails?.regionRestriction?.allowed || null,
           blocked_regions: video.contentDetails?.regionRestriction?.blocked || null,
-          privacy_status: video.status?.privacyStatus || 'public',
+          privacy_status: video.status?.privacyStatus ?? 'public',
           embeddable: video.status?.embeddable !== false,
           status: 'active',
           last_fetched_at: new Date().toISOString()
@@ -177,9 +177,9 @@ export async function handleBackfillChannel(
     const statsData = {
       channel_id: channelId,
       captured_at: new Date().toISOString(),
-      subscriber_count: channel.statistics?.subscriberCount || 0,
-      video_count: channel.statistics?.videoCount || 0,
-      view_count: channel.statistics?.viewCount || 0,
+      subscriber_count: channel.statistics?.subscriberCount ?? 0,
+      video_count: channel.statistics?.videoCount ?? 0,
+      view_count: channel.statistics?.viewCount ?? 0,
       // Additional stats will be captured by REFRESH_CHANNEL_STATS jobs
     }
 

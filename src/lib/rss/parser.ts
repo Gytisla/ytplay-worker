@@ -102,7 +102,7 @@ export class RSSParser {
 
       const result: ParsedVideoItem = {
         videoId,
-        title: item.title || 'Untitled',
+        title: item.title ?? 'Untitled',
         link: item.link,
         publishedAt,
       }
@@ -133,14 +133,19 @@ export class RSSParser {
    */
   private parsePubDate(pubDate: string): Date | null {
     try {
-      // RSS dates should be in RFC 2822 format
-      // Example: "Wed, 21 Oct 2015 07:28:00 GMT"
-      // Check if it looks like RFC 2822 format (contains day name and GMT)
-      if (!pubDate.includes(',') || !pubDate.includes('GMT')) {
-        return null
+      // First try parsing as-is
+      let date = new Date(pubDate)
+      if (!isNaN(date.getTime())) {
+        return date
       }
 
-      const date = new Date(pubDate)
+      // Clean up the date string and try again
+      const cleanDate = pubDate
+        .replace(/^[a-zA-Z]+,\s*/, '') // Remove day name
+        .replace(/\s+\([A-Z]+\)$/, '') // Remove timezone name if present
+        .trim()
+
+      date = new Date(cleanDate)
       return isNaN(date.getTime()) ? null : date
     } catch {
       return null

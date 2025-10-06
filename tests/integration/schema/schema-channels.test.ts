@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { Client } from 'pg'
+import type { Database } from '../../../types/supabase'
 import dotenv from 'dotenv'
 
 dotenv.config({ path: '.env.local' })
@@ -47,11 +48,11 @@ describe('Channels Table Validation', () => {
     ])
 
     expect(result.rows).toHaveLength(1)
-    const insertedChannel = result.rows[0]
+    const insertedChannel = result.rows[0] as Database['public']['Tables']['channels']['Row']
 
     expect(insertedChannel.youtube_channel_id).toBe(uniqueId)
     expect(insertedChannel.title).toBe('Test Channel')
-    expect(insertedChannel.subscriber_count).toBe('100000')
+    expect(Number(insertedChannel.subscriber_count)).toBe(100000)
     expect(insertedChannel.status).toBe('active')
     expect(insertedChannel.id).toBeTruthy()
     expect(insertedChannel.created_at).toBeTruthy()

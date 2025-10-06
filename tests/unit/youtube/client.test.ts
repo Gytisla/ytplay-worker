@@ -17,7 +17,7 @@ beforeAll(() => {
   // Close the global server if it's running
   try {
     server.close()
-  } catch (e) {
+  } catch (_) {
     // Ignore if not running
   }
   // Start server with bypass for unhandled requests

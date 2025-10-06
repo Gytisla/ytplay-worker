@@ -1,0 +1,71 @@
+{
+  "version": "5",
+  "redirects": {
+    "https://esm.sh/@supabase/supabase-js@2": "https://esm.sh/@supabase/supabase-js@2.74.0",
+    "https://esm.sh/strnum@^2.1.0?target=denonext": "https://esm.sh/strnum@2.1.1?target=denonext",
+    "https://esm.sh/tr46@~0.0.3?target=denonext": "https://esm.sh/tr46@0.0.3?target=denonext",
+    "https://esm.sh/webidl-conversions@^3.0.0?target=denonext": "https://esm.sh/webidl-conversions@3.0.1?target=denonext",
+    "https://esm.sh/whatwg-url@^5.0.0?target=denonext": "https://esm.sh/whatwg-url@5.0.0?target=denonext"
+  },
+  "remote": {
+    "https://esm.sh/@supabase/auth-js@2.74.0/denonext/auth-js.mjs": "5ef233cafae311b3c27dd031ac0488eb11f66b74be4783a8816f6f3015e9d651",
+    "https://esm.sh/@supabase/functions-js@2.74.0/denonext/functions-js.mjs": "50ac563699b94b2f953084f3b7f75cf744323d07a10e5c81f2922aa7c42240d9",
+    "https://esm.sh/@supabase/node-fetch@2.6.15/denonext/node-fetch.mjs": "0bae9052231f4f6dbccc7234d05ea96923dbf967be12f402764580b6bf9f713d",
+    "https://esm.sh/@supabase/postgrest-js@2.74.0/denonext/postgrest-js.mjs": "cbfcb533c2f4d55b7c923aaf369d0c86c9d6b03af1cdb181fc625f28af8edf65",
+    "https://esm.sh/@supabase/realtime-js@2.74.0/denonext/realtime-js.mjs": "62187011a4d7fa4eaac7e0119e0bc48f1e5f72efcaf07c0ca33ec0aaaa0ead97",
+    "https://esm.sh/@supabase/storage-js@2.74.0/denonext/storage-js.mjs": "7251f3df00c5c38b348a7ad6fa51983c55f5c8f099fa604a68195702cebcf2a2",
+    "https://esm.sh/@supabase/supabase-js@2.74.0": "75871edbf5542b596fcb70bd14327c60864a5d88a2be39264f64cd304a5258fa",
+    "https://esm.sh/@supabase/supabase-js@2.74.0/denonext/supabase-js.mjs": "12e521d8a761121ad23713c749c9e105daec10a4a49292511870615640ab98c3",
+    "https://esm.sh/fast-xml-parser@5.3.0": "35c89ddaee009daf96e7aebd244343b50da21e13d5c06fa521606db820b181e3",
+    "https://esm.sh/fast-xml-parser@5.3.0/denonext/fast-xml-parser.mjs": "6de9b081c4ab7891ac71a9ce5f580011e656553248384346ee2e83e2ce0c240b",
+    "https://esm.sh/strnum@2.1.1/denonext/strnum.mjs": "2ba1ef72b5eee1e4a21237b1e3b3d5621b3c4eaec3f7d365b5a13a5a99f95db2",
+    "https://esm.sh/strnum@2.1.1?target=denonext": "ec351a625b19a9acb32f081ae480d64251a03ac48e64b069666c52de69380605",
+    "https://esm.sh/tr46@0.0.3/denonext/tr46.mjs": "5753ec0a99414f4055f0c1f97691100f13d88e48a8443b00aebb90a512785fa2",
+    "https://esm.sh/tr46@0.0.3?target=denonext": "19cb9be0f0d418a0c3abb81f2df31f080e9540a04e43b0f699bce1149cba0cbb",
+    "https://esm.sh/webidl-conversions@3.0.1/denonext/webidl-conversions.mjs": "54b5c2d50a294853c4ccebf9d5ed8988c94f4e24e463d84ec859a866ea5fafec",
+    "https://esm.sh/webidl-conversions@3.0.1?target=denonext": "4e20318d50528084616c79d7b3f6e7f0fe7b6d09013bd01b3974d7448d767e29",
+    "https://esm.sh/whatwg-url@5.0.0/denonext/whatwg-url.mjs": "29b16d74ee72624c915745bbd25b617cfd2248c6af0f5120d131e232a9a9af79",
+    "https://esm.sh/whatwg-url@5.0.0?target=denonext": "f001a2cadf81312d214ca330033f474e74d81a003e21e8c5d70a1f46dc97b02d"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@nuxt/devtools@latest",
+        "npm:@nuxt/eslint-config@^1.9.0",
+        "npm:@nuxt/test-utils@^3.19.2",
+        "npm:@nuxtjs/tailwindcss@^6.14.0",
+        "npm:@supabase/supabase-js@^2.38.5",
+        "npm:@tailwindcss/typography@~0.5.19",
+        "npm:@trivago/prettier-plugin-sort-imports@^4.3.0",
+        "npm:@types/node@^20.10.6",
+        "npm:@types/pg@^8.15.5",
+        "npm:@typescript-eslint/eslint-plugin@^8.45.0",
+        "npm:@typescript-eslint/parser@^8.45.0",
+        "npm:@vitejs/plugin-vue@^6.0.1",
+        "npm:@vitest/coverage-v8@^3.2.4",
+        "npm:@vitest/ui@^3.2.4",
+        "npm:dotenv@^17.2.3",
+        "npm:eslint-config-prettier@^10.1.8",
+        "npm:eslint-plugin-prettier@^5.5.4",
+        "npm:eslint-plugin-vue@^10.5.0",
+        "npm:eslint@^9.37.0",
+        "npm:fast-xml-parser@^5.3.0",
+        "npm:happy-dom@^12.10.3",
+        "npm:husky@^9.1.7",
+        "npm:lint-staged@^16.2.3",
+        "npm:msw@^2.0.11",
+        "npm:nuxt@^3.8.4",
+        "npm:pg@^8.16.3",
+        "npm:prettier@^3.6.2",
+        "npm:tailwindcss@^4.1.14",
+        "npm:typescript@^5.3.3",
+        "npm:vite@^7.1.9",
+        "npm:vitest@^3.2.4",
+        "npm:vue-router@^4.2.5",
+        "npm:vue-tsc@^3.1.0",
+        "npm:vue@^3.3.13",
+        "npm:zod@^3.22.4"
+      ]
+    }
+  }
+}

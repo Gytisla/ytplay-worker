@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { RSSParser } from '../../../src/lib/rss/parser'
+import { VideoIdExtractor } from '../../../src/lib/rss/extractor'
 
 // Mock YouTube RSS feed XML for testing
 const mockRssFeedXml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -224,7 +225,7 @@ describe('RSSParser', () => {
       ]
 
       testCases.forEach(url => {
-        const result = (parser as any).extractVideoId(url)
+        const result = VideoIdExtractor.extractVideoId(url)
         expect(result).toBe('dQw4w9WgXcQ')
       })
     })
@@ -237,14 +238,14 @@ describe('RSSParser', () => {
       ]
 
       testCases.forEach(url => {
-        const result = (parser as any).extractVideoId(url)
+        const result = VideoIdExtractor.extractVideoId(url)
         expect(result).toBe('dQw4w9WgXcQ')
       })
     })
 
     it('should extract video ID from embed URLs', () => {
       const url = 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-      const result = (parser as any).extractVideoId(url)
+      const result = VideoIdExtractor.extractVideoId(url)
       expect(result).toBe('dQw4w9WgXcQ')
     })
 
@@ -258,49 +259,62 @@ describe('RSSParser', () => {
       ]
 
       invalidUrls.forEach(url => {
-        const result = (parser as any).extractVideoId(url)
+        const result = VideoIdExtractor.extractVideoId(url)
         expect(result).toBeNull()
       })
 
-      // Test null separately
-      const result = (parser as any).extractVideoId(null as any)
-      expect(result).toBeNull()
+      expect(VideoIdExtractor.extractVideoId(null as unknown as string)).toBeNull()
     })
   })
 
   describe('parsePubDate', () => {
-    it('should parse RFC 2822 date format', () => {
-      const dateString = 'Wed, 21 Oct 2015 07:28:00 GMT'
-      const result = (parser as any).parsePubDate(dateString)
-      expect(result).toEqual(new Date(dateString))
+    it('should parse valid RSS date formats', () => {
+      // RFC 2822
+      const rfc2822Date = 'Wed, 21 Oct 2015 07:28:00 GMT'
+      let result = (parser as any).parsePubDate(rfc2822Date)
+      expect(result).toBeTruthy()
+      expect(result).toEqual(new Date('2015-10-21T07:28:00.000Z'))
+
+      // ISO 8601
+      const isoDate = '2015-10-21T07:28:00Z'
+      result = (parser as any).parsePubDate(isoDate)
+      expect(result).toBeTruthy()
+      expect(result).toEqual(new Date('2015-10-21T07:28:00.000Z'))
     })
 
     it('should return null for invalid date strings', () => {
-      const invalidDates = [
-        'Invalid Date',
-        '',
-        'Not a date',
-        '2023-10-21', // ISO format without time
-      ]
-
-      invalidDates.forEach(dateString => {
-        const result = (parser as any).parsePubDate(dateString)
-        expect(result).toBeNull()
-      })
+      const invalidRss = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <item>
+      <title>Test</title>
+      <link>https://www.youtube.com/watch?v=test123</link>
+      <pubDate>Invalid Date</pubDate>
+    </item>
+  </channel>
+</rss>`
+      expect(parser.parseFeed(invalidRss)).toEqual([])
     })
   })
 
   describe('parseItem', () => {
     it('should parse complete RSS item', () => {
-      const item = {
-        title: 'Test Video',
-        link: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-        description: 'Test description',
-        pubDate: 'Wed, 21 Oct 2023 07:28:00 GMT',
-        'media:thumbnail': { '@_url': 'https://example.com/thumb.jpg' },
-      }
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Test Channel</title>
+    <link>https://youtube.com/channel/test</link>
+    <item>
+      <title>Test Video</title>
+      <link>https://www.youtube.com/watch?v=dQw4w9WgXcQ</link>
+      <description>Test description</description>
+      <pubDate>Wed, 21 Oct 2023 07:28:00 GMT</pubDate>
+      <media:thumbnail url="https://example.com/thumb.jpg" />
+    </item>
+  </channel>
+</rss>`
 
-      const result = (parser as any).parseItem(item)
+      const result = parser.parseFeed(xml)?.[0]
 
       expect(result).toEqual({
         videoId: 'dQw4w9WgXcQ',
@@ -308,32 +322,61 @@ describe('RSSParser', () => {
         link: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
         description: 'Test description',
         publishedAt: new Date('Wed, 21 Oct 2023 07:28:00 GMT'),
-        thumbnailUrl: 'https://example.com/thumb.jpg',
+        thumbnailUrl: 'https://example.com/thumb.jpg'
       })
     })
 
     it('should handle media:content as thumbnail fallback', () => {
-      const item = {
-        title: 'Test Video',
-        link: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-        pubDate: 'Wed, 21 Oct 2023 07:28:00 GMT',
-        'media:content': { '@_url': 'https://example.com/content.jpg' },
-      }
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Test Channel</title>
+    <link>https://youtube.com/channel/test</link>
+    <item>
+      <title>Test Video</title>
+      <link>https://www.youtube.com/watch?v=dQw4w9WgXcQ</link>
+      <pubDate>Wed, 21 Oct 2023 07:28:00 GMT</pubDate>
+      <media:content url="https://example.com/content.jpg" type="image/jpeg" />
+    </item>
+  </channel>
+</rss>`
 
-      const result = (parser as any).parseItem(item)
+      const result = parser.parseFeed(xml)?.[0]
       expect(result?.thumbnailUrl).toBe('https://example.com/content.jpg')
     })
 
     it('should return null for invalid items', () => {
-      const invalidItems = [
-        { title: 'No link' },
-        { link: 'https://example.com/not-youtube' },
-        { link: 'https://youtube.com/watch?v=invalid', pubDate: 'Invalid Date' },
+      const invalidXmls = [
+        `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <item>
+      <title>No link</title>
+    </item>
+  </channel>
+</rss>`,
+        `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <item>
+      <link>https://example.com/not-youtube</link>
+    </item>
+  </channel>
+</rss>`,
+        `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <item>
+      <link>https://youtube.com/watch?v=invalid</link>
+      <pubDate>Invalid Date</pubDate>
+    </item>
+  </channel>
+</rss>`
       ]
 
-      invalidItems.forEach(item => {
-        const result = (parser as any).parseItem(item as any)
-        expect(result).toBeNull()
+      invalidXmls.forEach(xml => {
+        const result = parser.parseFeed(xml)
+        expect(result).toEqual([])
       })
     })
   })

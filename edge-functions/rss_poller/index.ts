@@ -1,6 +1,8 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { XMLParser } from 'https://esm.sh/fast-xml-parser@5.3.0'
 
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument, @typescript-eslint/prefer-nullish-coalescing, no-useless-escape */
+
 // Define types locally for Edge Function
 interface ParsedVideoItem {
   videoId: string
@@ -49,7 +51,7 @@ class RSSParser {
       const items = Array.isArray(channel.item) ? channel.item : [channel.item]
 
       return items
-        .filter((item: any) => item && item.link)
+        .filter((item: any) => item?.link)
         .map((item: any) => this.parseItem(item))
         .filter((item: ParsedVideoItem | null): item is ParsedVideoItem => item !== null)
     } catch (error) {
@@ -73,7 +75,7 @@ class RSSParser {
 
       const result: ParsedVideoItem = {
         videoId,
-        title: item.title || 'Untitled',
+        title: item.title ?? 'Untitled',
         link: item.link,
         publishedAt,
       }
@@ -94,13 +96,13 @@ class RSSParser {
 
   private extractVideoId(url: string): string | null {
     const patterns = [
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[&\?].*)?$/,
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[&?].*)?$/,
       /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})(?:\?.*)?$/,
     ]
 
     for (const pattern of patterns) {
       const match = url.match(pattern)
-      if (match && match[1]) {
+      if (match?.[1]) {
         return match[1]
       }
     }
@@ -123,6 +125,7 @@ class RSSParser {
 }
 
 // Copy FeedStateManager logic here for Edge Function compatibility
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class FeedStateManager {
   static shouldPoll(state: FeedState): boolean {
     if (state.status === 'paused') {
@@ -265,16 +268,16 @@ Deno.serve(async (req) => {
       .single()
 
     if (feedError || !feedData) {
-      throw new Error(`Channel feed not found: ${feedError?.message || 'No feed configured'}`)
+      throw new Error(`Channel feed not found: ${feedError?.message ?? 'No feed configured'}`)
     }
 
     // Convert database row to FeedState
     const currentState: FeedState = {
       channelId: feedData.channel_id,
       feedUrl: feedData.feed_url,
-      pollIntervalMinutes: feedData.poll_interval_minutes || 10,
-      consecutiveErrors: feedData.consecutive_errors || 0,
-      status: feedData.status || 'active',
+      pollIntervalMinutes: feedData.poll_interval_minutes ?? 10,
+      consecutiveErrors: feedData.consecutive_errors ?? 0,
+      status: feedData.status ?? 'active',
       ...(feedData.last_etag && { lastETag: feedData.last_etag }),
       ...(feedData.last_modified && { lastModified: feedData.last_modified }),
       ...(feedData.last_polled_at && { lastPolledAt: new Date(feedData.last_polled_at) }),
@@ -352,8 +355,8 @@ Deno.serve(async (req) => {
 
     // Get response headers for caching
     const responseHeaders = {
-      etag: feedResponse.headers.get('etag') || undefined,
-      lastModified: feedResponse.headers.get('last-modified') || undefined,
+      etag: feedResponse.headers.get('etag') ?? undefined,
+      lastModified: feedResponse.headers.get('last-modified') ?? undefined,
     }
 
     // Check if feed has changes
@@ -459,9 +462,9 @@ Deno.serve(async (req) => {
           const currentState: FeedState = {
             channelId: feedData.channel_id,
             feedUrl: feedData.feed_url,
-            pollIntervalMinutes: feedData.poll_interval_minutes || 10,
-            consecutiveErrors: feedData.consecutive_errors || 0,
-            status: feedData.status || 'active',
+            pollIntervalMinutes: feedData.poll_interval_minutes ?? 10,
+            consecutiveErrors: feedData.consecutive_errors ?? 0,
+            status: feedData.status ?? 'active',
             ...(feedData.last_etag && { lastETag: feedData.last_etag }),
             ...(feedData.last_modified && { lastModified: feedData.last_modified }),
             ...(feedData.last_polled_at && { lastPolledAt: new Date(feedData.last_polled_at) }),

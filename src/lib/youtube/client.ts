@@ -251,7 +251,7 @@ export class YouTubeApiClient {
       }
 
       // Check if we should return ApiResponse format
-      const etag = response.headers.get('etag') || undefined
+      const etag = response.headers.get('etag') ?? undefined
       return {
         data,
         etag,
@@ -367,7 +367,7 @@ export class YouTubeApiClient {
 
     return new YouTubeApiClientError(
       error.message,
-      error.errors[0]?.reason || 'UNKNOWN_ERROR',
+      error.errors[0]?.reason ?? 'UNKNOWN_ERROR',
       statusCode,
       retryable,
       errorData
@@ -438,7 +438,7 @@ export function createYouTubeClient(config: Partial<YouTubeClientConfig> = {}): 
  * Create a YouTube API client from environment variables
  */
 export function createYouTubeClientFromEnv(): YouTubeApiClient {
-  const apiKey = process.env['YT_API_KEY'] || process.env['YOUTUBE_API_KEY']
+  const apiKey = process.env['YT_API_KEY'] ?? process.env['YOUTUBE_API_KEY']
   if (!apiKey) {
     throw new Error('YouTube API key not found. Set YT_API_KEY or YOUTUBE_API_KEY environment variable.')
   }

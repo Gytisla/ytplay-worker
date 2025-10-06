@@ -1,5 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/prefer-nullish-coalescing */
+
 // Define types locally for Edge Function
 
 interface JobResult {
@@ -32,31 +34,31 @@ const corsHeaders = {
 
 // Job type handlers - these will be implemented in separate files
 const jobHandlers: Record<string, (payload: any, supabase: any) => Promise<{ success: boolean; itemsProcessed?: number; error?: string }>> = {
-  'BACKFILL_CHANNEL': async (payload, supabase) => {
+  'BACKFILL_CHANNEL': async (payload, _supabase) => {
     // TODO: Implement BACKFILL_CHANNEL handler
     console.log('Processing BACKFILL_CHANNEL job:', payload)
     return { success: true, itemsProcessed: 1 }
   },
 
-  'REFRESH_CHANNEL_STATS': async (payload, supabase) => {
+  'REFRESH_CHANNEL_STATS': async (payload, _supabase) => {
     // TODO: Implement REFRESH_CHANNEL_STATS handler
     console.log('Processing REFRESH_CHANNEL_STATS job:', payload)
     return { success: true, itemsProcessed: 1 }
   },
 
-  'REFRESH_HOT_VIDEOS': async (payload, supabase) => {
+  'REFRESH_HOT_VIDEOS': async (payload, _supabase) => {
     // TODO: Implement REFRESH_HOT_VIDEOS handler
     console.log('Processing REFRESH_HOT_VIDEOS job:', payload)
     return { success: true, itemsProcessed: 1 }
   },
 
-  'REFRESH_VIDEO_STATS': async (payload, supabase) => {
+  'REFRESH_VIDEO_STATS': async (payload, _supabase) => {
     // TODO: Implement REFRESH_VIDEO_STATS handler
     console.log('Processing REFRESH_VIDEO_STATS job:', payload)
     return { success: true, itemsProcessed: 1 }
   },
 
-  'RSS_POLL_CHANNEL': async (payload, supabase) => {
+  'RSS_POLL_CHANNEL': async (payload, _supabase) => {
     // TODO: Implement RSS_POLL_CHANNEL handler
     console.log('Processing RSS_POLL_CHANNEL job:', payload)
     return { success: true, itemsProcessed: 1 }
@@ -75,8 +77,8 @@ Deno.serve(async (req) => {
   try {
     // Parse request body
     const body: RequestBody = await req.json().catch(() => ({}))
-    const maxJobs = Math.min(body.maxJobs || 1, 10) // Max 10 jobs per request
-    const jobTypes = body.jobTypes || null
+    const maxJobs = Math.min(body.maxJobs ?? 1, 10) // Max 10 jobs per request
+    const jobTypes = body.jobTypes ?? null
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!

@@ -2,6 +2,22 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { Client } from 'pg'
 import dotenv from 'dotenv'
 
+interface DatabaseIndex {
+  indexname: string;
+  tablename: string;
+}
+
+interface TableSecurity {
+  schemaname: string;
+  tablename: string;
+  rowsecurity: boolean;
+}
+
+interface DatabaseFunction {
+  routine_name: string;
+  routine_type: string;
+}
+
 dotenv.config({ path: '.env.local' })
 
 describe('Schema Integrity and Constraints', () => {
@@ -30,7 +46,7 @@ describe('Schema Integrity and Constraints', () => {
       AND tablename IN ('channels', 'videos', 'jobs', 'channel_stats', 'video_stats')
       ORDER BY tablename, indexname
     `
-    const result = await client.query(indexQuery)
+    const result = await client.query<DatabaseIndex>(indexQuery)
     expect(result.rows.length).toBeGreaterThan(0)
     const indexNames = result.rows.map(row => row.indexname)
     expect(indexNames.some(name => name.includes('channels_pkey'))).toBe(true)
@@ -44,7 +60,7 @@ describe('Schema Integrity and Constraints', () => {
       WHERE schemaname = 'public'
       AND tablename IN ('channels', 'videos', 'jobs')
     `
-    const result = await client.query(rlsQuery)
+    const result = await client.query<TableSecurity>(rlsQuery)
     expect(result.rows.length).toBeGreaterThan(0)
     result.rows.forEach(row => {
       expect(row.rowsecurity).toBe(true)
@@ -58,7 +74,7 @@ describe('Schema Integrity and Constraints', () => {
       WHERE routine_schema = 'public'
       AND routine_name IN ('is_admin', 'can_access_channel', 'can_access_video')
     `
-    const result = await client.query(functionsQuery)
+    const result = await client.query<DatabaseFunction>(functionsQuery)
     expect(result.rows.length).toBe(3)
     const functionNames = result.rows.map(row => row.routine_name)
     expect(functionNames).toContain('is_admin')

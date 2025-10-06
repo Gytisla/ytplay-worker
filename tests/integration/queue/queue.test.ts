@@ -22,7 +22,6 @@ describe('Queue Integration Tests', () => {
     // Confirm tables are empty
     const jobs = await client.query('SELECT COUNT(*) FROM jobs')
     const events = await client.query('SELECT COUNT(*) FROM job_events')
-    // eslint-disable-next-line no-console
     console.log('After truncate: jobs:', jobs.rows[0].count, 'events:', events.rows[0].count)
   })
 
@@ -36,7 +35,6 @@ describe('Queue Integration Tests', () => {
         )
         const jobId = enqueueResult.rows[0].job_id
         expect(jobId).toBeTruthy()
-        // eslint-disable-next-line no-console
         console.log('Enqueued jobId:', jobId)
         // Print all jobs after enqueue
         const allJobsAfterEnqueue = await client.query('SELECT id, job_type, dedup_key, status FROM jobs')
@@ -52,11 +50,9 @@ describe('Queue Integration Tests', () => {
           `SELECT fail_job($1, $2) as status`,
           [jobId, 'Simulated API failure']
         )
-        // eslint-disable-next-line no-console
         console.log('Fail result:', failResult.rows)
         expect(failResult.rows[0].status).toBe('pending')
         const jobResult = await client.query('SELECT * FROM jobs WHERE id = $1', [jobId])
-        // eslint-disable-next-line no-console
         console.log('Job after fail:', jobResult.rows[0])
         const updatedJob = jobResult.rows[0]
         expect(updatedJob.status).toBe('pending')
@@ -132,7 +128,6 @@ describe('Queue Integration Tests', () => {
           ['REFRESH_CHANNEL_STATS_EVENTS', JSON.stringify({ channel_id: 'test-channel-3' }), 5, dedupKey]
         )
         const jobId = enqueueResult.rows[0].job_id
-        // eslint-disable-next-line no-console
         console.log('Enqueued jobId:', jobId)
         // Print all jobs after enqueue
         const allJobsAfterEnqueue = await client.query('SELECT id, job_type, dedup_key, status FROM jobs')
@@ -144,7 +139,6 @@ describe('Queue Integration Tests', () => {
         // Print all jobs after dequeue
         const allJobsAfterDequeue = await client.query('SELECT id, job_type, dedup_key, status FROM jobs')
         console.log('All jobs after dequeue:', allJobsAfterDequeue.rows)
-        // eslint-disable-next-line no-console
         console.log('Dequeued jobs:', dequeueResult.rows)
         expect(dequeueResult.rows[0].job_id).toBe(jobId)
         await client.query(
@@ -181,17 +175,14 @@ describe('Queue Integration Tests', () => {
             `SELECT * FROM dequeue_jobs($1, $2, $3)`,
             [`test-worker-${attempt}`, ['REFRESH_CHANNEL_STATS_BACKOFF'], 1]
           )
-          // eslint-disable-next-line no-console
           console.log(`Attempt ${attempt} dequeue:`, dequeueResult.rows)
           if (dequeueResult.rows.length === 0) break
           const failResult = await client.query(
             `SELECT secure_fail_job($1, $2) as status`,
             [jobId, `Failure attempt ${attempt}`]
           )
-          // eslint-disable-next-line no-console
           console.log(`Attempt ${attempt} fail:`, failResult.rows)
           const jobResult = await client.query('SELECT * FROM jobs WHERE id = $1', [jobId])
-          // eslint-disable-next-line no-console
           console.log(`Attempt ${attempt} job state:`, jobResult.rows[0])
           const jobState = jobResult.rows[0]
           expect(jobState.attempt_count).toBe(attempt)
@@ -429,7 +420,7 @@ describe('Queue Integration Tests', () => {
       }
 
       // Check that all jobs are unique and distributed
-      const dequeuedJobIds = results.map(r => r.job && r.job.job_id).filter(Boolean)
+      const dequeuedJobIds = results.map(r => r.job?.job_id).filter(Boolean)
       expect(new Set(dequeuedJobIds).size).toBe(10)
       // Optionally, check that no worker gets two jobs in a row (fairness)
       for (let i = 1; i < results.length; i++) {

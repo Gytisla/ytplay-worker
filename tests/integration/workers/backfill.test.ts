@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest'
 import { Client } from 'pg'
 import { createClient } from '@supabase/supabase-js'
+import type { Database } from '../../../types/supabase'
 import dotenv from 'dotenv'
 import { handleBackfillChannel } from '../../../src/workers/handlers/backfill'
 
@@ -37,7 +38,7 @@ vi.mock('../../../src/lib/youtube/client', () => ({
 
 describe('BACKFILL_CHANNEL Handler Integration Tests', () => {
   let client: Client
-  let supabase: any
+  let supabase: ReturnType<typeof createClient<Database>>
 
   beforeAll(async () => {
     client = new Client({
@@ -234,12 +235,12 @@ describe('BACKFILL_CHANNEL Handler Integration Tests', () => {
         ['UC1234567890']
       )
       expect(channelResult.rows).toHaveLength(1)
-      const channel = channelResult.rows[0]
+      const channel = channelResult.rows[0] as Database['public']['Tables']['channels']['Row']
       expect(channel.title).toBe('Test Channel')
       expect(channel.description).toBe('A test YouTube channel')
-      expect(channel.subscriber_count).toBe('10000')
-      expect(channel.video_count).toBe('50')
-      expect(channel.view_count).toBe('500000')
+      expect(Number(channel.subscriber_count)).toBe(10000)
+      expect(Number(channel.video_count)).toBe(50)
+      expect(Number(channel.view_count)).toBe(500000)
       expect(channel.status).toBe('active')
       // uploads_playlist_id is not stored in channels table
 
@@ -250,18 +251,18 @@ describe('BACKFILL_CHANNEL Handler Integration Tests', () => {
       )
       expect(videosResult.rows).toHaveLength(2)
 
-      const video1 = videosResult.rows[0]
+      const video1 = videosResult.rows[0] as Database['public']['Tables']['videos']['Row']
       expect(video1.youtube_video_id).toBe('video001')
       expect(video1.title).toBe('Video 1')
-      expect(video1.view_count).toBe('1000')
-      expect(video1.like_count).toBe('100')
-      expect(video1.comment_count).toBe('10')
+      expect(Number(video1.view_count)).toBe(1000)
+      expect(Number(video1.like_count)).toBe(100)
+      expect(Number(video1.comment_count)).toBe(10)
       expect(video1.tags).toEqual(['tag1', 'tag2'])
       expect(video1.category_id).toBe('20')
       expect(video1.licensed_content).toBe(false)
       expect(video1.caption).toBe(true)
 
-      const video2 = videosResult.rows[1]
+      const video2 = videosResult.rows[1] as Database['public']['Tables']['videos']['Row']
       expect(video2.youtube_video_id).toBe('video002')
       expect(video2.title).toBe('Video 2')
       expect(video2.licensed_content).toBe(true)
@@ -273,10 +274,10 @@ describe('BACKFILL_CHANNEL Handler Integration Tests', () => {
         [channel.id]
       )
       expect(statsResult.rows).toHaveLength(1)
-      const stats = statsResult.rows[0]
-      expect(stats.subscriber_count).toBe('10000')
-      expect(stats.video_count).toBe('50')
-      expect(stats.view_count).toBe('500000')
+      const stats = statsResult.rows[0] as Database['public']['Tables']['channel_stats']['Row']
+      expect(Number(stats.subscriber_count)).toBe(10000)
+      expect(Number(stats.video_count)).toBe(50)
+      expect(Number(stats.view_count)).toBe(500000)
     })
 
     it('should handle channel not found on YouTube', async () => {
@@ -350,11 +351,11 @@ describe('BACKFILL_CHANNEL Handler Integration Tests', () => {
         ['UC1234567890']
       )
       expect(channelResult.rows).toHaveLength(1)
-      const channel = channelResult.rows[0]
+      const channel = channelResult.rows[0] as Database['public']['Tables']['channels']['Row']
       expect(channel.title).toBe('') // Default for missing title
-      expect(channel.subscriber_count).toBe('0') // Default for missing stats
-      expect(channel.video_count).toBe('0')
-      expect(channel.view_count).toBe('0')
+      expect(Number(channel.subscriber_count)).toBe(0) // Default for missing stats
+      expect(Number(channel.video_count)).toBe(0)
+      expect(Number(channel.view_count)).toBe(0)
     })
 
     it('should handle YouTube API errors gracefully', async () => {

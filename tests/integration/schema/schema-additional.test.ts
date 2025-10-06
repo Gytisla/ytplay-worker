@@ -2,6 +2,13 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { Client } from 'pg'
 import dotenv from 'dotenv'
 
+interface ApiBudgetRow {
+  date: string;
+  quota_type: string;
+  daily_limit: number;
+  current_usage: number | null;
+}
+
 dotenv.config({ path: '.env.local' })
 
 describe('Additional Tables Validation', () => {
@@ -29,14 +36,17 @@ describe('Additional Tables Validation', () => {
       VALUES ($1, $2, $3, $4)
       RETURNING date, quota_type, daily_limit, current_usage
     `
-    const result = await client.query(insertQuery, [
+    const result = await client.query<ApiBudgetRow>(insertQuery, [
       '2023-01-01',
       'test_quota',
       10000,
       1500
     ])
     expect(result.rows).toHaveLength(1)
-    expect(result.rows[0].quota_type).toBe('test_quota')
-    expect(result.rows[0].daily_limit).toBe("10000")
+    
+    const row = result.rows[0]
+    expect(row).toBeDefined()
+    expect(row?.quota_type).toBe('test_quota')
+    expect(Number(row?.daily_limit)).toBe(10000)
   })
 })

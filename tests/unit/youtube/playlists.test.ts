@@ -10,7 +10,7 @@ beforeAll(() => {
   // Close the global server if it's running
   try {
     server.close()
-  } catch (_e) {
+  } catch {
     // Ignore if not running
   }
 

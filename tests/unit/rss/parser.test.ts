@@ -271,13 +271,13 @@ describe('RSSParser', () => {
     it('should parse valid RSS date formats', () => {
       // RFC 2822
       const rfc2822Date = 'Wed, 21 Oct 2015 07:28:00 GMT'
-      let result = (parser as any).parsePubDate(rfc2822Date)
+  let result: Date | null = ((parser as unknown) as { parsePubDate: (date: string) => Date | null }).parsePubDate(rfc2822Date)
       expect(result).toBeTruthy()
       expect(result).toEqual(new Date('2015-10-21T07:28:00.000Z'))
 
       // ISO 8601
       const isoDate = '2015-10-21T07:28:00Z'
-      result = (parser as any).parsePubDate(isoDate)
+  result = ((parser as unknown) as { parsePubDate: (date: string) => Date | null }).parsePubDate(isoDate)
       expect(result).toBeTruthy()
       expect(result).toEqual(new Date('2015-10-21T07:28:00.000Z'))
     })

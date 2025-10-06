@@ -51,7 +51,7 @@ beforeAll(() => {
   // Close the global server if it's running
   try {
     server.close()
-  } catch (_) {
+  } catch {
     // Ignore if not running
   }
 
@@ -242,9 +242,10 @@ describe('YouTubeVideosClient', () => {
 
   describe('batching logic', () => {
     it('should split large arrays into correct batch sizes', () => {
-      const client = new (YouTubeVideosClient as any)(createYouTubeClientFromEnv())
-      const array = Array.from({ length: 100 }, (_, i) => `item${i}`)
-      const batches = client.chunkArray(array, 30)
+      const client = new YouTubeVideosClient(createYouTubeClientFromEnv())
+      const array: string[] = Array.from({ length: 100 }, (_, i) => `item${i}`)
+      // Access private method for test purposes
+      const batches = (client as unknown as { chunkArray<T>(array: T[], chunkSize: number): T[][] }).chunkArray(array, 30)
 
       expect(batches).toHaveLength(4)
       expect(batches[0]).toHaveLength(30)
@@ -254,9 +255,10 @@ describe('YouTubeVideosClient', () => {
     })
 
     it('should handle batch sizes larger than array', () => {
-      const client = new (YouTubeVideosClient as any)(createYouTubeClientFromEnv())
-      const array = ['item1', 'item2']
-      const batches = client.chunkArray(array, 10)
+      const client = new YouTubeVideosClient(createYouTubeClientFromEnv())
+      const array: string[] = ['item1', 'item2']
+      // Access private method for test purposes
+      const batches = (client as unknown as { chunkArray<T>(array: T[], chunkSize: number): T[][] }).chunkArray(array, 10)
 
       expect(batches).toHaveLength(1)
       expect(batches[0]).toHaveLength(2)

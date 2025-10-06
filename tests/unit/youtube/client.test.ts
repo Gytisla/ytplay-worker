@@ -17,7 +17,7 @@ beforeAll(() => {
   // Close the global server if it's running
   try {
     server.close()
-  } catch (_) {
+  } catch {
     // Ignore if not running
   }
   // Start server with bypass for unhandled requests
@@ -83,7 +83,7 @@ describe('YouTubeApiClient', () => {
 
   describe('Request Execution', () => {
     it('should make successful GET request', async () => {
-      const mockResponse = {
+      const mockResponse: Response = {
         ok: true,
         status: 200,
         json: () => Promise.resolve({ success: true }),
@@ -92,7 +92,7 @@ describe('YouTubeApiClient', () => {
 
       vi.spyOn(global, 'fetch').mockResolvedValueOnce(mockResponse)
 
-      const result = await client.get('/test-endpoint', { param1: 'value1' })
+  const result: { success: boolean } = await client.get('/test-endpoint', { param1: 'value1' })
 
       expect(global.fetch).toHaveBeenCalledWith(
         'https://www.googleapis.com/youtube/v3/test-endpoint?key=test-api-key&param1=value1',
@@ -391,7 +391,7 @@ describe('YouTubeApiClient', () => {
     beforeEach(() => {
       vi.useFakeTimers()
       // Mock the sleep method to resolve immediately
-      sleepSpy = vi.spyOn(YouTubeApiClient.prototype as any, 'sleep').mockResolvedValue(undefined)
+  sleepSpy = vi.spyOn(YouTubeApiClient.prototype as unknown as { sleep: () => Promise<void> }, 'sleep').mockResolvedValue(undefined)
     })
 
     afterEach(() => {
@@ -463,7 +463,7 @@ describe('YouTubeApiClient', () => {
 
     it('should implement exponential backoff with jitter', async () => {
       // Spy on the calculateRetryDelay method to check the delay calculation
-      const calculateDelaySpy = vi.spyOn(YouTubeApiClient.prototype as any, 'calculateRetryDelay')
+  const calculateDelaySpy = vi.spyOn(YouTubeApiClient.prototype as unknown as { calculateRetryDelay: (attempt: number) => number }, 'calculateRetryDelay')
 
       vi.spyOn(global, 'fetch').mockResolvedValueOnce({
         ok: false,
@@ -486,7 +486,7 @@ describe('YouTubeApiClient', () => {
     })
 
     it('should calculate exponential backoff delays correctly', async () => {
-      const calculateDelaySpy = vi.spyOn(YouTubeApiClient.prototype as any, 'calculateRetryDelay')
+  const calculateDelaySpy = vi.spyOn(YouTubeApiClient.prototype as unknown as { calculateRetryDelay: (attempt: number) => number }, 'calculateRetryDelay')
 
       // Test multiple retry attempts
       vi.spyOn(global, 'fetch').mockResolvedValue({
@@ -517,9 +517,9 @@ describe('YouTubeApiClient', () => {
       })
 
       try {
-        const delay0 = (clientWithJitter as any).calculateRetryDelay(0)
-        const delay1 = (clientWithJitter as any).calculateRetryDelay(1)
-        const delay2 = (clientWithJitter as any).calculateRetryDelay(2)
+    const delay0 = (clientWithJitter as unknown as { calculateRetryDelay: (attempt: number) => number }).calculateRetryDelay(0)
+    const delay1 = (clientWithJitter as unknown as { calculateRetryDelay: (attempt: number) => number }).calculateRetryDelay(1)
+    const delay2 = (clientWithJitter as unknown as { calculateRetryDelay: (attempt: number) => number }).calculateRetryDelay(2)
 
         // Base delays: 1000ms, 2000ms, 4000ms
         // With 20% jitter and random=0.5: delay * (1 + 0.2 * (0.5 * 2 - 1)) = delay * (1 + 0.2 * 0) = delay
@@ -538,9 +538,9 @@ describe('YouTubeApiClient', () => {
         retryJitter: 0, // No jitter
       })
 
-      const delay0 = (clientNoJitter as any).calculateRetryDelay(0)
-      const delay1 = (clientNoJitter as any).calculateRetryDelay(1)
-      const delay2 = (clientNoJitter as any).calculateRetryDelay(2)
+  const delay0 = (clientNoJitter as unknown as { calculateRetryDelay: (attempt: number) => number }).calculateRetryDelay(0)
+  const delay1 = (clientNoJitter as unknown as { calculateRetryDelay: (attempt: number) => number }).calculateRetryDelay(1)
+  const delay2 = (clientNoJitter as unknown as { calculateRetryDelay: (attempt: number) => number }).calculateRetryDelay(2)
 
       expect(delay0).toBe(1000)
       expect(delay1).toBe(2000)
@@ -603,7 +603,7 @@ describe('YouTubeApiClient', () => {
     })
 
     it('should support custom timeout per request', async () => {
-      const mockResponse = {
+      const mockResponse: Response = {
         ok: true,
         status: 200,
         json: () => Promise.resolve({ success: true }),
@@ -625,7 +625,7 @@ describe('YouTubeApiClient', () => {
 
     it('should support custom retry count per request', async () => {
       // Mock sleep to avoid delays
-      const sleepSpy = vi.spyOn(YouTubeApiClient.prototype as any, 'sleep').mockResolvedValue(undefined)
+  const sleepSpy = vi.spyOn(YouTubeApiClient.prototype as unknown as { sleep: () => Promise<void> }, 'sleep').mockResolvedValue(undefined)
 
       vi.spyOn(global, 'fetch').mockResolvedValue({
         ok: false,
@@ -670,7 +670,7 @@ describe('YouTubeApiClient', () => {
     })
 
     it('should handle 304 Not Modified responses', async () => {
-      const mockResponse = {
+      const mockResponse: Response = {
         ok: false,
         status: 304,
         headers: new Headers(),

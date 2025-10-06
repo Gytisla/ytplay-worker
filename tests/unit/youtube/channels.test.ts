@@ -10,7 +10,7 @@ beforeAll(() => {
   // Close the global server if it's running
   try {
     server.close()
-  } catch (_) {
+  } catch {
     // Ignore if not running
   }
 
@@ -101,15 +101,15 @@ beforeEach(() => {
   // Close the global server if it's running
   try {
     server.close()
-  } catch (_e) {
+  } catch {
     // Ignore if not running
   }
 
   // Add handlers for YouTube API
   server.use(
     http.get('https://www.googleapis.com/youtube/v3/channels', ({ request }) => {
-      const url = new URL(request.url)
-      const ids = url.searchParams.get('id')?.split(',') || []
+  const url = new URL(request.url)
+  const ids = url.searchParams.get('id')?.split(',') ?? []
 
       console.log('MSW intercepted request for IDs:', ids)
 
@@ -192,7 +192,7 @@ describe('YouTubeChannelsClient', () => {
     channelsClient = new YouTubeChannelsClient(client)
 
     // Mock the sleep method to resolve immediately for faster tests
-    sleepSpy = vi.spyOn(YouTubeApiClient.prototype as any, 'sleep').mockResolvedValue(undefined)
+  sleepSpy = vi.spyOn(YouTubeApiClient.prototype as unknown as { sleep: () => Promise<void> }, 'sleep').mockResolvedValue(undefined)
   })
 
   afterEach(() => {
@@ -351,23 +351,23 @@ describe('YouTubeChannelsClient', () => {
       const channelsClient = new YouTubeChannelsClient(client, { batchSize: 10 })
       const channelIds = Array.from({ length: 25 }, (_, i) => `UC${i}`)
 
-      // Access private method for testing
-      const batches = (channelsClient as any).chunkArray(channelIds, 10)
+  // Access private method for testing
+  const batches = (channelsClient as unknown as { chunkArray<T>(array: T[], chunkSize: number): T[][] }).chunkArray(channelIds, 10)
 
-      expect(batches).toHaveLength(3)
-      expect(batches[0]).toHaveLength(10)
-      expect(batches[1]).toHaveLength(10)
-      expect(batches[2]).toHaveLength(5)
+  expect(batches).toHaveLength(3)
+  expect(batches[0]).toHaveLength(10)
+  expect(batches[1]).toHaveLength(10)
+  expect(batches[2]).toHaveLength(5)
     })
 
     it('should handle batch sizes larger than array', () => {
       const channelsClient = new YouTubeChannelsClient(client, { batchSize: 10 })
       const channelIds = ['UC1', 'UC2']
 
-      const batches = (channelsClient as any).chunkArray(channelIds, 10)
+  const batches = (channelsClient as unknown as { chunkArray<T>(array: T[], chunkSize: number): T[][] }).chunkArray(channelIds, 10)
 
-      expect(batches).toHaveLength(1)
-      expect(batches[0]).toHaveLength(2)
+  expect(batches).toHaveLength(1)
+  expect(batches[0]).toHaveLength(2)
     })
   })
 })

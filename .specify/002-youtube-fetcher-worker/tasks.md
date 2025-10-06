@@ -104,10 +104,10 @@ Backend-first monorepo structure:
 - [x] T044 Create RSS poller Edge Function in edge-functions/rss_poller/index.ts
 - [x] T045 [P] Add RSS polling database operations in src/workers/rss.ts
 - [x] T046 [P] Write RSS parsing tests with mock XML feeds in tests/unit/rss/
-- [ ] T047 [P] Write feed state management tests in tests/integration/rss/
-- [ ] T048 [P] Test new video discovery and job enqueueing workflow
-- [ ] T049 [P] Test RSS error handling and fallback mechanisms
-- [ ] T050 Validate RSS polling with real YouTube channel feeds
+- [x] T047 [P] Write feed state management tests in tests/integration/rss/
+- [x] T048 [P] Test new video discovery and job enqueueing workflow
+- [x] T049 [P] Test RSS error handling and fallback mechanisms
+- [x] T050 Validate RSS polling with real YouTube channel feeds
 
 ## Phase P5: Edge Function Workers
 

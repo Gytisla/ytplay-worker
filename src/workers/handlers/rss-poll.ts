@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { RSSPollingOperations } from '../../workers/rss'
 import { RSSParser } from '../../lib/rss/parser'
 import { FeedStateManager } from '../../lib/rss/state'
+import type { FeedState } from '../../lib/rss/state'
 
 /**
  * RSS_POLL_CHANNEL job handler
@@ -121,15 +122,14 @@ export async function handleRSSPollChannel(
         )
       : undefined
 
-    const updatedState = {
+    const updatedState: FeedState = {
       ...currentState,
-      lastETag: headers.etag ?? currentState.lastETag,
-      lastModified: headers.lastModified ?? currentState.lastModified,
+      ...(headers.etag && { lastETag: headers.etag }),
+      ...(headers.lastModified && { lastModified: headers.lastModified }),
       lastPolledAt: new Date(),
-      lastVideoPublishedAt: latestVideoPublishedAt ?? currentState.lastVideoPublishedAt,
+      ...(latestVideoPublishedAt && { lastVideoPublishedAt: latestVideoPublishedAt }),
       consecutiveErrors: 0,
-      status: 'active' as const,
-      errorMessage: undefined
+      status: 'active'
     }
     await rssOps.updateFeedState(updatedState)
 

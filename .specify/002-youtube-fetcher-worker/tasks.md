@@ -115,7 +115,7 @@ Backend-first monorepo structure:
 - [x] T052 [P] Create BACKFILL_CHANNEL job handler in src/workers/handlers/backfill.ts
 - [x] T053 [P] Create REFRESH_CHANNEL_STATS job handler in src/workers/handlers/channel-stats.ts
 - [x] T054 [P] Create REFRESH_HOT_VIDEOS job handler in src/workers/handlers/hot-videos.ts
-- [ ] T055 [P] Create REFRESH_VIDEO_STATS job handler in src/workers/handlers/video-stats.ts
+- [x] T055 [P] Create REFRESH_VIDEO_STATS job handler in src/workers/handlers/video-stats.ts
 - [ ] T056 [P] Create RSS_POLL_CHANNEL job handler in src/workers/handlers/rss-poll.ts
 - [ ] T057 [P] Create idempotent database operations in src/workers/db.ts
 - [ ] T058 [P] Add job coordination and advisory locking logic

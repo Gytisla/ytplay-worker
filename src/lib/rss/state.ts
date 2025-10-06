@@ -24,11 +24,11 @@ export interface FeedPollResult {
 /**
  * Manages RSS feed polling state and change detection
  */
-export class FeedStateManager {
+export const FeedStateManager = {
   /**
    * Create initial feed state for a channel
    */
-  static createInitialState(channelId: string, feedUrl: string): FeedState {
+  createInitialState(channelId: string, feedUrl: string): FeedState {
     return {
       channelId,
       feedUrl,
@@ -36,12 +36,13 @@ export class FeedStateManager {
       consecutiveErrors: 0,
       status: 'active',
     }
-  }
+  },
 
+// Removed duplicate method definitions after FeedStateManager object
   /**
    * Update feed state after successful poll
    */
-  static updateAfterSuccessfulPoll(
+  updateAfterSuccessfulPoll(
     currentState: FeedState,
     headers: { etag?: string; lastModified?: string },
     latestVideoPublishedAt?: Date
@@ -72,12 +73,12 @@ export class FeedStateManager {
     delete updatedState.errorMessage
 
     return updatedState
-  }
+  },
 
   /**
    * Update feed state after failed poll
    */
-  static updateAfterFailedPoll(
+  updateAfterFailedPoll(
     currentState: FeedState,
     error: Error
   ): FeedState {
@@ -91,12 +92,12 @@ export class FeedStateManager {
       errorMessage: error.message,
       lastPolledAt: new Date(),
     }
-  }
+  },
 
   /**
    * Check if feed has changes based on HTTP headers
    */
-  static hasChanges(
+  hasChanges(
     currentState: FeedState,
     headers: { etag?: string; lastModified?: string }
   ): boolean {
@@ -119,12 +120,12 @@ export class FeedStateManager {
     }
 
     return true
-  }
+  },
 
   /**
    * Determine if feed should be polled based on time since last poll
    */
-  static shouldPoll(state: FeedState): boolean {
+  shouldPoll(state: FeedState): boolean {
     if (state.status === 'paused') {
       return false
     }
@@ -138,47 +139,47 @@ export class FeedStateManager {
     const pollIntervalMs = state.pollIntervalMinutes * 60 * 1000
 
     return timeSinceLastPoll >= pollIntervalMs
-  }
+  },
 
   /**
    * Calculate next poll time
    */
-  static getNextPollTime(state: FeedState): Date {
+  getNextPollTime(state: FeedState): Date {
     if (!state.lastPolledAt) {
       return new Date() // Poll immediately if never polled
     }
 
     const pollIntervalMs = state.pollIntervalMinutes * 60 * 1000
     return new Date(state.lastPolledAt.getTime() + pollIntervalMs)
-  }
+  },
 
   /**
    * Check if video is new based on publication date
    */
-  static isVideoNew(state: FeedState, videoPublishedAt: Date): boolean {
+  isVideoNew(state: FeedState, videoPublishedAt: Date): boolean {
     if (!state.lastVideoPublishedAt) {
       return true // No previous videos seen
     }
 
     return videoPublishedAt > state.lastVideoPublishedAt
-  }
+  },
 
   /**
    * Get videos that are new since last poll
    */
-  static filterNewVideos(
+  filterNewVideos(
     state: FeedState,
     videos: Array<{ videoId: string; publishedAt: Date }>
   ): string[] {
     return videos
-      .filter(video => this.isVideoNew(state, video.publishedAt))
+      .filter(video => FeedStateManager.isVideoNew(state, video.publishedAt))
       .map(video => video.videoId)
-  }
+  },
 
   /**
    * Update poll interval based on feed activity
    */
-  static adjustPollInterval(state: FeedState, hasNewVideos: boolean): FeedState {
+  adjustPollInterval(state: FeedState, hasNewVideos: boolean): FeedState {
     let newInterval = state.pollIntervalMinutes
 
     if (hasNewVideos) {
@@ -193,5 +194,5 @@ export class FeedStateManager {
       ...state,
       pollIntervalMinutes: newInterval,
     }
-  }
+  },
 }

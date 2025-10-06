@@ -230,10 +230,10 @@ export class YouTubeApiClient {
       // Handle 304 Not Modified (ETag match)
       if (response.status === 304) {
         return {
-          data: null as unknown as T,
+          data: null as unknown,
           etag: options.etag, // Return the ETag that was sent
           notModified: true,
-        } as T
+        } as unknown as T
       }
 
       // Handle HTTP errors
@@ -241,8 +241,9 @@ export class YouTubeApiClient {
         await this.handleHttpError(response)
       }
 
-      // Parse JSON response
-      const data = await response.json()
+    // Parse JSON response
+  const rawData: unknown = await response.json();
+  const data: unknown = typeof rawData === 'object' && rawData !== null ? rawData : {}
 
       // Validate response is not an error
       const errorValidation = YouTubeApiErrorSchema.safeParse(data)
@@ -256,7 +257,7 @@ export class YouTubeApiClient {
         data,
         etag,
         notModified: false,
-      } as T
+      } as unknown as T
 
     } catch (error) {
       clearTimeout(timeoutId)
@@ -330,10 +331,10 @@ export class YouTubeApiClient {
     let errorData: YouTubeApiError | undefined
 
     try {
-      const data = await response.json()
-      const validation = YouTubeApiErrorSchema.safeParse(data)
+      const rawData: unknown = await response.json();
+      const validation = YouTubeApiErrorSchema.safeParse(rawData);
       if (validation.success) {
-        errorData = validation.data
+        errorData = validation.data;
       }
     } catch {
       // Ignore JSON parsing errors for error responses
@@ -363,7 +364,7 @@ export class YouTubeApiClient {
     }
 
     // Check if error is retryable (5xx or specific 4xx codes)
-    const retryable = statusCode! >= 500 || statusCode === 429 || statusCode === 408 || statusCode === 503
+  const retryable = (statusCode ?? 0) >= 500 || statusCode === 429 || statusCode === 408 || statusCode === 503
 
     return new YouTubeApiClientError(
       error.message,

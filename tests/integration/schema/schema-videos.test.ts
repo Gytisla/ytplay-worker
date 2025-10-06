@@ -51,12 +51,12 @@ describe('Videos Table Validation', () => {
       200,
       'active'
     ])
-    expect(result.rows).toHaveLength(1)
-    const insertedVideo = result.rows[0] as Database['public']['Tables']['videos']['Row']
-    expect(insertedVideo.youtube_video_id).toBe(uniqueVideoId)
-    expect(insertedVideo.channel_id).toBe(channelId)
-    expect(insertedVideo.title).toBe('Test Video Title')
-    expect(Number(insertedVideo.view_count)).toBe(50000)
+  expect(result.rows).toHaveLength(1)
+  const insertedVideo = result.rows[0] as Database['public']['Tables']['videos']['Row']
+  expect(insertedVideo.youtube_video_id).toBe(uniqueVideoId)
+  expect(insertedVideo.channel_id).toBe(channelId)
+  expect(insertedVideo.title).toBe('Test Video Title')
+  expect(Number(insertedVideo.view_count)).toBe(50000)
   // videoId assignment removed (unused)
   })
 

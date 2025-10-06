@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '../../../types/supabase'
 import { RSSPollingOperations } from '../../../src/workers/rss'
-import type { ChannelFeedResult, JobResult, JobEventResult } from './utils'
+import type { ChannelFeedResult, JobResult } from './utils'
 
 dotenv.config({ path: '.env.local' })
 
@@ -66,8 +66,9 @@ describe('RSS Feed State Management Integration Tests', () => {
           WHERE c.youtube_channel_id = $1
         `, [channelId])
 
-        expect(result.rows).toHaveLength(1)
-        const row = result.rows[0]!
+  const rows = result.rows;
+  expect(rows).toHaveLength(1)
+  const row = rows[0]!
         expect(row).toBeDefined()
         expect(row).toMatchObject({
           youtube_channel_id: channelId,
@@ -104,8 +105,9 @@ describe('RSS Feed State Management Integration Tests', () => {
           WHERE c.youtube_channel_id = $1
         `, [channelId])
 
-        expect(result.rows).toHaveLength(1)
-        expect(result.rows[0]).toMatchObject({
+  const rows = result.rows;
+  expect(rows).toHaveLength(1)
+  expect(rows[0]).toMatchObject({
           youtube_channel_id: channelId,
           feed_url: feedUrl,
           feed_type: 'youtube_rss',
@@ -127,8 +129,9 @@ describe('RSS Feed State Management Integration Tests', () => {
           [channelId]
         )
 
-        expect(result.rows).toHaveLength(2)
-        expect(result.rows.map(r => r.feed_url).sort()).toEqual([feedUrl1, feedUrl2].sort())
+  const rows = result.rows;
+  expect(rows).toHaveLength(2)
+  expect(rows.map(r => r.feed_url).sort()).toEqual([feedUrl1, feedUrl2].sort())
       })
     })
 
@@ -154,7 +157,8 @@ describe('RSS Feed State Management Integration Tests', () => {
           RETURNING id
         `, [channelId, 'Test Channel', new Date().toISOString()])
 
-        if (!channelResult.rows[0]) {
+  const channelRows = channelResult.rows;
+        if (!channelRows[0]) {
           throw new Error('Failed to create channel')
         }
 
@@ -166,13 +170,13 @@ describe('RSS Feed State Management Integration Tests', () => {
             is_active, last_error_message
           ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
         `, [
-          channelResult.rows[0].id, feedUrl, etag, lastModified, lastPolledAt.toISOString(),
+          channelRows[0].id, feedUrl, etag, lastModified, lastPolledAt.toISOString(),
           lastSuccessfulPollAt.toISOString(), 15, 2, true, errorMessage
         ])
 
-        const result = await rssOps.getChannelFeed(channelId)
+        const feedState = await rssOps.getChannelFeed(channelId)
 
-        expect(result).toEqual({
+        expect(feedState).toEqual({
           channelId,
           feedUrl,
           lastETag: etag,
@@ -271,7 +275,7 @@ describe('RSS Feed State Management Integration Tests', () => {
           consecutive_failures: 0,
           is_active: true,
         })
-        expect(result.rows[0].last_error_message).toBeNull()
+  expect(result.rows[0]?.last_error_message).toBeNull()
       })
 
       it('should clear error message on successful update', async () => {
@@ -285,7 +289,8 @@ describe('RSS Feed State Management Integration Tests', () => {
           RETURNING id
         `, [channelId, 'Test Channel', new Date().toISOString()])
 
-        if (!channelResult.rows[0]) {
+  const channelRow = channelResult.rows[0];
+        if (!channelRow) {
           throw new Error('Failed to create channel')
         }
 
@@ -293,7 +298,7 @@ describe('RSS Feed State Management Integration Tests', () => {
         await client.query<ChannelFeedResult>(`
           INSERT INTO channel_feeds (channel_id, feed_url, last_error_message, consecutive_failures, is_active)
           VALUES ($1, $2, $3, $4, $5)
-        `, [channelResult.rows[0].id, feedUrl, 'Previous error', 3, true])
+        `, [channelRow.id, feedUrl, 'Previous error', 3, true])
 
         const newState = {
           channelId,
@@ -309,12 +314,13 @@ describe('RSS Feed State Management Integration Tests', () => {
           'SELECT cf.last_error_message, cf.consecutive_failures FROM channel_feeds cf JOIN channels c ON cf.channel_id = c.id WHERE c.youtube_channel_id = $1',
           [channelId])
 
-        if (!result.rows[0]) {
+  const feedStateRow = result.rows[0];
+        if (!feedStateRow) {
           throw new Error('Failed to get feed state')
         }
 
-        expect(result.rows[0].last_error_message).toBeNull()
-        expect(result.rows[0].consecutive_failures).toBe(0)
+  expect(result.rows[0]?.last_error_message).toBeNull()
+  expect(result.rows[0]?.consecutive_failures).toBe(0)
       })
     })
 
@@ -341,7 +347,7 @@ describe('RSS Feed State Management Integration Tests', () => {
           last_error_message: 'Network timeout',
           is_active: true,
         })
-        expect(result.rows[0].last_error_at).toBeTruthy()
+  expect(result.rows[0]!.last_error_at).toBeTruthy()
       })
 
       it('should deactivate feed after 5 consecutive failures', async () => {
@@ -354,7 +360,9 @@ describe('RSS Feed State Management Integration Tests', () => {
           VALUES ($1, $2, $3)
           RETURNING id
         `, [channelId, 'Test Channel', new Date().toISOString()])
-        const channelUuid = channelResult.rows[0].id
+  const channelRows = channelResult.rows;
+  expect(channelRows.length).toBeGreaterThan(0);
+  const channelUuid = channelRows[0]!.id;
 
         // Create feed with 4 failures
         await client.query(`
@@ -371,8 +379,10 @@ describe('RSS Feed State Management Integration Tests', () => {
           [channelId]
         )
 
-        expect(result.rows[0].consecutive_failures).toBe(5)
-        expect(result.rows[0].is_active).toBe(false)
+  const feedRows = result.rows;
+  expect(feedRows.length).toBeGreaterThan(0);
+  expect(feedRows[0]!.consecutive_failures).toBe(5);
+  expect(feedRows[0]!.is_active).toBe(false);
       })
 
       it('should handle non-existent channel gracefully', async () => {
@@ -451,7 +461,8 @@ describe('RSS Feed State Management Integration Tests', () => {
           VALUES ($1, $2, $3)
           RETURNING id
         `, [channelId, 'Test Channel', new Date().toISOString()])
-        const channelUuid = channelResult.rows[0].id
+  const channelRow = channelResult.rows[0];
+  const channelUuid = channelRow.id
 
         await client.query(`
           INSERT INTO channel_feeds (channel_id, feed_url, is_active, last_polled_at)
@@ -478,7 +489,8 @@ describe('RSS Feed State Management Integration Tests', () => {
           VALUES ($1, $2, $3)
           RETURNING id
         `, [channelId, 'Test Channel', new Date().toISOString()])
-        const channelUuid = channelResult.rows[0].id
+  const channelRow = channelResult.rows[0];
+  const channelUuid = channelRow.id
 
         await client.query(`
           INSERT INTO channel_feeds (channel_id, feed_url, is_active, last_polled_at)
@@ -504,7 +516,8 @@ describe('RSS Feed State Management Integration Tests', () => {
           VALUES ($1, $2, $3)
           RETURNING id
         `, [channelId, 'Test Channel', new Date().toISOString()])
-        const channelUuid = channelResult.rows[0].id
+  const channelRow = channelResult.rows[0];
+  const channelUuid = channelRow.id
 
         await client.query(`
           INSERT INTO channel_feeds (channel_id, feed_url, is_active, last_polled_at)
@@ -526,7 +539,8 @@ describe('RSS Feed State Management Integration Tests', () => {
           VALUES ($1, $2, $3)
           RETURNING id
         `, [channelId, 'Test Channel', new Date().toISOString()])
-        const channelUuid = channelResult.rows[0].id
+  const channelRow = channelResult.rows[0];
+  const channelUuid = channelRow.id
 
         await client.query(`
           INSERT INTO channel_feeds (channel_id, feed_url, is_active, last_polled_at)
@@ -550,7 +564,8 @@ describe('RSS Feed State Management Integration Tests', () => {
             VALUES ($1, $2, $3)
             RETURNING id
           `, [channel.id, 'Test Channel', new Date().toISOString()])
-          const channelUuid = channelResult.rows[0].id
+          const channelRow = channelResult.rows[0];
+          const channelUuid = channelRow.id
 
           await client.query(`
             INSERT INTO channel_feeds (channel_id, feed_url, is_active, last_polled_at)
@@ -577,7 +592,8 @@ describe('RSS Feed State Management Integration Tests', () => {
           'INSERT INTO channels (youtube_channel_id, title, published_at) VALUES ($1, $2, $3) RETURNING id',
           [channelId, 'Test Channel', new Date('2025-01-01T00:00:00Z').toISOString()]
         )
-        const channelUuid = channelResult.rows[0].id
+  const channelRow = channelResult.rows[0] as { id: string }
+  const channelUuid = channelRow.id
 
         // Insert existing videos (already processed)
         const existingVideoIds = ['video001', 'video002', 'video003']
@@ -659,7 +675,8 @@ describe('RSS Feed State Management Integration Tests', () => {
           'INSERT INTO channels (youtube_channel_id, title, published_at) VALUES ($1, $2, $3) RETURNING id',
           [channelId, 'Fresh Channel', new Date('2025-01-01T00:00:00Z').toISOString()]
         )
-        const channelUuid = channelResult.rows[0].id
+  const channelRow = channelResult.rows[0] as { id: string }
+  const channelUuid = channelRow.id
 
         // Set up feed state with no last_successful_poll_at (first time)
         await client.query(`
@@ -694,9 +711,10 @@ describe('RSS Feed State Management Integration Tests', () => {
           ORDER BY (payload->'video_ids'->>0)
         `)
 
-        expect(jobsResult.rows).toHaveLength(3)
-        const enqueuedVideoIds = jobsResult.rows.map((job: JobResult) => (job.payload as { video_ids: string[] })['video_ids'][0]).sort()
-        expect(enqueuedVideoIds).toEqual(['fresh001', 'fresh002', 'fresh003'])
+  const jobsRows = jobsResult.rows as JobResult[]
+  expect(jobsRows).toHaveLength(3)
+  const enqueuedVideoIds = jobsRows.map((job: JobResult) => (job.payload as { video_ids: string[] })['video_ids'][0]).sort()
+  expect(enqueuedVideoIds).toEqual(['fresh001', 'fresh002', 'fresh003'])
       })
 
       it('should handle empty RSS feed with no new videos', async () => {

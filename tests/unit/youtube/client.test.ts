@@ -421,8 +421,9 @@ describe('YouTubeApiClient', () => {
 
       const result = await client.get('/test')
 
-      expect(global.fetch).toHaveBeenCalledTimes(3)
-      expect(result).toEqual({ success: true })
+  expect(global.fetch).toHaveBeenCalledTimes(3)
+  const typedResult = result as { success: boolean }
+  expect(typedResult).toEqual({ success: true })
     })
 
     it('should not retry on non-retryable errors', async () => {

@@ -31,7 +31,8 @@ describe('Stats Tables Validation', () => {
     const res = await client.query(
       `INSERT INTO channels (youtube_channel_id, title, published_at) VALUES ('${uniqueChannelId}', 'Stats FK Channel', '2020-01-01T00:00:00Z') RETURNING id`
     )
-    const channelId = res.rows[0].id
+  const channelRows = res.rows as Array<{ id: string }>;
+  const channelId = channelRows[0]!.id
     const insertQuery = `
       INSERT INTO channel_stats (
         channel_id, date, view_count, subscriber_count, video_count
@@ -45,9 +46,10 @@ describe('Stats Tables Validation', () => {
       100500,
       251
     ])
-    expect(result.rows).toHaveLength(1)
-    const insertedStats = result.rows[0] as Database['public']['Tables']['channel_stats']['Row']
-    expect(insertedStats.channel_id).toBe(channelId)
+  const statsRows = result.rows as Array<Database['public']['Tables']['channel_stats']['Row']>;
+  expect(statsRows).toHaveLength(1)
+  const insertedStats = statsRows[0]!
+  expect(insertedStats.channel_id).toBe(channelId)
     expect(Number(insertedStats.view_count)).toBe(5001000)
     expect(Number(insertedStats.subscriber_count)).toBe(100500)
   })

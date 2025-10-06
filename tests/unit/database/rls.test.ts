@@ -28,7 +28,9 @@ describe('Row Level Security (RLS) Policies', () => {
       INSERT INTO channels (youtube_channel_id, title, published_at) 
       VALUES ($1, $2, $3) RETURNING id
     `, ['UC_rls_test_channel', 'RLS Test Channel', new Date().toISOString()])
-    testChannelId = channelResult.rows[0].id
+  const channelRows = channelResult.rows as Array<{ id: string }>;
+  expect(channelRows.length).toBeGreaterThan(0);
+  testChannelId = channelRows[0]!.id;
 
     await db.query(`
       INSERT INTO videos (youtube_video_id, channel_id, title, published_at) 
@@ -59,9 +61,9 @@ describe('Row Level Security (RLS) Policies', () => {
         FROM pg_class 
         WHERE relname = 'channels'
       `)
-      
-      expect(result.rows).toHaveLength(1)
-      expect(result.rows[0].relrowsecurity).toBe(true)
+      const rows = result.rows as Array<{ relname: string; relrowsecurity: boolean }>
+  expect(rows).toHaveLength(1)
+  expect(rows[0]?.relrowsecurity).toBe(true)
     })
 
     it('should have RLS enabled on videos table', async () => {
@@ -70,9 +72,9 @@ describe('Row Level Security (RLS) Policies', () => {
         FROM pg_class 
         WHERE relname = 'videos'
       `)
-      
-      expect(result.rows).toHaveLength(1)
-      expect(result.rows[0].relrowsecurity).toBe(true)
+      const rows = result.rows as Array<{ relname: string; relrowsecurity: boolean }>
+  expect(rows).toHaveLength(1)
+  expect(rows[0]?.relrowsecurity).toBe(true)
     })
 
     it('should have RLS enabled on jobs table', async () => {
@@ -81,9 +83,9 @@ describe('Row Level Security (RLS) Policies', () => {
         FROM pg_class 
         WHERE relname = 'jobs'
       `)
-      
-      expect(result.rows).toHaveLength(1)
-      expect(result.rows[0].relrowsecurity).toBe(true)
+      const rows = result.rows as Array<{ relname: string; relrowsecurity: boolean }>
+  expect(rows).toHaveLength(1)
+  expect(rows[0]?.relrowsecurity).toBe(true)
     })
   })
 
@@ -95,13 +97,10 @@ describe('Row Level Security (RLS) Policies', () => {
         JOIN pg_class cls ON pol.polrelid = cls.oid 
         WHERE cls.relname = 'channels'
       `)
-      
-      expect(result.rows.length).toBeGreaterThan(0)
-      
+      const rows = result.rows as Array<{ polname: string; polcmd: string }>
+      expect(rows.length).toBeGreaterThan(0)
       // Check for service role policy
-      const serviceRolePolicy = result.rows.find(row => 
-        row.polname.includes('service_role')
-      )
+      const serviceRolePolicy = rows.find(row => row.polname.includes('service_role'))
       expect(serviceRolePolicy).toBeTruthy()
     })
 
@@ -112,13 +111,10 @@ describe('Row Level Security (RLS) Policies', () => {
         JOIN pg_class cls ON pol.polrelid = cls.oid 
         WHERE cls.relname = 'videos'
       `)
-      
-      expect(result.rows.length).toBeGreaterThan(0)
-      
+      const rows = result.rows as Array<{ polname: string; polcmd: string }>
+      expect(rows.length).toBeGreaterThan(0)
       // Check for service role policy
-      const serviceRolePolicy = result.rows.find(row => 
-        row.polname.includes('service_role')
-      )
+      const serviceRolePolicy = rows.find(row => row.polname.includes('service_role'))
       expect(serviceRolePolicy).toBeTruthy()
     })
 
@@ -129,13 +125,10 @@ describe('Row Level Security (RLS) Policies', () => {
         JOIN pg_class cls ON pol.polrelid = cls.oid 
         WHERE cls.relname = 'jobs'
       `)
-      
-      expect(result.rows.length).toBeGreaterThan(0)
-      
+      const rows = result.rows as Array<{ polname: string; polcmd: string }>
+      expect(rows.length).toBeGreaterThan(0)
       // Check for service role policy
-      const serviceRolePolicy = result.rows.find(row => 
-        row.polname.includes('service_role')
-      )
+      const serviceRolePolicy = rows.find(row => row.polname.includes('service_role'))
       expect(serviceRolePolicy).toBeTruthy()
     })
   })
@@ -147,9 +140,9 @@ describe('Row Level Security (RLS) Policies', () => {
         FROM pg_proc 
         WHERE proname = 'is_admin'
       `)
-      
-      expect(result.rows).toHaveLength(1)
-      expect(result.rows[0].prosrc).toContain('service_role')
+      const rows = result.rows as Array<{ proname: string; prosrc: string }>
+  expect(rows).toHaveLength(1)
+  expect(rows[0]?.prosrc).toContain('service_role')
     })
 
     it('should have can_access_channel function', async () => {
@@ -158,9 +151,9 @@ describe('Row Level Security (RLS) Policies', () => {
         FROM pg_proc 
         WHERE proname = 'can_access_channel'
       `)
-      
-      expect(result.rows).toHaveLength(1)
-      expect(result.rows[0].prosrc).toContain('authenticated')
+      const rows = result.rows as Array<{ proname: string; prosrc: string }>
+  expect(rows).toHaveLength(1)
+  expect(rows[0]?.prosrc).toContain('authenticated')
     })
 
     it('should have can_access_video function', async () => {
@@ -169,9 +162,9 @@ describe('Row Level Security (RLS) Policies', () => {
         FROM pg_proc 
         WHERE proname = 'can_access_video'
       `)
-      
-      expect(result.rows).toHaveLength(1)
-      expect(result.rows[0].prosrc).toContain('authenticated')
+      const rows = result.rows as Array<{ proname: string; prosrc: string }>
+  expect(rows).toHaveLength(1)
+  expect(rows[0]?.prosrc).toContain('authenticated')
     })
   })
 
@@ -182,9 +175,9 @@ describe('Row Level Security (RLS) Policies', () => {
         SELECT * FROM channels 
         WHERE youtube_channel_id = $1
       `, ['UC_rls_test_channel'])
-      
-      expect(channelResult.rows).toHaveLength(1)
-      expect(channelResult.rows[0].youtube_channel_id).toBe('UC_rls_test_channel')
+      const channelRows = channelResult.rows as Array<{ youtube_channel_id: string }>
+  expect(channelRows).toHaveLength(1)
+  expect(channelRows[0]?.youtube_channel_id).toBe('UC_rls_test_channel')
     })
 
     it('should allow postgres user to modify all data', async () => {
@@ -195,8 +188,8 @@ describe('Row Level Security (RLS) Policies', () => {
         WHERE youtube_channel_id = $2 
         RETURNING id
       `, ['Updated description', 'UC_rls_test_channel'])
-      
-      expect(updateResult.rows).toHaveLength(1)
+      const updateRows = updateResult.rows as Array<{ id: string }>
+      expect(updateRows).toHaveLength(1)
     })
 
     it('should verify foreign key relationships work', async () => {
@@ -207,9 +200,9 @@ describe('Row Level Security (RLS) Policies', () => {
         JOIN channels c ON v.channel_id = c.id 
         WHERE v.youtube_video_id = $1
       `, ['rls_test_video_123'])
-      
-      expect(result.rows).toHaveLength(1)
-      expect(result.rows[0].youtube_channel_id).toBe('UC_rls_test_channel')
+      const rows = result.rows as Array<{ youtube_video_id: string; youtube_channel_id: string }>
+  expect(rows).toHaveLength(1)
+  expect(rows[0]?.youtube_channel_id).toBe('UC_rls_test_channel')
     })
 
     it('should verify test data integrity', async () => {
@@ -218,19 +211,23 @@ describe('Row Level Security (RLS) Policies', () => {
         SELECT COUNT(*) as count FROM channels 
         WHERE youtube_channel_id = $1
       `, ['UC_rls_test_channel'])
-      expect(parseInt(channelCount.rows[0].count)).toBe(1)
+      const channelCountRows = channelCount.rows as Array<{ count: string }>;
+      expect(channelCountRows.length).toBeGreaterThan(0);
+  expect(parseInt(channelCountRows[0]!.count)).toBe(1);
 
-      const videoCount = await db.query(`
+      const videoCountRows = (await db.query(`
         SELECT COUNT(*) as count FROM videos 
         WHERE youtube_video_id = $1
-      `, ['rls_test_video_123'])
-      expect(parseInt(videoCount.rows[0].count)).toBe(1)
+      `, ['rls_test_video_123'])).rows as Array<{ count: string }>;
+      expect(videoCountRows.length).toBeGreaterThan(0);
+  expect(parseInt(videoCountRows[0]!.count)).toBe(1);
 
-      const jobCount = await db.query(`
+      const jobCountRows = (await db.query(`
         SELECT COUNT(*) as count FROM jobs 
         WHERE id = $1
-      `, ['550e8400-e29b-41d4-a716-446655440000'])
-      expect(parseInt(jobCount.rows[0].count)).toBe(1)
+      `, ['550e8400-e29b-41d4-a716-446655440000'])).rows as Array<{ count: string }>;
+      expect(jobCountRows.length).toBeGreaterThan(0);
+  expect(parseInt(jobCountRows[0]!.count)).toBe(1);
     })
   })
 })

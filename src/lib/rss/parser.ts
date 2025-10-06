@@ -62,7 +62,7 @@ export class RSSParser {
       const parsed = this.parser.parse(xmlContent) as RSSFeed
 
       // Check if this is valid RSS structure
-      if (!parsed.rss || !parsed.rss.channel) {
+      if (!parsed.rss?.channel) {
         throw new Error('Invalid RSS feed structure: missing rss or channel')
       }
 
@@ -74,10 +74,10 @@ export class RSSParser {
       const channel = parsed.rss.channel
       const items = Array.isArray(channel.item) ? channel.item : [channel.item]
 
-      return items
-        .filter(item => item && item.link)
-        .map(item => this.parseItem(item))
-        .filter((item): item is ParsedVideoItem => item !== null)
+        return items
+          .filter(item => item?.link)
+          .map(item => this.parseItem?.(item))
+          .filter((item): item is ParsedVideoItem => item !== null)
     } catch (error) {
       throw new Error(`Failed to parse RSS feed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }

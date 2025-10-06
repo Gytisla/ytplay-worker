@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { YouTubeChannelsClient, type FetchChannelsOptions } from '../../lib/youtube/channels'
 import { YouTubePlaylistsClient, type FetchPlaylistItemsOptions } from '../../lib/youtube/playlists'
 import { YouTubeVideosClient, type FetchVideosOptions } from '../../lib/youtube/videos'
+import type { VideoResource } from '../../lib/youtube/types'
 import { createYouTubeClientFromEnv } from '../../lib/youtube/client'
 
 /**
@@ -32,6 +33,11 @@ export async function handleBackfillChannel(
 
     let totalItemsProcessed = 0
 
+    const safeNumber = (v: unknown) => {
+      const n = Number(v)
+      return Number.isFinite(n) ? n : 0
+    }
+
     // Step 1: Fetch channel metadata
     console.log(`Fetching channel metadata for ${channelId}`)
     const channelOptions: FetchChannelsOptions = {
@@ -43,7 +49,10 @@ export async function handleBackfillChannel(
       return { success: false, error: `Channel ${channelId} not found on YouTube` }
     }
 
-    const channel = channels[0]!
+    const channel = channels[0]
+    if (!channel) {
+      return { success: false, error: `Channel ${channelId} not found after fetch` }
+    }
     totalItemsProcessed++
 
     // Step 2: Store channel data
@@ -52,33 +61,44 @@ export async function handleBackfillChannel(
       youtube_channel_id: channel.id,
       title: channel.snippet?.title ?? '',
       description: channel.snippet?.description ?? '',
-      published_at: channel.snippet?.publishedAt || new Date().toISOString(),
-      country: channel.snippet?.country || null,
-      default_language: channel.snippet?.defaultLanguage || null,
-      subscriber_count: Number(channel.statistics?.subscriberCount) || 0,
-      video_count: Number(channel.statistics?.videoCount) || 0,
-      view_count: Number(channel.statistics?.viewCount) || 0,
+      published_at: channel.snippet?.publishedAt ?? new Date().toISOString(),
+      country: channel.snippet?.country ?? null,
+      default_language: channel.snippet?.defaultLanguage ?? null,
+      subscriber_count: safeNumber(channel.statistics?.subscriberCount),
+      video_count: safeNumber(channel.statistics?.videoCount),
+      view_count: safeNumber(channel.statistics?.viewCount),
       keywords: null, // TODO: Extract from channel branding or description
       privacy_status: channel.status?.privacyStatus ?? 'public',
-      is_linked: channel.status?.isLinked || false,
-      long_uploads_status: channel.status?.longUploadsStatus || null,
-      made_for_kids: channel.status?.madeForKids || false,
-      branding_settings: channel.brandingSettings || null,
+      is_linked: channel.status?.isLinked ?? false,
+      long_uploads_status: channel.status?.longUploadsStatus ?? null,
+      made_for_kids: channel.status?.madeForKids ?? false,
+      branding_settings: channel.brandingSettings ?? null,
       status: 'pending', // Will be set to 'active' after successful backfill
       last_fetched_at: new Date().toISOString()
     }
 
-    const { data: insertedChannel, error: channelError } = await supabase
+    const upsertChannelResult = await supabase
       .rpc('upsert_channel', {
         channel_data: channelData
-      })
+      }) as unknown
+
+    const typedUpsert = upsertChannelResult as {
+      data?: { id?: string } | null
+      error?: { message?: string } | null
+    }
+
+    const insertedChannel = typedUpsert.data ?? null
+    const channelError = typedUpsert.error ?? null
 
     if (channelError) {
       console.error('Failed to upsert channel:', channelError)
       return { success: false, error: `Failed to store channel data: ${channelError.message}` }
     }
 
-    const channelUuid = insertedChannel.id
+    const typedInsertedChannel = insertedChannel as { id?: string } | null
+    const channelUuid = typedInsertedChannel && typeof typedInsertedChannel.id === 'string'
+      ? typedInsertedChannel.id
+      : null
 
     // Step 3: Fetch all videos from uploads playlist
     console.log(`Fetching videos from uploads playlist for ${channelId}`)
@@ -109,7 +129,7 @@ export async function handleBackfillChannel(
           videoBatches.push(videoIds.slice(i, i + batchSize))
         }
 
-        const allVideos = []
+        const allVideos: VideoResource[] = []
         for (const batch of videoBatches) {
           const videoOptions: FetchVideosOptions = {
             ids: batch
@@ -127,27 +147,28 @@ export async function handleBackfillChannel(
           channel_id: channelUuid,
           title: video.snippet?.title ?? '',
           description: video.snippet?.description ?? '',
-          published_at: video.snippet?.publishedAt || new Date().toISOString(),
-          duration: video.contentDetails?.duration || null,
-          view_count: Number(video.statistics?.viewCount) || 0,
-          like_count: Number(video.statistics?.likeCount) || 0,
-          comment_count: Number(video.statistics?.commentCount) || 0,
-          thumbnail_url: video.snippet?.thumbnails?.maxres?.url ||
-                        video.snippet?.thumbnails?.high?.url ||
-                        video.snippet?.thumbnails?.medium?.url ||
-                        video.snippet?.thumbnails?.default?.url || null,
-          tags: video.snippet?.tags || null,
-          category_id: video.snippet?.categoryId || null,
-          live_broadcast_content: video.snippet?.liveBroadcastContent || 'none',
-          default_language: video.snippet?.defaultLanguage || null,
-          default_audio_language: video.snippet?.defaultAudioLanguage || null,
-          licensed_content: video.contentDetails?.licensedContent || false,
-          projection: video.contentDetails?.projection || 'rectangular',
-          dimension: video.contentDetails?.dimension || '2d',
-          definition: video.contentDetails?.definition || 'hd',
-          caption: video.contentDetails?.caption || false,
-          allowed_regions: video.contentDetails?.regionRestriction?.allowed || null,
-          blocked_regions: video.contentDetails?.regionRestriction?.blocked || null,
+          published_at: video.snippet?.publishedAt ?? new Date().toISOString(),
+          duration: video.contentDetails?.duration ?? null,
+          view_count: safeNumber(video.statistics?.viewCount),
+          like_count: safeNumber(video.statistics?.likeCount),
+          comment_count: safeNumber(video.statistics?.commentCount),
+          thumbnail_url:
+            video.snippet?.thumbnails?.maxres?.url ??
+            video.snippet?.thumbnails?.high?.url ??
+            video.snippet?.thumbnails?.medium?.url ??
+            video.snippet?.thumbnails?.default?.url ?? null,
+          tags: video.snippet?.tags ?? null,
+          category_id: video.snippet?.categoryId ?? null,
+          live_broadcast_content: video.snippet?.liveBroadcastContent ?? 'none',
+          default_language: video.snippet?.defaultLanguage ?? null,
+          default_audio_language: video.snippet?.defaultAudioLanguage ?? null,
+          licensed_content: video.contentDetails?.licensedContent ?? false,
+          projection: video.contentDetails?.projection ?? 'rectangular',
+          dimension: video.contentDetails?.dimension ?? '2d',
+          definition: video.contentDetails?.definition ?? 'hd',
+          caption: video.contentDetails?.caption ?? false,
+          allowed_regions: video.contentDetails?.regionRestriction?.allowed ?? null,
+          blocked_regions: video.contentDetails?.regionRestriction?.blocked ?? null,
           privacy_status: video.status?.privacyStatus ?? 'public',
           embeddable: video.status?.embeddable !== false,
           status: 'active',
@@ -155,11 +176,15 @@ export async function handleBackfillChannel(
         }))
 
         // Store videos in database
+
         if (videoData.length > 0) {
-          const { error: videosError } = await supabase
+          const upsertVideosResult = await supabase
             .rpc('upsert_videos', {
               video_data: videoData
-            })
+            }) as unknown
+
+          const typedUpsertVideos = upsertVideosResult as { error?: { message?: string } | null }
+          const videosError = typedUpsertVideos.error ?? null
 
           if (videosError) {
             console.error('Failed to upsert videos:', videosError)

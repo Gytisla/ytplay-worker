@@ -71,34 +71,36 @@ export class YouTubePlaylistsClient {
 
     try {
       do {
-        pageCount++
-        const pageItems = await this.fetchPlaylistItemsPage(playlistId, mergedConfig, pageToken)
+        pageCount++;
+        const pageItemsRaw = await this.fetchPlaylistItemsPage(playlistId, mergedConfig, pageToken);
+        const pageItems = typeof pageItemsRaw === 'object' && pageItemsRaw !== null ? pageItemsRaw : { items: [], nextPageToken: undefined };
 
         // Validate each playlist item resource
-        const validatedItems = pageItems.items.map(item =>
-          PlaylistItemResourceSchema.parse(item)
-        )
+        const validatedItems = Array.isArray(pageItems.items)
+          ? pageItems.items.map(item => PlaylistItemResourceSchema.parse(item))
+          : [];
 
-        allItems.push(...validatedItems)
+        allItems.push(...validatedItems);
 
-        console.debug(`Fetched page ${pageCount} with ${validatedItems.length} items (total: ${allItems.length})`)
+        console.debug(`Fetched page ${pageCount} with ${validatedItems.length} items (total: ${allItems.length})`);
 
         // Check if we've reached the max pages limit
         if (pageCount >= maxPages) {
-          console.warn(`Reached maximum page limit (${maxPages}) for playlist ${playlistId}`)
-          break
+          console.warn(`Reached maximum page limit (${maxPages}) for playlist ${playlistId}`);
+          break;
         }
 
-        pageToken = pageItems.nextPageToken
+        pageToken = pageItems.nextPageToken;
 
-      } while (pageToken)
+      } while (pageToken);
 
-      console.debug(`Successfully fetched ${allItems.length} playlist items from ${pageCount} pages`)
-      return allItems
+      console.debug(`Successfully fetched ${allItems.length} playlist items from ${pageCount} pages`);
+      return allItems;
 
     } catch (error) {
-      console.error(`Failed to fetch playlist items for ${playlistId}:`, error)
-      throw error
+      // eslint-disable-next-line no-console
+      console.error(`Failed to fetch playlist items for ${playlistId}:`, error);
+      throw error;
     }
   }
 

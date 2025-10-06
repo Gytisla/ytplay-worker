@@ -1,6 +1,12 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { XMLParser } from 'https://esm.sh/fast-xml-parser@5.3.0'
 
+import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+function toError(err: unknown): Error {
+  return err instanceof Error ? err : new Error(String(err ?? 'Unknown error'))
+}
+
 // Define types locally for Edge Function
 interface ParsedVideoItem {
   videoId: string
@@ -24,6 +30,21 @@ interface FeedState {
   errorMessage?: string
 }
 
+// Type for RSS item structure
+interface RSSItem {
+  link?: string;
+  title?: string;
+  pubDate?: string;
+  description?: string;
+  'media:thumbnail'?: { ['@_url']?: string };
+  'media:content'?: { ['@_url']?: string };
+  [key: string]: unknown;
+}
+
+// Request/Response body types (stub, update as needed)
+type RequestBody = Record<string, unknown>;
+type ResponseBody = Record<string, unknown>;
+
 // Copy RSS parser logic here for Edge Function compatibility
 class RSSParser {
   private parser: XMLParser
@@ -39,68 +60,90 @@ class RSSParser {
 
   parseFeed(xmlContent: string): ParsedVideoItem[] {
     try {
-      const parsed = this.parser.parse(xmlContent) as any
-
-      if (!parsed.rss?.channel?.item) {
-        return []
-      }
-
-      const channel = parsed.rss.channel
-      const items = Array.isArray(channel.item) ? channel.item : [channel.item]
-
+      const parsed = this.parser.parse(xmlContent) as Record<string, unknown>
+      // Type guard for expected RSS structure
+      const rss = typeof parsed.rss === 'object' && parsed.rss !== null ? parsed.rss as Record<string, unknown> : {};
+      const channel = typeof rss.channel === 'object' && rss.channel !== null ? rss.channel as Record<string, unknown> : {};
+      const itemsRaw = channel.item ?? [];
+      const items = Array.isArray(itemsRaw) ? itemsRaw : [itemsRaw];
       return items
-        .filter((item: any) => item && item.link)
-        .map((item: any) => this.parseItem(item))
+        .filter((item: unknown): item is RSSItem => {
+          return typeof item === 'object' && item !== null && 'link' in item && typeof (item as RSSItem).link === 'string';
+        })
+        .map((item: RSSItem) => this.parseItem(item))
         .filter((item: ParsedVideoItem | null): item is ParsedVideoItem => item !== null)
-    } catch (error) {
-      throw new Error(`Failed to parse RSS feed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      throw new Error(`Failed to parse RSS feed: ${msg}`)
     }
   }
 
-  private parseItem(item: any): ParsedVideoItem | null {
+  private parseItem(item: RSSItem): ParsedVideoItem | null {
     try {
-      const videoId = this.extractVideoId(item.link)
+      // Type guards for expected item shape
+      const link = typeof item.link === 'string' ? item.link : '';
+      const title = typeof item.title === 'string' ? item.title : 'Untitled';
+      const pubDate = typeof item.pubDate === 'string' ? item.pubDate : '';
+      const description = typeof item.description === 'string' ? item.description : undefined;
+      let thumbnailUrl: string | undefined = undefined;
+      if (
+        item['media:thumbnail'] &&
+        typeof item['media:thumbnail'] === 'object' &&
+        item['media:thumbnail'] !== null &&
+        '@_url' in item['media:thumbnail'] &&
+        typeof (item['media:thumbnail'] as { ['@_url']: unknown })['@_url'] === 'string'
+      ) {
+        thumbnailUrl = (item['media:thumbnail'] as { ['@_url']: string })['@_url'];
+      } else if (
+        item['media:content'] &&
+        typeof item['media:content'] === 'object' &&
+        item['media:content'] !== null &&
+        '@_url' in item['media:content'] &&
+        typeof (item['media:content'] as { ['@_url']: unknown })['@_url'] === 'string'
+      ) {
+        thumbnailUrl = (item['media:content'] as { ['@_url']: string })['@_url'];
+      }
+
+      const videoId = this.extractVideoId(link);
       if (!videoId) {
-        return null
+        return null;
       }
 
-      const publishedAt = this.parsePubDate(item.pubDate)
+      const publishedAt = this.parsePubDate(pubDate);
       if (!publishedAt) {
-        return null
+        return null;
       }
-
-      const thumbnailUrl = item['media:thumbnail']?.['@_url'] ?? item['media:content']?.['@_url']
 
       const result: ParsedVideoItem = {
         videoId,
-        title: item.title || 'Untitled',
-        link: item.link,
+        title,
+        link,
         publishedAt,
-      }
+      };
 
-      if (item.description) {
-        result.description = item.description
+      if (description) {
+        result.description = description;
       }
 
       if (thumbnailUrl) {
-        result.thumbnailUrl = thumbnailUrl
+        result.thumbnailUrl = thumbnailUrl;
       }
 
-      return result
+      return result;
     } catch {
-      return null
+      return null;
     }
   }
 
   private extractVideoId(url: string): string | null {
     const patterns = [
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[&\?].*)?$/,
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[&?].*)?$/,
       /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})(?:\?.*)?$/,
     ]
 
     for (const pattern of patterns) {
       const match = url.match(pattern)
-      if (match && match[1]) {
+      if (match?.[1]) {
         return match[1]
       }
     }
@@ -122,9 +165,9 @@ class RSSParser {
   }
 }
 
-// Copy FeedStateManager logic here for Edge Function compatibility
-class FeedStateManager {
-  static shouldPoll(state: FeedState): boolean {
+// FeedStateManager as a plain object (avoid extraneous-class lint)
+const FeedStateManager = {
+  shouldPoll(state: FeedState): boolean {
     if (state.status === 'paused') {
       return false
     }
@@ -138,24 +181,22 @@ class FeedStateManager {
     const pollIntervalMs = state.pollIntervalMinutes * 60 * 1000
 
     return timeSinceLastPoll >= pollIntervalMs
-  }
+  },
 
-  static hasChanges(
+  hasChanges(
     currentState: FeedState,
     headers: { etag?: string | undefined; lastModified?: string | undefined }
   ): boolean {
     if (currentState.lastETag && headers.etag === currentState.lastETag) {
       return false
     }
-
     if (currentState.lastModified && headers.lastModified === currentState.lastModified) {
       return false
     }
-
     return true
-  }
+  },
 
-  static updateAfterSuccessfulPoll(
+  updateAfterSuccessfulPoll(
     currentState: FeedState,
     headers: { etag?: string | undefined; lastModified?: string | undefined },
     latestVideoPublishedAt?: Date
@@ -184,9 +225,9 @@ class FeedStateManager {
     delete updatedState.errorMessage
 
     return updatedState
-  }
+  },
 
-  static updateAfterFailedPoll(
+  updateAfterFailedPoll(
     currentState: FeedState,
     error: Error
   ): FeedState {
@@ -200,9 +241,9 @@ class FeedStateManager {
       errorMessage: error.message,
       lastPolledAt: new Date(),
     }
-  }
+  },
 
-  static filterNewVideos(
+  filterNewVideos(
     state: FeedState,
     videos: Array<{ videoId: string; publishedAt: Date }>
   ): string[] {
@@ -214,21 +255,10 @@ class FeedStateManager {
         return video.publishedAt > state.lastVideoPublishedAt
       })
       .map(video => video.videoId)
-  }
+  },
 }
-
-interface RequestBody {
-  channelId: string
-}
-
-interface ResponseBody {
-  success: boolean
-  channelId: string
-  newVideosCount: number
-  hasChanges: boolean
-  error?: string
-  executionTimeMs?: number
-}
+  // ...existing code...
+// ...existing code...
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -253,19 +283,22 @@ Deno.serve(async (req) => {
     }
 
     // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Supabase env vars missing')
+    }
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
     // Get channel feed configuration
-    const { data: feedData, error: feedError } = await supabase
+    const { data: feedData, error: dbError } = await supabase
       .from('channel_feeds')
       .select('*')
       .eq('channel_id', channelId)
       .single()
 
-    if (feedError || !feedData) {
-      throw new Error(`Channel feed not found: ${feedError?.message || 'No feed configured'}`)
+    if (dbError || !feedData) {
+      throw new Error(`Channel feed not found: ${dbError?.message ?? 'No feed configured'}`)
     }
 
     // Convert database row to FeedState
@@ -352,8 +385,8 @@ Deno.serve(async (req) => {
 
     // Get response headers for caching
     const responseHeaders = {
-      etag: feedResponse.headers.get('etag') || undefined,
-      lastModified: feedResponse.headers.get('last-modified') || undefined,
+      etag: feedResponse.headers.get('etag') ?? undefined,
+      lastModified: feedResponse.headers.get('last-modified') ?? undefined,
     }
 
     // Check if feed has changes
@@ -396,12 +429,12 @@ Deno.serve(async (req) => {
         dedup_key: `refresh_video_stats_${videoId}`,
       }))
 
-      const { error: jobError } = await supabase
+      const { error: jobDbError } = await supabase
         .from('jobs')
         .insert(jobInserts)
 
-      if (jobError) {
-        console.error('Failed to enqueue video jobs:', jobError)
+      if (jobDbError) {
+        console.error('Failed to enqueue video jobs:', jobDbError)
         // Continue with feed state update even if job enqueue fails
       }
     }
@@ -438,15 +471,19 @@ Deno.serve(async (req) => {
       }
     )
 
-  } catch (error) {
+  } catch (err: unknown) {
+    const error = toError(err)
     console.error('RSS poller error:', error)
 
     // Try to update feed state with error if we have channel info
     try {
       const body: RequestBody = await req.clone().json()
       if (body.channelId) {
-        const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-        const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+        const supabaseUrl = Deno.env.get('SUPABASE_URL')
+        const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+        if (!supabaseUrl || !supabaseServiceKey) {
+          throw new Error('Supabase env vars missing')
+        }
         const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
         const { data: feedData } = await supabase
@@ -471,13 +508,14 @@ Deno.serve(async (req) => {
 
           const errorState = FeedStateManager.updateAfterFailedPoll(
             currentState,
-            error as Error
+            error
           )
 
           await updateFeedState(supabase, errorState)
         }
       }
-    } catch (updateError) {
+    } catch (updateErr: unknown) {
+      const updateError = toError(updateErr)
       console.error('Failed to update error state:', updateError)
     }
 
@@ -486,7 +524,7 @@ Deno.serve(async (req) => {
       channelId: '',
       newVideosCount: 0,
       hasChanges: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+  error: error.message,
       executionTimeMs: Date.now() - startTime,
     }
 
@@ -499,9 +537,8 @@ Deno.serve(async (req) => {
     )
   }
 })
-
-async function updateFeedState(supabase: any, state: FeedState) {
-  const { error } = await supabase
+async function updateFeedState(supabase: SupabaseClient, state: FeedState) {
+  const { error: dbError } = await supabase
     .from('channel_feeds')
     .update({
       last_etag: state.lastETag,
@@ -515,8 +552,8 @@ async function updateFeedState(supabase: any, state: FeedState) {
     })
     .eq('channel_id', state.channelId)
 
-  if (error) {
-    console.error('Failed to update feed state:', error)
-    throw error
-  }
+  if (dbError) {
+      console.error('Failed to update feed state:', toError(dbError))
+      throw toError(dbError)
+    }
 }

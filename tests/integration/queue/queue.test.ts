@@ -20,9 +20,11 @@ describe('Queue Integration Tests', () => {
   beforeEach(async () => {
     await client.query('TRUNCATE TABLE jobs, job_events RESTART IDENTITY CASCADE')
     // Confirm tables are empty
-    const jobs = await client.query('SELECT COUNT(*) FROM jobs')
-    const events = await client.query('SELECT COUNT(*) FROM job_events')
-    console.log('After truncate: jobs:', jobs.rows[0].count, 'events:', events.rows[0].count)
+  const jobs = await client.query('SELECT COUNT(*) FROM jobs')
+  const jobsRows = jobs.rows as Array<{ count: string }>;
+  const events = await client.query('SELECT COUNT(*) FROM job_events')
+  const eventsRows = events.rows as Array<{ count: string }>;
+  console.log('After truncate: jobs:', jobsRows[0]!.count, 'events:', eventsRows[0]!.count)
   })
 
   describe('Job Retry Logic', () => {
@@ -33,7 +35,8 @@ describe('Queue Integration Tests', () => {
           `SELECT enqueue_job($1::varchar, $2::jsonb, $3::integer, $4::varchar) as job_id`,
           ['REFRESH_CHANNEL_STATS_BASIC', JSON.stringify({ channel_id: 'test-channel-1' }), 5, dedupKey]
         )
-        const jobId = enqueueResult.rows[0].job_id
+        const enqueueRows = enqueueResult.rows as Array<{ job_id: string }>;
+  const jobId = enqueueRows[0]!.job_id
         expect(jobId).toBeTruthy()
         console.log('Enqueued jobId:', jobId)
         // Print all jobs after enqueue
@@ -70,7 +73,8 @@ describe('Queue Integration Tests', () => {
            VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
           ['REFRESH_CHANNEL_STATS_BASIC', JSON.stringify({ channel_id: 'test-channel-2' }), 5, 2, 0, dedupKey2]
         )
-        const jobId = insertResult.rows[0].id
+        const insertRows = insertResult.rows as Array<{ id: string }>;
+  const jobId = insertRows[0]!.id
         console.log('Inserted jobId:', jobId)
         // Check job after insert
         const jobAfterInsert = await client.query('SELECT * FROM jobs WHERE id = $1', [jobId])
@@ -127,7 +131,8 @@ describe('Queue Integration Tests', () => {
           `SELECT enqueue_job($1::varchar, $2::jsonb, $3::integer, $4::varchar) as job_id`,
           ['REFRESH_CHANNEL_STATS_EVENTS', JSON.stringify({ channel_id: 'test-channel-3' }), 5, dedupKey]
         )
-        const jobId = enqueueResult.rows[0].job_id
+        const enqueueRows = enqueueResult.rows as Array<{ job_id: string }>;
+  const jobId = enqueueRows[0]!.job_id
         console.log('Enqueued jobId:', jobId)
         // Print all jobs after enqueue
         const allJobsAfterEnqueue = await client.query('SELECT id, job_type, dedup_key, status FROM jobs')
@@ -165,7 +170,8 @@ describe('Queue Integration Tests', () => {
           `SELECT enqueue_job($1::varchar, $2::jsonb, $3::integer, $4::varchar) as job_id`,
           ['REFRESH_CHANNEL_STATS_BACKOFF', JSON.stringify({ channel_id: 'test-channel-4' }), 5, dedupKey]
         )
-        const jobId = enqueueResult.rows[0].job_id
+        const enqueueRows = enqueueResult.rows as Array<{ job_id: string }>;
+  const jobId = enqueueRows[0]!.job_id
         expect(jobId).toBeTruthy()
         // Print all jobs after enqueue
         const allJobsAfterEnqueue = await client.query('SELECT id, job_type, dedup_key, status FROM jobs')
@@ -206,7 +212,8 @@ describe('Queue Integration Tests', () => {
           `SELECT enqueue_job($1::varchar, $2::jsonb, $3::integer, $4::varchar, $5::timestamptz) as job_id`,
           ['REFRESH_CHANNEL_STATS_BACKOFF', JSON.stringify({ channel_id: 'test-channel-5' }), 5, dedupKey2, futureTime.toISOString()]
         )
-        const jobId = enqueueResult.rows[0].job_id
+        const enqueueRows = enqueueResult.rows as Array<{ job_id: string }>;
+  const jobId = enqueueRows[0]!.job_id
         expect(jobId).toBeTruthy()
         // Print all jobs after enqueue
         const allJobsAfterEnqueue = await client.query('SELECT id, job_type, dedup_key, status FROM jobs')

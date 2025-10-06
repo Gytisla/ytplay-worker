@@ -180,7 +180,7 @@ export class YouTubeQuotaManager {
  * Create quota manager from environment variables
  */
 export function createYouTubeQuotaManagerFromEnv(): YouTubeQuotaManager {
-  const quotaLimitStr = process.env['YOUTUBE_API_QUOTA_LIMIT'] || '10000'
+  const quotaLimitStr = process.env['YOUTUBE_API_QUOTA_LIMIT'] ?? '10000'
   const quotaLimit = parseInt(quotaLimitStr, 10)
 
   // Validate that quotaLimit is a valid number

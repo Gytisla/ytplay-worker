@@ -14,7 +14,7 @@ beforeAll(() => {
   // Close the global server if it's running
   try {
     server.close()
-  } catch (_) {
+  } catch {
     // Ignore if not running
   }
   // Start server with bypass for unhandled requests
@@ -367,7 +367,9 @@ describe('YouTube API Integration Tests', () => {
         params: { id: 'UC1234567890', part: 'snippet' }
       })
 
-      expect((firstResult.data as any)?.items).toHaveLength(1)
+  const data = firstResult.data as import('../../../src/lib/youtube/types').ChannelsListResponse
+  expect(Array.isArray(data.items)).toBe(true)
+  expect(data.items).toHaveLength(1)
       expect(firstResult.etag).toBe('"etag-123"')
       expect(firstResult.notModified).toBe(false)
 

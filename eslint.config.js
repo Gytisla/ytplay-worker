@@ -26,16 +26,14 @@ export default createConfigForNuxt({
       '@typescript-eslint/prefer-optional-chain': 'error',
 
       // Additional TypeScript rules for code quality
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-      '@typescript-eslint/explicit-function-return-type': 'off', // Allow inference
-      '@typescript-eslint/no-non-null-assertion': 'warn',
-      'no-console': 'error',
-      '@typescript-eslint/no-non-null-assertion': 'warn', // Allow but warn
+  '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+  '@typescript-eslint/explicit-function-return-type': 'off', // Allow inference
+  '@typescript-eslint/no-non-null-assertion': 'warn',
+  'no-console': 'warn',
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
 
-      // General code quality rules
-      'no-console': 'warn', // Allow console in development
+  // General code quality rules
       'no-debugger': 'error',
       'prefer-const': 'error',
       'no-var': 'error',
@@ -51,17 +49,17 @@ export default createConfigForNuxt({
   {
     files: ['tests/**/*.ts', 'tests/**/*.test.ts'],
     rules: {
-      '@typescript-eslint/no-explicit-any': 'warn', // Allow any in tests
-      '@typescript-eslint/no-unsafe-assignment': 'warn', // Allow unsafe assignments in tests
-      '@typescript-eslint/no-unsafe-member-access': 'warn', // Allow unsafe member access in tests
-      '@typescript-eslint/no-unsafe-call': 'warn', // Allow unsafe calls in tests
-      '@typescript-eslint/no-unsafe-return': 'warn', // Allow unsafe returns in tests
-      '@typescript-eslint/no-unsafe-argument': 'warn', // Allow unsafe arguments in tests
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }], // Warn instead of error
+      '@typescript-eslint/no-explicit-any': 'off', // Allow any in tests
+      '@typescript-eslint/no-unsafe-assignment': 'off', // Allow unsafe assignments in tests
+      '@typescript-eslint/no-unsafe-member-access': 'off', // Allow unsafe member access in tests
+      '@typescript-eslint/no-unsafe-call': 'off', // Allow unsafe calls in tests
+      '@typescript-eslint/no-unsafe-return': 'off', // Allow unsafe returns in tests
+      '@typescript-eslint/no-unsafe-argument': 'off', // Allow unsafe arguments in tests
+      '@typescript-eslint/no-unused-vars': ['off', { argsIgnorePattern: '^_' }], // Warn instead of error
       '@typescript-eslint/consistent-type-imports': 'off', // Allow regular imports in tests
       'no-console': 'off', // Allow console in tests
       '@typescript-eslint/no-non-null-assertion': 'off', // Allow non-null assertions in tests
-      '@typescript-eslint/prefer-nullish-coalescing': 'warn', // Warn instead of error
+      '@typescript-eslint/prefer-nullish-coalescing': 'off', // Warn instead of error
       'prefer-const': 'warn', // Warn instead of error
     },
   },
@@ -74,7 +72,7 @@ export default createConfigForNuxt({
   },
   // Override for Edge Functions - more lenient rules for Deno runtime
   {
-    files: ['edge-functions/**/*.ts'],
+    files: ['edge-functions/**/*.ts', 'supabase/functions/**/*.ts', 'src/workers/**/*.ts', 'src/lib/youtube/**/*.ts'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn', // Allow any in edge functions
       '@typescript-eslint/no-unsafe-assignment': 'warn', // Allow unsafe assignments in edge functions

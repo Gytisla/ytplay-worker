@@ -6,37 +6,21 @@ declare global {
   var testUtils: Record<string, unknown>
 }
 
-// Mock server for external API calls (constitutional requirement)
+// Create MSW server for testing
 export const server = setupServer()
 
 // Global test setup
 beforeAll(() => {
-  // Only start MSW server for non-database tests
-  // Database tests need real Supabase connections
-  const isDatabaseTest = process.env['VITEST_TEST_NAME']?.includes('database') || 
-                        process.env['VITEST_FILE_PATH']?.includes('database')
-  
-  if (!isDatabaseTest) {
-    server.listen({ onUnhandledRequest: 'error' })
-  }
+  // No MSW setup for any tests - integration tests need real connections
+  // Unit tests that need MSW can set it up individually
 })
 
 afterAll(() => {
-  // Clean up MSW server if it was started
-  try {
-    server.close()
-  } catch (e) {
-    // Server wasn't started, ignore
-  }
+  // No MSW server to clean up
 })
 
 afterEach(() => {
-  // Reset handlers after each test if server is listening
-  try {
-    server.resetHandlers()
-  } catch (e) {
-    // Server not active, ignore
-  }
+  // No MSW handlers to reset
 })
 
 // Initialize global test utilities

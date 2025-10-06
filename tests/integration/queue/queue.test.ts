@@ -148,7 +148,7 @@ describe('Queue Integration Tests', () => {
         console.log('Dequeued jobs:', dequeueResult.rows)
         expect(dequeueResult.rows[0].job_id).toBe(jobId)
         await client.query(
-          `SELECT fail_job($1, $2) as status`,
+          `SELECT secure_fail_job($1, $2) as status`,
           [jobId, 'Test retry failure']
         )
         const eventsResult = await client.query(
@@ -185,7 +185,7 @@ describe('Queue Integration Tests', () => {
           console.log(`Attempt ${attempt} dequeue:`, dequeueResult.rows)
           if (dequeueResult.rows.length === 0) break
           const failResult = await client.query(
-            `SELECT fail_job($1, $2) as status`,
+            `SELECT secure_fail_job($1, $2) as status`,
             [jobId, `Failure attempt ${attempt}`]
           )
           // eslint-disable-next-line no-console

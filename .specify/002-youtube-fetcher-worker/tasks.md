@@ -94,16 +94,16 @@ Backend-first monorepo structure:
 - [x] T037 [P] Add ETag/If-None-Match support for bandwidth optimization
 - [x] T038 [P] Write comprehensive mocked tests in tests/unit/youtube or tests/integration/youtube
 - [x] T039 [P] Test error handling for 429/5xx responses with backoff
-- [ ] T040 Test end-to-end YouTube API integration with real but limited calls
+- [x] T040 Test end-to-end YouTube API integration with real but limited calls
 
 ## Phase P4: RSS Feed Polling
 
-- [ ] T041 [P] Create RSS feed parser in src/lib/rss/parser.ts with XML handling
-- [ ] T042 [P] Create feed state management in src/lib/rss/state.ts for ETag/Last-Modified
-- [ ] T043 [P] Create video ID extraction logic in src/lib/rss/extractor.ts
-- [ ] T044 Create RSS poller Edge Function in edge-functions/rss_poller/index.ts
-- [ ] T045 [P] Add RSS polling database operations in src/workers/rss.ts
-- [ ] T046 [P] Write RSS parsing tests with mock XML feeds in tests/unit/rss/
+- [x] T041 [P] Create RSS feed parser in src/lib/rss/parser.ts with XML handling
+- [x] T042 [P] Create feed state management in src/lib/rss/state.ts for ETag/Last-Modified
+- [x] T043 [P] Create video ID extraction logic in src/lib/rss/extractor.ts
+- [x] T044 Create RSS poller Edge Function in edge-functions/rss_poller/index.ts
+- [x] T045 [P] Add RSS polling database operations in src/workers/rss.ts
+- [x] T046 [P] Write RSS parsing tests with mock XML feeds in tests/unit/rss/
 - [ ] T047 [P] Write feed state management tests in tests/integration/rss/
 - [ ] T048 [P] Test new video discovery and job enqueueing workflow
 - [ ] T049 [P] Test RSS error handling and fallback mechanisms

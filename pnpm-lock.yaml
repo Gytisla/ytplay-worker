@@ -11,6 +11,9 @@ dependencies:
   '@supabase/supabase-js':
     specifier: ^2.38.5
     version: 2.58.0
+  fast-xml-parser:
+    specifier: ^5.3.0
+    version: 5.3.0
   nuxt:
     specifier: ^3.8.4
     version: 3.19.2(@types/node@20.19.19)(@vue/compiler-sfc@3.5.22)(eslint@9.37.0)(typescript@5.9.3)(vite@7.1.9)(vue-tsc@3.1.0)
@@ -4673,6 +4676,13 @@ packages:
     resolution: {integrity: sha512-aZU3i3eRcSb2NCq8i6N6IlyiTyF6vqAqzBGl2NBF6ngNx/GIqfYbkLDIKZ4z4P0o/RmtsFnVqHwdrSm13o4tnQ==}
     dev: false
 
+  /fast-xml-parser@5.3.0:
+    resolution: {integrity: sha512-gkWGshjYcQCF+6qtlrqBqELqNqnt4CxruY6UVAWWnqb3DQ6qaNFEIKqzYep1XzHLM/QtrHVCxyPOtTk4LTQ7Aw==}
+    hasBin: true
+    dependencies:
+      strnum: 2.1.1
+    dev: false
+
   /fastq@1.19.1:
     resolution: {integrity: sha512-GwLTyxkCXjXbxqIhTsMI2Nui8huMPtnxg7krajPJAjnEG/iiOS7i+zCtWGZR9G0NBKbXKh6X9m9UIsYX/N6vvQ==}
     dependencies:
@@ -7684,6 +7694,10 @@ packages:
     resolution: {integrity: sha512-8r3mkIM/2+PpjHoOtiAW8Rg3jJLHaV7xPwG+YRGrv6FP0wwk/toTpATxWYOW0BKdWwl82VT2tFYi5DlROa0Mxg==}
     dependencies:
       js-tokens: 9.0.1
+
+  /strnum@2.1.1:
+    resolution: {integrity: sha512-7ZvoFTiCnGxBtDqJ//Cu6fWtZtc7Y3x+QOirG15wztbdngGSkht27o2pyGWrVy0b4WAy3jbKmnoK6g5VlVNUUw==}
+    dev: false
 
   /structured-clone-es@1.0.0:
     resolution: {integrity: sha512-FL8EeKFFyNQv5cMnXI31CIMCsFarSVI2bF0U0ImeNE3g/F1IvJQyqzOXxPBRXiwQfyBTlbNe88jh1jFW0O/jiQ==}

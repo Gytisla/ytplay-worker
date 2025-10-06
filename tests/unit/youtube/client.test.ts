@@ -678,7 +678,7 @@ describe('YouTubeApiClient', () => {
 
       vi.spyOn(global, 'fetch').mockResolvedValueOnce(mockResponse)
 
-      const result = await client.request('/test', { etag: '"cached-etag"' })
+      const result = await client.requestWithETag('/test', { etag: '"cached-etag"' })
 
       expect(result).toEqual({
         data: null,
@@ -697,7 +697,7 @@ describe('YouTubeApiClient', () => {
 
       vi.spyOn(global, 'fetch').mockResolvedValueOnce(mockResponse)
 
-      const result = await client.request('/test')
+      const result = await client.requestWithETag('/test')
 
       expect(result).toEqual({
         data: { items: [] },

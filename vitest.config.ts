@@ -25,6 +25,15 @@ export default defineConfig({
       '**/database/**' // Exclude database tests from main test run
     ],
 
+    // Run integration tests sequentially to avoid database conflicts
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        singleThread: true,
+        isolate: false
+      }
+    },
+
     // Coverage configuration for >90% requirement
     coverage: {
       provider: 'v8',

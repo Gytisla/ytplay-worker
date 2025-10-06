@@ -3,7 +3,7 @@ import { server } from '../../setup'
 import { http, HttpResponse } from 'msw'
 import { YouTubeVideosClient, createYouTubeVideosClient } from '../../../src/lib/youtube/videos'
 import { createYouTubeClientFromEnv } from '../../../src/lib/youtube/client'
-import type { VideosListResponse, VideoResource } from '../../../src/lib/youtube/types'
+import type { VideoResource } from '../../../src/lib/youtube/types'
 
 // Mock sleep function to speed up tests
 vi.mock('./utils', () => ({
@@ -44,16 +44,6 @@ const mockVideo: VideoResource = {
     licensedContent: true,
     projection: 'rectangular',
   },
-}
-
-const mockVideosResponse: VideosListResponse = {
-  kind: 'youtube#videoListResponse',
-  etag: 'etag123',
-  pageInfo: {
-    totalResults: 1,
-    resultsPerPage: 1,
-  },
-  items: [mockVideo],
 }
 
 // Configure MSW to allow YouTube API requests to pass through

@@ -112,7 +112,7 @@ Backend-first monorepo structure:
 ## Phase P5: Edge Function Workers
 
 - [x] T051 Create main queue worker Edge Function in edge-functions/queue_worker/index.ts
-- [ ] T052 [P] Create BACKFILL_CHANNEL job handler in src/workers/handlers/backfill.ts
+- [x] T052 [P] Create BACKFILL_CHANNEL job handler in src/workers/handlers/backfill.ts
 - [ ] T053 [P] Create REFRESH_CHANNEL_STATS job handler in src/workers/handlers/channel-stats.ts
 - [ ] T054 [P] Create REFRESH_HOT_VIDEOS job handler in src/workers/handlers/hot-videos.ts
 - [ ] T055 [P] Create REFRESH_VIDEO_STATS job handler in src/workers/handlers/video-stats.ts

@@ -119,8 +119,8 @@ Backend-first monorepo structure:
 - [x] T056 [P] Create RSS_POLL_CHANNEL job handler in src/workers/handlers/rss-poll.ts
 - [x] T057 [P] Create idempotent database operations in src/workers/db.ts
 - [ ] T058 [P] Add job coordination and advisory locking logic
-- [ ] T059 [P] Write integration tests for each job handler in tests/integration/workers/
-- [ ] T060 [P] Test job coalescing and batch processing logic
+- [x] T059 [P] Write integration tests for each job handler in tests/integration/workers/
+- [x] T060 [P] Test job coalescing and batch processing logic
 - [ ] T061 [P] Test idempotency with duplicate job scenarios
 - [ ] T062 Deploy and test Edge Functions in Supabase environment
 

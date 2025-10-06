@@ -75,13 +75,12 @@ describe('RSS_POLL_CHANNEL (integration - mocked DB/HTTP)', () => {
     mockRSSOps.updateFeedStateAfterError.mockResolvedValue(undefined)
     mockRSSOps.enqueueVideoJobs.mockResolvedValue(undefined)
     mockParser.parseFeed.mockReturnValue([])
-    mockRSSOps.updateFeedState.mockImplementation((state) => {
-      if (typeof state === 'object' && state !== null) {
-        // Assume this is an already updated state from FeedStateManager
-        return Promise.resolve(undefined)
-      }
-      return Promise.reject(new Error('Invalid state passed to updateFeedState'))
-    })
+    mockRSSOps.updateFeedState.mockImplementation((s: any, headers: any) => ({
+      ...s,
+      lastETag: headers?.etag ?? s.lastETag,
+      lastModified: headers?.lastModified ?? s.lastModified,
+      lastPolledAt: new Date()
+    }))
   })
 
   it('polls feed, parses and enqueues new videos', async () => {

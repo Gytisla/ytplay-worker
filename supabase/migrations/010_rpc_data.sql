@@ -197,33 +197,97 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Capture channel statistics
+-- Capture channel statistics snapshot
 CREATE OR REPLACE FUNCTION capture_channel_stats(
-    p_channel_id UUID,
+    p_channel_id TEXT,
     stats_data JSONB
 )
-RETURNS channel_stats AS $$
+RETURNS TABLE(stats_id UUID, is_new_day BOOLEAN) AS $$
 DECLARE
-    v_stats channel_stats;
+    v_channel_uuid UUID;
+    v_today DATE := CURRENT_DATE;
+    v_yesterday DATE := CURRENT_DATE - INTERVAL '1 day';
+    v_previous_stats channel_stats%ROWTYPE;
+    v_new_stats_id UUID;
+    v_is_new_day BOOLEAN := true;
 BEGIN
-    INSERT INTO channel_stats (
-        channel_id,
-        date,
-        view_count,
-        subscriber_count,
-        video_count
-    ) VALUES (
-        p_channel_id,
-        CURRENT_DATE,
-        (stats_data->>'view_count')::BIGINT,
-        (stats_data->>'subscriber_count')::BIGINT,
-        (stats_data->>'video_count')::BIGINT
-    )
-    ON CONFLICT (channel_id, date) DO UPDATE SET
-        view_count = EXCLUDED.view_count,
-        subscriber_count = EXCLUDED.subscriber_count,
-        video_count = EXCLUDED.video_count
-    RETURNING * INTO v_stats;
-    RETURN v_stats;
+    -- Get channel UUID from YouTube channel ID
+    SELECT id INTO v_channel_uuid
+    FROM channels
+    WHERE youtube_channel_id = p_channel_id;
+
+    IF v_channel_uuid IS NULL THEN
+        RAISE EXCEPTION 'Channel not found: %', p_channel_id;
+    END IF;
+
+    -- Check if we already have stats for today
+    SELECT * INTO v_previous_stats
+    FROM channel_stats
+    WHERE channel_id = v_channel_uuid AND date = v_today;
+
+    IF FOUND THEN
+        -- Update existing record for today
+        UPDATE channel_stats SET
+            view_count = (stats_data->>'view_count')::BIGINT,
+            subscriber_count = (stats_data->>'subscriber_count')::BIGINT,
+            video_count = (stats_data->>'video_count')::BIGINT,
+            estimated_minutes_watched = COALESCE((stats_data->>'estimated_minutes_watched')::BIGINT, 0),
+            average_view_duration = CASE
+                WHEN stats_data->>'average_view_duration' IS NOT NULL
+                THEN (stats_data->>'average_view_duration')::INTERVAL
+                ELSE NULL
+            END,
+            created_at = NOW()
+        WHERE id = v_previous_stats.id
+        RETURNING id INTO v_new_stats_id;
+
+        v_is_new_day := false;
+    ELSE
+        -- Get previous day's stats for delta calculation
+        SELECT * INTO v_previous_stats
+        FROM channel_stats
+        WHERE channel_id = v_channel_uuid AND date = v_yesterday;
+
+        -- Insert new record for today
+        INSERT INTO channel_stats (
+            channel_id,
+            date,
+            view_count,
+            subscriber_count,
+            video_count,
+            subscriber_gained,
+            subscriber_lost,
+            view_gained,
+            estimated_minutes_watched,
+            average_view_duration
+        ) VALUES (
+            v_channel_uuid,
+            v_today,
+            (stats_data->>'view_count')::BIGINT,
+            (stats_data->>'subscriber_count')::BIGINT,
+            (stats_data->>'video_count')::BIGINT,
+            GREATEST(0, (stats_data->>'subscriber_count')::BIGINT - COALESCE(v_previous_stats.subscriber_count, 0)),
+            GREATEST(0, COALESCE(v_previous_stats.subscriber_count, 0) - (stats_data->>'subscriber_count')::BIGINT),
+            GREATEST(0, (stats_data->>'view_count')::BIGINT - COALESCE(v_previous_stats.view_count, 0)),
+            COALESCE((stats_data->>'estimated_minutes_watched')::BIGINT, 0),
+            CASE
+                WHEN stats_data->>'average_view_duration' IS NOT NULL
+                THEN (stats_data->>'average_view_duration')::INTERVAL
+                ELSE NULL
+            END
+        )
+        RETURNING id INTO v_new_stats_id;
+    END IF;
+
+    -- Update channel's last statistics
+    UPDATE channels SET
+        view_count = (stats_data->>'view_count')::BIGINT,
+        subscriber_count = (stats_data->>'subscriber_count')::BIGINT,
+        video_count = (stats_data->>'video_count')::BIGINT,
+        last_fetched_at = NOW(),
+        updated_at = NOW()
+    WHERE id = v_channel_uuid;
+
+    RETURN QUERY SELECT v_new_stats_id, v_is_new_day;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

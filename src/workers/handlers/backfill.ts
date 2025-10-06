@@ -185,7 +185,7 @@ export async function handleBackfillChannel(
 
     const { error: statsError } = await supabase
       .rpc('capture_channel_stats', {
-        p_channel_id: channelUuid,
+        p_channel_id: channelId,
         stats_data: statsData
       })
 

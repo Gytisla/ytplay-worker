@@ -75,11 +75,11 @@ export default createConfigForNuxt({
     files: ['edge-functions/**/*.ts', 'supabase/functions/**/*.ts', 'src/workers/**/*.ts', 'src/lib/youtube/**/*.ts'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn', // Allow any in edge functions
-      '@typescript-eslint/no-unsafe-assignment': 'warn', // Allow unsafe assignments in edge functions
-      '@typescript-eslint/no-unsafe-member-access': 'warn', // Allow unsafe member access in edge functions
-      '@typescript-eslint/no-unsafe-call': 'warn', // Allow unsafe calls in edge functions
-      '@typescript-eslint/no-unsafe-return': 'warn', // Allow unsafe returns in edge functions
-      '@typescript-eslint/no-unsafe-argument': 'warn', // Allow unsafe arguments in edge functions
+      '@typescript-eslint/no-unsafe-assignment': 'off', // Allow unsafe assignments in edge functions
+      '@typescript-eslint/no-unsafe-member-access': 'off', // Allow unsafe member access in edge functions
+      '@typescript-eslint/no-unsafe-call': 'off', // Allow unsafe calls in edge functions
+      '@typescript-eslint/no-unsafe-return': 'off', // Allow unsafe returns in edge functions
+      '@typescript-eslint/no-unsafe-argument': 'off', // Allow unsafe arguments in edge functions
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }], // Warn instead of error
       'no-console': 'off', // Allow console in edge functions
       '@typescript-eslint/no-non-null-assertion': 'off', // Allow non-null assertions in edge functions

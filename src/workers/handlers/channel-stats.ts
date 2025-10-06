@@ -67,7 +67,7 @@ export async function handleRefreshChannelStats(
       return { success: false, error: `Failed to store channel statistics: ${statsError.message}` }
     }
 
-    const isNewDay = statsResult?.[0]?.is_new_day || false
+    const isNewDay = statsResult?.[0]?.is_new_day ?? false
     console.log(`Successfully ${isNewDay ? 'created new daily' : 'updated existing'} stats snapshot for channel ${channelId}`)
 
     return { success: true }

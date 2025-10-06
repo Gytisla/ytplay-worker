@@ -98,7 +98,7 @@ export class YouTubePlaylistsClient {
       return allItems;
 
     } catch (error) {
-      // eslint-disable-next-line no-console
+       
       console.error(`Failed to fetch playlist items for ${playlistId}:`, error);
       throw error;
     }

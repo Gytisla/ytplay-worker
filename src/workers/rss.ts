@@ -194,7 +194,7 @@ export class RSSPollingOperations {
     }
     // Combine, filter out feeds with missing youtube_channel_id, and deduplicate
     const allFeeds = [...neverPolledFeeds, ...overduePolledFeeds];
-    // eslint-disable-next-line no-console
+     
     console.log('DEBUG getChannelsDueForPolling allFeeds:', JSON.stringify(allFeeds, null, 2));
     return allFeeds
       .filter(feed => typeof feed.channels === 'object' && feed.channels !== null && typeof feed.channels.youtube_channel_id === 'string')

@@ -1,3 +1,4 @@
+ 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { XMLParser } from 'https://esm.sh/fast-xml-parser@5.3.0'
 
@@ -257,8 +258,6 @@ const FeedStateManager = {
       .map(video => video.videoId)
   },
 }
-  // ...existing code...
-// ...existing code...
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

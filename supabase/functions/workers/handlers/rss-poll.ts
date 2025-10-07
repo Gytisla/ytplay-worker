@@ -1,8 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { RSSPollingOperations } from '../../workers/rss'
-import { RSSParser } from '../../lib/rss/parser'
-import { FeedStateManager } from '../../lib/rss/state'
-import type { FeedState } from '../../lib/rss/state'
+import { RSSPollingOperations } from '../rss.ts'
+import { RSSParser } from '../../../../src/lib/rss/parser.ts'
+import { FeedStateManager } from '../../../../src/lib/rss/state.ts'
+import type { FeedState } from '../../../../src/lib/rss/state.ts'
 
 /**
  * RSS_POLL_CHANNEL job handler

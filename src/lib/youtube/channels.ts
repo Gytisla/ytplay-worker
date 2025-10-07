@@ -1,12 +1,12 @@
 import { z } from 'zod'
 import type { YouTubeApiClient } from './client'
-import { createYouTubeClientFromEnv } from './client'
+import { createYouTubeClientFromEnv } from './client.ts'
 import {
   ChannelsListResponseSchema,
   ChannelResourceSchema,
   type ChannelsListResponse,
   type ChannelResource,
-} from './types'
+} from './types.ts'
 
 // ============================================================================
 // Configuration Types
@@ -16,7 +16,7 @@ import {
  * Configuration for channels.list API calls
  */
 export const ChannelsListConfigSchema = z.object({
-  part: z.array(z.enum(['snippet', 'statistics', 'status', 'contentDetails', 'brandingSettings'])).default(['snippet', 'statistics']),
+  part: z.array(z.enum(['snippet', 'statistics', 'status', 'contentDetails', 'brandingSettings'])).default(['snippet', 'statistics', 'contentDetails']),
   fields: z.string().optional(),
   maxResults: z.number().int().min(1).max(50).optional(),
   batchSize: z.number().int().min(1).max(50).default(50), // YouTube API limit

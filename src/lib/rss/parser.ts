@@ -1,5 +1,5 @@
 import { XMLParser } from 'fast-xml-parser'
-import { VideoIdExtractor } from './extractor'
+import { VideoIdExtractor } from './extractor.ts'
 
 export interface RSSItem {
   title: string

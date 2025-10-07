@@ -1,9 +1,9 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { handleBackfillChannel } from '../../src/workers/handlers/backfill'
-import { handleRefreshChannelStats } from '../../src/workers/handlers/channel-stats'
-import { handleRefreshHotVideos } from '../../src/workers/handlers/hot-videos'
-import { handleRefreshVideoStats } from '../../src/workers/handlers/video-stats'
-import { handleRSSPollChannel } from '../../src/workers/handlers/rss-poll'
+import { handleBackfillChannel } from '../workers/handlers/backfill.ts'
+import { handleRefreshChannelStats } from '../workers/handlers/channel-stats.ts'
+import { handleRefreshHotVideos } from '../workers/handlers/hot-videos.ts'
+import { handleRefreshVideoStats } from '../workers/handlers/video-stats.ts'
+import { handleRSSPollChannel } from '../workers/handlers/rss-poll.ts'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 

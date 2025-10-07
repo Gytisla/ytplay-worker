@@ -3,7 +3,7 @@ import { Client } from 'pg'
 import dotenv from 'dotenv'
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '../../../types/supabase'
-import { RSSPollingOperations } from '../../../src/workers/rss'
+import { RSSPollingOperations } from '../../../supabase/functions/workers/rss'
 import type { ChannelFeedResult, JobResult } from './utils'
 
 dotenv.config({ path: '.env.local' })

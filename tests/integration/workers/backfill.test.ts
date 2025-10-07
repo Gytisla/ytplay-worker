@@ -3,7 +3,7 @@ import { Client } from 'pg'
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '../../../types/supabase'
 import dotenv from 'dotenv'
-import { handleBackfillChannel } from '../../../src/workers/handlers/backfill'
+import { handleBackfillChannel } from '../../../supabase/functions/workers/handlers/backfill'
 
 dotenv.config({ path: '.env.local' })
 

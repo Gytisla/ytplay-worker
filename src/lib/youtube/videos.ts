@@ -1,12 +1,12 @@
 import { z } from 'zod'
 import type { YouTubeApiClient } from './client'
-import { createYouTubeClientFromEnv } from './client'
+import { createYouTubeClientFromEnv } from './client.ts'
 import {
   VideosListResponseSchema,
   VideoResourceSchema,
   type VideosListResponse,
   type VideoResource,
-} from './types'
+} from './types.ts'
 
 // ============================================================================
 // Configuration Types

@@ -1,12 +1,12 @@
 import { z } from 'zod'
 import type { YouTubeApiClient } from './client'
-import { createYouTubeClientFromEnv } from './client'
+import { createYouTubeClientFromEnv } from './client.ts'
 import {
   PlaylistItemsListResponseSchema,
   PlaylistItemResourceSchema,
   type PlaylistItemsListResponse,
   type PlaylistItemResource,
-} from './types'
+} from './types.ts'
 
 // ============================================================================
 // Configuration Types

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { handleRefreshVideoStats } from '../../../src/workers/handlers/video-stats'
+import { handleRefreshVideoStats } from '../../../supabase/functions/workers/handlers/video-stats'
 
 // Mock the YouTube API clients
 const mockVideosClient = {

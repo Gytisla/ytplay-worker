@@ -5,7 +5,7 @@
 -- Channel feeds table
 -- Tracks RSS feed URLs and polling state for each channel
 CREATE TABLE channel_feeds (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     channel_id UUID NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
     feed_url VARCHAR(1000) NOT NULL,
     feed_type VARCHAR(50) DEFAULT 'youtube_rss', -- youtube_rss, custom_rss
@@ -27,7 +27,7 @@ CREATE TABLE channel_feeds (
 -- API budget table
 -- Tracks YouTube API quota usage and limits
 CREATE TABLE api_budget (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     date DATE NOT NULL DEFAULT CURRENT_DATE,
     quota_type VARCHAR(100) NOT NULL, -- 'youtube_data_api_v3', 'youtube_analytics_api', etc.
     daily_limit BIGINT NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE api_budget (
 -- API usage log table
 -- Detailed log of API calls for auditing and analysis
 CREATE TABLE api_usage_log (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     quota_type VARCHAR(100) NOT NULL,
     endpoint VARCHAR(255) NOT NULL, -- API endpoint called
     method VARCHAR(10) DEFAULT 'GET',

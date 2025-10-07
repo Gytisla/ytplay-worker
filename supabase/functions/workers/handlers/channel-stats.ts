@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { YouTubeChannelsClient, type FetchChannelsOptions } from '../../lib/youtube/channels'
-import { createYouTubeClientFromEnv } from '../../lib/youtube/client'
+import { YouTubeChannelsClient, type FetchChannelsOptions } from '../../../../src/lib/youtube/channels.ts'
+import { createYouTubeClientFromEnv } from '../../../../src/lib/youtube/client.ts'
 
 /**
  * REFRESH_CHANNEL_STATS job handler

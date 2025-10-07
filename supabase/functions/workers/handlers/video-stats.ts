@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { YouTubeVideosClient, type FetchVideosOptions } from '../../lib/youtube/videos'
-import { createYouTubeClientFromEnv } from '../../lib/youtube/client'
+import { YouTubeVideosClient, type FetchVideosOptions } from '../../../../src/lib/youtube/videos.ts'
+import { createYouTubeClientFromEnv } from '../../../../src/lib/youtube/client.ts'
 
 /**
  * REFRESH_VIDEO_STATS job handler

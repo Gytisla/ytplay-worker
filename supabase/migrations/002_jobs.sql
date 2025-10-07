@@ -5,7 +5,7 @@
 -- Jobs table
 -- Main job queue with different job types and states
 CREATE TABLE jobs (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     job_type VARCHAR(100) NOT NULL, -- 'BACKFILL_CHANNEL', 'REFRESH_CHANNEL_STATS', etc.
     priority INTEGER DEFAULT 0, -- Higher numbers = higher priority
     status VARCHAR(50) DEFAULT 'pending', -- pending, running, completed, failed, dead_letter
@@ -28,7 +28,7 @@ CREATE TABLE jobs (
 -- Job events table
 -- Audit trail for job lifecycle events
 CREATE TABLE job_events (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
     event_type VARCHAR(100) NOT NULL, -- created, started, completed, failed, retried, dead_letter
     event_data JSONB, -- Additional event-specific data

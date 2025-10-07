@@ -3,7 +3,7 @@ import { Client } from 'pg'
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '../../../types/supabase'
 import dotenv from 'dotenv'
-import { handleRefreshChannelStats } from '../../../src/workers/handlers/channel-stats'
+import { handleRefreshChannelStats } from '../../../supabase/functions/workers/handlers/channel-stats'
 
 dotenv.config({ path: '.env.local' })
 

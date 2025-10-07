@@ -1,0 +1,13 @@
+{
+  "imports": {
+    "zod": "https://esm.sh/zod@3.22.4",
+    "zod/": "https://esm.sh/zod@3.22.4/",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.74.0",
+    "@supabase/": "https://esm.sh/@supabase/",
+    "fast-xml-parser": "https://esm.sh/fast-xml-parser@4.0.12",
+    "fast-xml-parser/": "https://esm.sh/fast-xml-parser@4.0.12/",
+    "node/": "https://esm.sh/node@18.16.0/",
+    "node/process.mjs": "https://esm.sh/node@18.16.0/process.mjs",
+    "node/buffer.mjs": "https://esm.sh/node@18.16.0/buffer.mjs"
+  }
+}

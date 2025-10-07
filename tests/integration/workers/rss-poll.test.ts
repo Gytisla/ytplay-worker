@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { handleRSSPollChannel } from '../../../src/workers/handlers/rss-poll'
+import { handleRSSPollChannel } from '../../../supabase/functions/workers/handlers/rss-poll'
 
 // Use vi.__mock__ to expose mock instances safely
 vi.mock('../../../src/workers/rss', async () => {

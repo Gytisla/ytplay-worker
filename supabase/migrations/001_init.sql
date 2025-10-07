@@ -9,7 +9,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- Channels table
 -- Stores basic information about YouTube channels
 CREATE TABLE channels (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     youtube_channel_id VARCHAR(255) UNIQUE NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -38,7 +38,7 @@ CREATE TABLE channels (
 -- Videos table
 -- Stores information about individual YouTube videos
 CREATE TABLE videos (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     youtube_video_id VARCHAR(255) UNIQUE NOT NULL,
     channel_id UUID NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
     title VARCHAR(500) NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE videos (
 -- Channel statistics table
 -- Historical statistics for channels (updated daily)
 CREATE TABLE channel_stats (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     channel_id UUID NOT NULL REFERENCES channels(id) ON DELETE CASCADE,
     date DATE NOT NULL,
     view_count BIGINT DEFAULT 0,
@@ -90,7 +90,7 @@ CREATE TABLE channel_stats (
 -- Video statistics table
 -- Historical statistics for videos (updated hourly/daily)
 CREATE TABLE video_stats (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     video_id UUID NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
     date DATE NOT NULL,
     hour INTEGER, -- 0-23 for hourly stats, NULL for daily

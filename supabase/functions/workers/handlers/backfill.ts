@@ -1,9 +1,9 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { YouTubeChannelsClient, type FetchChannelsOptions } from '../../lib/youtube/channels'
-import { YouTubePlaylistsClient, type FetchPlaylistItemsOptions } from '../../lib/youtube/playlists'
-import { YouTubeVideosClient, type FetchVideosOptions } from '../../lib/youtube/videos'
-import type { VideoResource } from '../../lib/youtube/types'
-import { createYouTubeClientFromEnv } from '../../lib/youtube/client'
+import { YouTubeChannelsClient, type FetchChannelsOptions } from '../../../../src/lib/youtube/channels.ts'
+import { YouTubePlaylistsClient, type FetchPlaylistItemsOptions } from '../../../../src/lib/youtube/playlists.ts'
+import { YouTubeVideosClient, type FetchVideosOptions } from '../../../../src/lib/youtube/videos.ts'
+import type { VideoResource } from '../../../../src/lib/youtube/types.ts'
+import { createYouTubeClientFromEnv } from '../../../../src/lib/youtube/client.ts'
 
 /**
  * BACKFILL_CHANNEL job handler

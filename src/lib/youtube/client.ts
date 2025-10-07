@@ -2,7 +2,7 @@ import { z } from 'zod'
 import {
   YouTubeApiErrorSchema,
   type YouTubeApiError,
-} from './types'
+} from './types.ts'
 
 // ============================================================================
 // Configuration Types

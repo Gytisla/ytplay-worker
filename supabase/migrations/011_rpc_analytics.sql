@@ -28,7 +28,7 @@ CREATE OR REPLACE FUNCTION capture_video_stats(
     video_stats_array JSONB[]
 )
 RETURNS TABLE(
-    video_id TEXT,
+    youtube_video_id TEXT,
     stats_id UUID,
     hourly_change INTEGER,
     daily_change INTEGER
@@ -46,9 +46,9 @@ DECLARE
 BEGIN
     FOREACH v_stats_record IN ARRAY video_stats_array LOOP
         -- Get video UUID from YouTube video ID
-        SELECT id INTO v_video_uuid
-        FROM videos
-        WHERE youtube_video_id = v_stats_record->>'video_id';
+    SELECT id INTO v_video_uuid
+    FROM videos
+    WHERE videos.youtube_video_id = v_stats_record->>'video_id';
 
         IF v_video_uuid IS NULL THEN
             -- Skip if video not found
@@ -112,9 +112,9 @@ BEGIN
             created_at = NOW()
         RETURNING id INTO v_new_stats_id;
 
-        -- Return result for this video
+        -- Return result for this video (youtube_video_id avoids ambiguity with video_stats.video_id)
         RETURN QUERY SELECT
-            v_stats_record->>'video_id',
+            v_stats_record->>'video_id' AS youtube_video_id,
             v_new_stats_id,
             v_hourly_change,
             v_daily_change;

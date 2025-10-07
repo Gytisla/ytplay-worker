@@ -1,4 +1,9 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { handleBackfillChannel } from '../../src/workers/handlers/backfill'
+import { handleRefreshChannelStats } from '../../src/workers/handlers/channel-stats'
+import { handleRefreshHotVideos } from '../../src/workers/handlers/hot-videos'
+import { handleRefreshVideoStats } from '../../src/workers/handlers/video-stats'
+import { handleRSSPollChannel } from '../../src/workers/handlers/rss-poll'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -33,39 +38,57 @@ const corsHeaders = {
 }
 
 // Job type handlers - these will be implemented in separate files
+// Provide minimal typings for the Deno runtime when typechecking locally
+declare const Deno: any
+
 const jobHandlers: Record<string, (payload: any, supabase: any) => Promise<{ success: boolean; itemsProcessed?: number; error?: string }>> = {
-  'BACKFILL_CHANNEL': async (payload, _supabase) => {
-    // TODO: Implement BACKFILL_CHANNEL handler
-    console.log('Processing BACKFILL_CHANNEL job:', payload)
-    return { success: true, itemsProcessed: 1 }
+  'BACKFILL_CHANNEL': async (payload, supabase) => {
+    try {
+      return await handleBackfillChannel(payload, supabase)
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : String(error), itemsProcessed: 0 }
+    }
   },
 
-  'REFRESH_CHANNEL_STATS': async (payload, _supabase) => {
-    // TODO: Implement REFRESH_CHANNEL_STATS handler
-    console.log('Processing REFRESH_CHANNEL_STATS job:', payload)
-    return { success: true, itemsProcessed: 1 }
+  'REFRESH_CHANNEL_STATS': async (payload, supabase) => {
+    try {
+      const res = await handleRefreshChannelStats(payload, supabase)
+      return { success: res.success, ...(res.error ? { error: res.error } : {}) }
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : String(error) }
+    }
   },
 
-  'REFRESH_HOT_VIDEOS': async (payload, _supabase) => {
-    // TODO: Implement REFRESH_HOT_VIDEOS handler
-    console.log('Processing REFRESH_HOT_VIDEOS job:', payload)
-    return { success: true, itemsProcessed: 1 }
+  'REFRESH_HOT_VIDEOS': async (payload, supabase) => {
+    try {
+      const res = await handleRefreshHotVideos(payload, supabase)
+      return { success: res.success, ...(typeof res.itemsProcessed === 'number' ? { itemsProcessed: res.itemsProcessed } : {}), ...(res.error ? { error: res.error } : {}) }
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : String(error) }
+    }
   },
 
-  'REFRESH_VIDEO_STATS': async (payload, _supabase) => {
-    // TODO: Implement REFRESH_VIDEO_STATS handler
-    console.log('Processing REFRESH_VIDEO_STATS job:', payload)
-    return { success: true, itemsProcessed: 1 }
+  'REFRESH_VIDEO_STATS': async (payload, supabase) => {
+    try {
+      const res = await handleRefreshVideoStats(payload, supabase)
+      return { success: res.success, ...(typeof res.itemsProcessed === 'number' ? { itemsProcessed: res.itemsProcessed } : {}), ...(res.error ? { error: res.error } : {}) }
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : String(error) }
+    }
   },
 
-  'RSS_POLL_CHANNEL': async (payload, _supabase) => {
-    // TODO: Implement RSS_POLL_CHANNEL handler
-    console.log('Processing RSS_POLL_CHANNEL job:', payload)
-    return { success: true, itemsProcessed: 1 }
+  'RSS_POLL_CHANNEL': async (payload, supabase) => {
+    try {
+      const res = await handleRSSPollChannel(payload, supabase)
+      return { success: res.success, ...(typeof res.itemsProcessed === 'number' ? { itemsProcessed: res.itemsProcessed } : {}), ...(res.error ? { error: res.error } : {}) }
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : String(error) }
+    }
   },
 }
 
-Deno.serve(async (req) => {
+// Use the standard Request type for the handler parameter
+Deno.serve(async (req: Request) => {
   const startTime = Date.now()
   const workerId = `edge-worker-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 

@@ -122,6 +122,7 @@ Backend-first monorepo structure:
 - [x] T059 [P] Write integration tests for each job handler in tests/integration/workers/
 - [x] T060 [P] Test job coalescing and batch processing logic
 - [ ] T061 [P] Test idempotency with duplicate job scenarios
+- [x] T061-1 [P] Implement T052-T056 in the T051
 - [ ] T062 Deploy and test Edge Functions in Supabase environment
 
 ## Phase P6: pg_cron Scheduling

@@ -123,15 +123,15 @@ Backend-first monorepo structure:
 - [x] T060 [P] Test job coalescing and batch processing logic
 - [ ] T061 [P] Test idempotency with duplicate job scenarios
 - [x] T061-1 [P] Implement T052-T056 in the T051
-- [ ] T062 Deploy and test Edge Functions in Supabase environment
+- [x] T062 Deploy and test Edge Functions in Supabase environment
 
 ## Phase P6: pg_cron Scheduling
 
-- [ ] T063 [P] Create pg_cron setup in migrations/012_pg_cron.sql
-- [ ] T064 [P] Schedule RSS_POLL_CHANNEL jobs (every 10 minutes)
-- [ ] T065 [P] Schedule REFRESH_CHANNEL_STATS jobs (daily at 03:00)
-- [ ] T066 [P] Schedule REFRESH_HOT_VIDEOS jobs (hourly)
-- [ ] T067 [P] Schedule REFRESH_VIDEO_STATS jobs (weekly rotation by channel hash)
+- [x] T063 [P] Create pg_cron setup in migrations/012_pg_cron.sql
+- [x] T064 [P] Schedule RSS_POLL_CHANNEL jobs (every 10 minutes)
+- [x] T065 [P] Schedule REFRESH_CHANNEL_STATS jobs (daily at 03:00)
+- [x] T066 [P] Schedule REFRESH_HOT_VIDEOS jobs (hourly)
+- [x] T067 [P] Schedule REFRESH_VIDEO_STATS jobs (weekly rotation by channel hash)
 - [ ] T068 [P] Schedule REQUEUE_STUCK jobs (hourly cleanup)
 - [ ] T069 Apply cron scheduling to database
 - [ ] T070 [P] Write tests for schedule timing and dedup keys in tests/unit/cron/

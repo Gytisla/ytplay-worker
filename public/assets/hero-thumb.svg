@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="600" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hero placeholder">
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1">
+      <stop offset="0%" stop-color="#ff6b6b" />
+      <stop offset="100%" stop-color="#ff2f2f" />
+    </linearGradient>
+    <linearGradient id="g2" x1="0" x2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.06" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#g1)" />
+  <rect x="0" y="0" width="1200" height="600" fill="url(#g2)" />
+  <g transform="translate(80,120) scale(1.1)">
+    <rect rx="16" ry="16" width="1040" height="360" fill="#ffffff22" />
+    <g transform="translate(60,60)">
+      <rect rx="12" ry="12" width="480" height="240" fill="#ffffff33" />
+      <circle cx="240" cy="120" r="44" fill="#ffffff" fill-opacity="0.14" />
+      <polygon points="225,100 225,140 260,120" fill="#fff" opacity="0.95" />
+    </g>
+    <g transform="translate(620,60)">
+      <rect rx="8" ry="8" width="320" height="56" fill="#ffffff22" />
+      <rect rx="8" ry="8" y="80" width="320" height="16" fill="#ffffff14" />
+      <rect rx="8" ry="8" y="106" width="320" height="16" fill="#ffffff10" />
+    </g>
+  </g>
+</svg>

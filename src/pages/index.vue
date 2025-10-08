@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Hero />
     <section class="mb-8">
       <h2 class="text-2xl font-semibold mb-4">New</h2>
       <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -35,9 +36,11 @@
       </div>
     </section>
   </div>
+
 </template>
 
 <script setup>
+import Hero from '~/components/Hero.vue'
 </script>
 
 <style>

@@ -39,7 +39,7 @@ devDependencies:
     version: 6.14.0
   '@tailwindcss/typography':
     specifier: ^0.5.19
-    version: 0.5.19(tailwindcss@4.1.14)
+    version: 0.5.19(tailwindcss@3.4.18)
   '@trivago/prettier-plugin-sort-imports':
     specifier: ^4.3.0
     version: 4.3.0(@vue/compiler-sfc@3.5.22)(prettier@3.6.2)
@@ -97,9 +97,6 @@ devDependencies:
   prettier:
     specifier: ^3.6.2
     version: 3.6.2
-  tailwindcss:
-    specifier: ^4.1.14
-    version: 4.1.14
   typescript:
     specifier: ^5.3.3
     version: 5.9.3
@@ -2432,13 +2429,13 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@tailwindcss/typography@0.5.19(tailwindcss@4.1.14):
+  /@tailwindcss/typography@0.5.19(tailwindcss@3.4.18):
     resolution: {integrity: sha512-w31dd8HOx3k9vPtcQh5QHP9GwKcgbMp87j58qi6xgiBnFFtKEAgCWnDw4qUT8aHwkCp8bKvb/KGKWWHedP0AAg==}
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders || >=4.0.0-alpha.20 || >=4.0.0-beta.1'
     dependencies:
       postcss-selector-parser: 6.0.10
-      tailwindcss: 4.1.14
+      tailwindcss: 3.4.18
     dev: true
 
   /@trivago/prettier-plugin-sort-imports@4.3.0(@vue/compiler-sfc@3.5.22)(prettier@3.6.2):
@@ -7826,10 +7823,6 @@ packages:
     transitivePeerDependencies:
       - tsx
       - yaml
-    dev: true
-
-  /tailwindcss@4.1.14:
-    resolution: {integrity: sha512-b7pCxjGO98LnxVkKjaZSDeNuljC4ueKUddjENJOADtubtdo8llTaJy7HwBMeLNSSo2N5QIAgklslK1+Ir8r6CA==}
     dev: true
 
   /tapable@2.3.0:

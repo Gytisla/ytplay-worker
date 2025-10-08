@@ -172,12 +172,14 @@ Backend-first monorepo structure:
 # Phase P9: Front-end
 
 - [ ] T099 [P] Create Layout with Header, Content and Footer
-- [ ] T100 [P] Create Home Page
+ - [x] T099 [P] Create Layout with Header, Content and Footer
+ - [x] T100 [P] Create Home Page
 - [ ] T101 [P] Create Top Channels Page
 - [ ] T102 [P] Create Top Videos Page
 - [ ] T103 [P] Create One Channel Page
  - [ ] T104 [P] Create Video Detail modal/page (no inline streaming)
- - [ ] T105 [P] Implement theme selector in header (light/dark/system) with persistence
+ - [ ] T104 [P] Create Video Detail modal/page (no inline streaming)
+ - [x] T105 [P] Implement theme selector in header (light/dark/system) with persistence
  - [ ] T106 [P] Implement search and category filters (server-side or client-side as appropriate)
  - [ ] T107 [P] Implement discovery sections on home page: New, Trending, Top (with skeleton loaders)
  - [ ] T108 [P] Implement infinite scroll/pagination for lists with graceful fallback

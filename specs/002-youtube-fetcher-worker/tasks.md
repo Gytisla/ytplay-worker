@@ -167,6 +167,45 @@ Backend-first monorepo structure:
 
 - [x] T094 [P] Call queue worker supabase functuon with Database-scheduled processing
  - [x] T095 [P] Create trigger to fill in channel_feeds automatically when new channel is added - https://www.youtube.com/feeds/videos.xml?channel_id=<channel_id>
+- [ ] T096 [P] Create trigger to automatically insert BACKFILL_CHANNEL queue job on channel creation
+
+# Phase P9: Front-end
+
+- [ ] T099 [P] Create Layout with Header, Content and Footer
+- [ ] T100 [P] Create Home Page
+- [ ] T101 [P] Create Top Channels Page
+- [ ] T102 [P] Create Top Videos Page
+- [ ] T103 [P] Create One Channel Page
+ - [ ] T104 [P] Create Video Detail modal/page (no inline streaming)
+ - [ ] T105 [P] Implement theme selector in header (light/dark/system) with persistence
+ - [ ] T106 [P] Implement search and category filters (server-side or client-side as appropriate)
+ - [ ] T107 [P] Implement discovery sections on home page: New, Trending, Top (with skeleton loaders)
+ - [ ] T108 [P] Implement infinite scroll/pagination for lists with graceful fallback
+ - [ ] T109 [P] Implement accessible keyboard navigation and focus management for card grids
+ - [ ] T110 [P] Implement open graph and SSR meta tags for landing and category pages
+ - [ ] T111 [P] Add small animation library or utilities (prefers-reduced-motion aware)
+ - [ ] T112 [P] Create lightweight client-side caching for discovery endpoints
+ - [ ] T113 [P] Write unit tests for UI components (Vitest + testing-library)
+ - [ ] T114 [P] Write integration tests for public endpoints and SSR pages
+ - [ ] T115 [P] Create end-to-end smoke test for discovery flow (landing -> open video detail)
+
+## Public API Endpoints (server)
+
+- `GET /api/public/discovery?section=new|trending|top&category=&page=&limit=` - returns list of lightweight video cards
+- `GET /api/public/videos/:id` - returns video metadata for detail view (no streaming)
+- `GET /api/public/channels/:id` - returns channel card and aggregated stats
+- `GET /api/public/top-channels?category=&page=&limit=` - paginated top channels
+- `GET /api/public/search?q=&category=&page=&limit=` - simple search for videos and channels
+
+## QA & Acceptance Tasks
+
+- [ ] QA001 Validate landing page shows New, Trending, Top sections with content on mobile and desktop
+- [ ] QA002 Validate theme toggle persists and prevents FOUT on first load (SSR cookie or server hint)
+- [ ] QA003 Accessibility audit: keyboard navigation, color contrast, screen reader labels
+- [ ] QA004 Performance: Lighthouse scores (PWA, Performance > 80, Accessibility > 90)
+- [ ] QA005 Privacy audit: confirm no secrets or user PII stored for anonymous users
+- [ ] QA006 Security: Ensure rate limits and no API keys are exposed client-side
+
 
 ## Dependencies
 

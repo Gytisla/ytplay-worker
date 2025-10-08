@@ -125,6 +125,59 @@
 
 ---
 
+## Public-facing App (discovery & UI spec)
+
+This project also includes a public-facing, unauthenticated web application that exposes discovery and browsing features inspired by high-engagement platforms (e.g., YouTube, Netflix) while avoiding any UI or content infringement. The goal is a beautiful, modern site focused on discovery: new videos, trending videos, top channels, and curated lists. The app should be responsive, performant, accessible, and support light and dark themes with a user-selectable header control.
+
+### Primary User Stories (public users)
+- As an unauthenticated visitor I want to discover new videos so I can find interesting content quickly.
+- As an unauthenticated visitor I want to browse trending videos so I can see whats popular now.
+- As an unauthenticated visitor I want to view top channels and top videos across categories so I can explore creators and highly-rated content.
+- As an unauthenticated visitor I want a fast, visually-rich experience with animations and theme options so the product feels polished and inviting.
+
+### Functional Requirements (Public App)
+- **PFA-001**: The app MUST expose a landing discovery page showing a mix of "New", "Trending", and "Top" cards in sections.
+- **PFA-002**: The app MUST provide filters and tabbed sections for categories (e.g., Music, Gaming, News, Education) and allow sorting by recency, popularity, and engagement.
+- **PFA-003**: The app MUST provide a detail modal or page for each video that shows metadata (title, short description, channel name, published date, basic stats) but must not embed or stream copyrighted content directly — instead link to the source when appropriate and allowed.
+- **PFA-004**: The app MUST surface "Top Channels" with channel cards (name, avatar, short bio, aggregated stats) and provide paginated browsing and basic search.
+- **PFA-005**: The app MUST implement infinite scroll or paginated feeds to load more results without full page refreshes.
+- **PFA-006**: The app MUST be fully client-side rendered or hybrid SSR/CSR depending on SEO needs; server-side rendering is encouraged for the landing page and open graph meta when appropriate.
+- **PFA-007**: The app MUST implement rate-limited client API calls and graceful fallback UIs when data is unavailable.
+
+### UX & Visual Design Guidance
+- Visual style should be modern and minimal, leveraging Tailwind utility classes and subtle animations (transitions on hover, card entrance animations, skeleton loaders while fetching).
+- Use a card-first layout for discovery rows: responsive grid with 1-4 columns depending on viewport (mobile: 1, tablet: 2, desktop: 3-4).
+- Provide accessible interactions (keyboard focus states, adequate color contrast, aria labels) and ensure animations can be reduced for prefers-reduced-motion.
+- Header must contain a theme toggle (sun/moon icon), a compact search input, and a minimal brand mark. Theme selector should persist choice in localStorage and respect system preference by default.
+- Provide a small "preview" overlay on hover/focus for video cards that shows a short excerpt (text) and primary actions (save, share, open source). Avoid autoplaying copyrighted media.
+
+### Tailwind Implementation Notes
+- Use Tailwind's dark mode class strategy (class-based) to toggle themes via a top-level `class="dark"` on the html/body wrapper.
+- Example utilities to use: rounded-xl, shadow-lg, bg-surface/ bg-surface-dark, text-muted, transition-transform, transform hover:-translate-y-1, animate-fade-in, ring-2 ring-offset-2 focus:ring-primary.
+- Implement a CSS variables theme layer for key colors to make theme tuning easier (use Tailwind config and CSS custom properties).
+
+### Accessibility & Performance
+- Ensure pages pass core web vitals thresholds: LCP < 2.5s, TTFB as low as possible for SSR pages, CLS minimal (reserve image/card space), FID/INP responsive.
+- All interactive elements must be reachable via keyboard and announced by screen readers.
+
+### Data & API Requirements (Public App)
+- The backend MUST provide read-only endpoints for: discovery feed (with section flags), trending calculation, top channels, top videos, category lists, and video/channel metadata.
+- Endpoints MUST support pagination, filtering, and sorting, and return lightweight payloads for initial lists with links for detail expansion.
+- The app MUST avoid storing or exposing any API keys or secrets client-side.
+
+### Acceptance Criteria (Public App)
+- Given a fresh visitor, when they open the landing page, then they see at least three discovery sections (New, Trending, Top) with responsive cards and skeleton loading while data is fetched.
+- Given a video card, when the user clicks, then a detail modal or page opens showing metadata and links but not streaming copyrighted content inline.
+- Given the theme toggle, when the user switches theme, then the UI updates immediately and the choice persists on reload.
+- Given slow or failing backend responses, when the client fetches data, then it shows skeletons and a friendly retry/backoff UI rather than a crash.
+
+### Non-Functional & Privacy Considerations
+- Do not collect personal data for unauthenticated visitors other than an optional anonymous cookie for theme preference and UX personalization. Document what is stored and for how long.
+- Follow robots/meta guidance for discovery pages that should be indexed vs not indexed and provide server-rendered metadata for essential pages.
+
+---
+
+
 ## Execution Status
 *Updated by main() during processing*
 

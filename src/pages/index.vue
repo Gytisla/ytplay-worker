@@ -1,7 +1,7 @@
 <template>
   <div>
     <Hero />
-    <NewSection />
+  <NewSection :loading="false" />
 
     <section class="mb-8">
       <h2 class="text-2xl font-semibold mb-4">Trending</h2>

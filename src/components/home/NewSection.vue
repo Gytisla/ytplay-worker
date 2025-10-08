@@ -73,5 +73,5 @@ const items = Array.from({ length: 8 }).map((_, i) => ({
 .dark .text-muted { color: rgba(148,163,184,0.8); }
 
 /* Small optimizations for card content */
-.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; -webkit-line-clamp: 2; line-clamp: 2; }
 </style>

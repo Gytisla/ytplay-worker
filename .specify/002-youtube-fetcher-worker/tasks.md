@@ -152,7 +152,7 @@ Backend-first monorepo structure:
 ## Phase P8: Observability & Operations
 
 - [x] T081 [P] Create structured logging utilities in src/lib/obs/logger.ts
-- [ ] T082 [P] Add logging to all job handlers
+- [x] T082 [P] Add logging to all job handlers
 - [ ] T083 [P] Create metrics collection in src/lib/obs/metrics.ts
 - [ ] T084 [P] Create database metrics views in migrations/013_metrics_views.sql
 - [ ] T085 [P] Create system metrics endpoint in server/api/metrics.get.ts
@@ -164,6 +164,9 @@ Backend-first monorepo structure:
 - [ ] T091 [P] Set up performance benchmarking and load testing
 - [ ] T092 [P] Create operational runbook and troubleshooting documentation
 - [ ] T093 Validate complete system with 100+ channel simulation
+
+# Phase 9: Improvements
+- [x] T094 [P] Call queue worker supabase functuon with Database-scheduled processing
 
 ## Dependencies
 

@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { YouTubeChannelsClient, type FetchChannelsOptions } from '../../../../src/lib/youtube/channels.ts'
 import { createYouTubeClientFromEnv } from '../../../../src/lib/youtube/client.ts'
+import { logger } from '../../../../src/lib/obs/logger.ts'
 
 /**
  * REFRESH_CHANNEL_STATS job handler
@@ -25,8 +26,8 @@ export async function handleRefreshChannelStats(
     const youtubeClient = createYouTubeClientFromEnv()
     const channelsClient = new YouTubeChannelsClient(youtubeClient)
 
-    // Fetch current channel statistics
-    console.log(`Fetching current stats for channel ${channelId}`)
+  // Fetch current channel statistics
+  logger.info('fetching current channel stats', { channelId })
     const channelOptions: FetchChannelsOptions = {
       ids: [channelId]
       // Use default config which includes statistics part
@@ -54,8 +55,8 @@ export async function handleRefreshChannelStats(
       // average_view_duration: channel.statistics.averageViewDuration || null
     }
 
-    // Store statistics snapshot
-    console.log(`Storing stats snapshot for channel ${channelId}`)
+  // Store statistics snapshot
+  logger.info('storing stats snapshot', { channelId })
     const { data: statsResult, error: statsError } = await supabase
       .rpc('capture_channel_stats', {
         p_channel_id: channelId,
@@ -63,17 +64,17 @@ export async function handleRefreshChannelStats(
       })
 
     if (statsError) {
-      console.error('Failed to capture channel stats:', statsError)
+      logger.error('Failed to capture channel stats', { channelId, error: statsError })
       return { success: false, error: `Failed to store channel statistics: ${statsError.message}` }
     }
 
     const isNewDay = statsResult?.[0]?.is_new_day ?? false
-    console.log(`Successfully ${isNewDay ? 'created new daily' : 'updated existing'} stats snapshot for channel ${channelId}`)
+  logger.info('stored channel stats snapshot', { channelId, isNewDay })
 
     return { success: true }
 
   } catch (error) {
-    console.error(`Error in REFRESH_CHANNEL_STATS handler for ${channelId}:`, error)
+    logger.error('error in REFRESH_CHANNEL_STATS handler', { channelId, error })
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error during channel stats refresh'

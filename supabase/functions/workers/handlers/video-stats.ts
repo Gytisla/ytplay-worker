@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { YouTubeVideosClient, type FetchVideosOptions } from '../../../../src/lib/youtube/videos.ts'
 import { createYouTubeClientFromEnv } from '../../../../src/lib/youtube/client.ts'
+import { logger } from '../../../../src/lib/obs/logger.ts'
 
 /**
  * REFRESH_VIDEO_STATS job handler
@@ -19,8 +20,8 @@ export async function handleRefreshVideoStats(
     const youtubeClient = createYouTubeClientFromEnv()
     const videosClient = new YouTubeVideosClient(youtubeClient)
 
-    // Build query for videos to refresh based on channel rotation criteria
-    console.log('Querying videos for stats refresh with criteria:', payload)
+  // Build query for videos to refresh based on channel rotation criteria
+  logger.info('querying videos for stats refresh', { payload })
 
     let query = supabase
       .from('videos')
@@ -38,22 +39,22 @@ export async function handleRefreshVideoStats(
     } else if (payload.channelHashRange) {
       // More complex rotation logic could be implemented here
       // For now, we'll process all videos if no specific criteria
-      console.log('Channel hash range specified but not implemented, processing all videos')
+  logger.info('channel hash range specified but not implemented; processing all', { payload })
     }
 
     const { data: videosToRefresh, error: queryError } = await query
 
     if (queryError) {
-      console.error('Failed to query videos for refresh:', queryError)
+      logger.error('failed to query videos for refresh', { error: queryError })
       return { success: false, error: `Database query failed: ${queryError.message}` }
     }
 
     if (!videosToRefresh || videosToRefresh.length === 0) {
-      console.log('No videos found matching refresh criteria')
+      logger.info('no videos found matching refresh criteria')
       return { success: true, itemsProcessed: 0 }
     }
 
-    console.log(`Found ${videosToRefresh.length} videos to refresh statistics`)
+    logger.info('found videos to refresh statistics', { count: videosToRefresh.length })
 
     // Extract YouTube video IDs
     const videoIds = videosToRefresh
@@ -61,12 +62,12 @@ export async function handleRefreshVideoStats(
       .filter(Boolean) as string[]
 
     if (videoIds.length === 0) {
-      console.log('No valid YouTube video IDs found')
+      logger.info('no valid youtube video ids found')
       return { success: true, itemsProcessed: 0 }
     }
 
-    // Fetch current statistics from YouTube API
-    console.log(`Fetching statistics for ${videoIds.length} videos`)
+  // Fetch current statistics from YouTube API
+  logger.info('fetching video statistics', { count: videoIds.length })
     const fetchOptions: FetchVideosOptions = {
       ids: videoIds,
       config: {
@@ -78,7 +79,7 @@ export async function handleRefreshVideoStats(
     const videos = await videosClient.fetchVideos(fetchOptions)
 
     if (videos.length === 0) {
-      console.log('No videos returned from YouTube API')
+      logger.info('no videos returned from youtube api')
       return { success: true, itemsProcessed: 0 }
     }
 
@@ -94,27 +95,27 @@ export async function handleRefreshVideoStats(
       }))
 
     if (statsData.length === 0) {
-      console.log('No videos with statistics to capture')
+      logger.info('no videos with statistics to capture')
       return { success: true, itemsProcessed: 0 }
     }
 
-    // Store statistics snapshots
-    console.log(`Capturing statistics for ${statsData.length} videos`)
+  // Store statistics snapshots
+  logger.info('capturing video statistics', { count: statsData.length })
     const { error: captureError } = await supabase
       .rpc('capture_video_stats', {
         video_stats_array: statsData
       })
 
     if (captureError) {
-      console.error('Failed to capture video stats:', captureError)
+      logger.error('failed to capture video stats', { error: captureError })
       return { success: false, error: `Failed to store video statistics: ${captureError.message}` }
     }
 
-    console.log(`Successfully refreshed statistics for ${statsData.length} videos`)
-    return { success: true, itemsProcessed: statsData.length }
+  logger.info('successfully refreshed video statistics', { itemsProcessed: statsData.length })
+  return { success: true, itemsProcessed: statsData.length }
 
   } catch (error) {
-    console.error('Error in REFRESH_VIDEO_STATS handler:', error)
+    logger.error('error in REFRESH_VIDEO_STATS handler', { error })
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error during video stats refresh'

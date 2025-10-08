@@ -4,6 +4,7 @@ import { YouTubePlaylistsClient, type FetchPlaylistItemsOptions } from '../../..
 import { YouTubeVideosClient, type FetchVideosOptions } from '../../../../src/lib/youtube/videos.ts'
 import type { VideoResource } from '../../../../src/lib/youtube/types.ts'
 import { createYouTubeClientFromEnv } from '../../../../src/lib/youtube/client.ts'
+import { logger } from '../../../../src/lib/obs/logger.ts'
 
 /**
  * BACKFILL_CHANNEL job handler
@@ -38,8 +39,8 @@ export async function handleBackfillChannel(
       return Number.isFinite(n) ? n : 0
     }
 
-    // Step 1: Fetch channel metadata
-    console.log(`Fetching channel metadata for ${channelId}`)
+  // Step 1: Fetch channel metadata
+  logger.info('fetching channel metadata', { channelId })
     const channelOptions: FetchChannelsOptions = {
       ids: [channelId]
     }
@@ -55,8 +56,8 @@ export async function handleBackfillChannel(
     }
     totalItemsProcessed++
 
-    // Step 2: Store channel data
-    console.log(`Storing channel data for ${channelId}`)
+  // Step 2: Store channel data
+  logger.info('storing channel data', { channelId })
     const channelData = {
       youtube_channel_id: channel.id,
       title: channel.snippet?.title ?? '',
@@ -91,7 +92,7 @@ export async function handleBackfillChannel(
     const channelError = typedUpsert.error ?? null
 
     if (channelError) {
-      console.error('Failed to upsert channel:', channelError)
+    logger.error('Failed to upsert channel', { channelId, error: channelError })
       return { success: false, error: `Failed to store channel data: ${channelError.message}` }
     }
 
@@ -100,12 +101,12 @@ export async function handleBackfillChannel(
       ? typedInsertedChannel.id
       : null
 
-    // Step 3: Fetch all videos from uploads playlist
-    console.log(`Fetching videos from uploads playlist for ${channelId}`)
+  // Step 3: Fetch all videos from uploads playlist
     const uploadsPlaylistId = channel.contentDetails?.relatedPlaylists?.uploads
+    logger.info('fetching uploads playlist', { channelId, uploadsPlaylistId })
 
     if (!uploadsPlaylistId) {
-      console.warn(`No uploads playlist found for channel ${channelId}`)
+      logger.warn('no uploads playlist found', { channelId })
       // Still capture initial stats even if no videos
     } else {
       const playlistOptions: FetchPlaylistItemsOptions = {
@@ -113,8 +114,8 @@ export async function handleBackfillChannel(
         maxPages: 100 // Allow fetching up to 5000 videos (100 pages * 50 videos)
       }
 
-      const playlistItems = await playlistsClient.fetchPlaylistItems(playlistOptions)
-      console.log(`Found ${playlistItems.length} videos in uploads playlist`)
+  const playlistItems = await playlistsClient.fetchPlaylistItems(playlistOptions)
+  logger.info('found videos in uploads playlist', { channelId, count: playlistItems.length })
 
       if (playlistItems.length > 0) {
         // Extract video IDs
@@ -139,7 +140,7 @@ export async function handleBackfillChannel(
           allVideos.push(...videos)
         }
 
-        console.log(`Fetched detailed data for ${allVideos.length} videos`)
+          logger.info('fetched detailed video data', { channelId, count: allVideos.length })
 
         // Convert to database format
         const videoData = allVideos.map(video => ({
@@ -187,18 +188,18 @@ export async function handleBackfillChannel(
           const videosError = typedUpsertVideos.error ?? null
 
           if (videosError) {
-            console.error('Failed to upsert videos:', videosError)
+            logger.error('Failed to upsert videos', { channelId, error: videosError })
             return { success: false, error: `Failed to store video data: ${videosError.message}` }
           }
 
           totalItemsProcessed += videoData.length
-          console.log(`Stored ${videoData.length} videos for channel ${channelId}`)
+          logger.info('stored videos', { channelId, stored: videoData.length })
         }
       }
     }
 
     // Step 4: Capture initial channel statistics
-    console.log(`Capturing initial stats for channel ${channelId}`)
+  logger.info('capturing initial channel stats', { channelId })
     const statsData = {
       channel_id: channelId,
       captured_at: new Date().toISOString(),
@@ -215,29 +216,29 @@ export async function handleBackfillChannel(
       })
 
     if (statsError) {
-      console.error('Failed to capture channel stats:', statsError)
+      logger.error('Failed to capture channel stats', { channelId, error: statsError })
       // Don't fail the entire job for stats capture failure
-      console.warn('Continuing despite stats capture failure')
+      logger.warn('continuing despite stats capture failure', { channelId })
     }
 
     // Step 5: Update channel status to active
-    console.log(`Marking channel ${channelId} as active`)
+  logger.info('marking channel active', { channelId })
     const { error: updateError } = await supabase
       .from('channels')
       .update({ status: 'active' })
       .eq('youtube_channel_id', channelId)
 
     if (updateError) {
-      console.error('Failed to update channel status:', updateError)
+      logger.error('Failed to update channel status', { channelId, error: updateError })
       // Don't fail the job for this, but log it
-      console.warn('Channel status not updated to active')
+      logger.warn('channel status not updated to active', { channelId })
     }
 
-    console.log(`Successfully backfilled channel ${channelId} with ${totalItemsProcessed} items processed`)
-    return { success: true, itemsProcessed: totalItemsProcessed }
+  logger.info('successfully backfilled channel', { channelId, itemsProcessed: totalItemsProcessed })
+  return { success: true, itemsProcessed: totalItemsProcessed }
 
   } catch (error) {
-    console.error(`Error in BACKFILL_CHANNEL handler for ${channelId}:`, error)
+    logger.error('error in BACKFILL_CHANNEL handler', { channelId, error })
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error during channel backfill'

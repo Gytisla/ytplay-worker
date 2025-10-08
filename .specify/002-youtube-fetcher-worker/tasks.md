@@ -151,18 +151,19 @@ Backend-first monorepo structure:
 
 ## Phase P8: Observability & Operations
 
-- [ ] T081 [P] Create structured logging utilities in src/lib/obs/logger.ts
-- [ ] T082 [P] Create metrics collection in src/lib/obs/metrics.ts
-- [ ] T083 [P] Create database metrics views in migrations/013_metrics_views.sql
-- [ ] T084 [P] Create system metrics endpoint in server/api/metrics.get.ts
-- [ ] T085 [P] Add performance monitoring to all job handlers
-- [ ] T086 [P] Add quota usage tracking and alerting logic
-- [ ] T087 [P] Write observability tests in tests/unit/observability/
-- [ ] T088 [P] Write metrics calculation tests in tests/integration/metrics/
-- [ ] T089 Create comprehensive end-to-end test suite covering all quickstart scenarios
-- [ ] T090 [P] Set up performance benchmarking and load testing
-- [ ] T091 [P] Create operational runbook and troubleshooting documentation
-- [ ] T092 Validate complete system with 100+ channel simulation
+- [x] T081 [P] Create structured logging utilities in src/lib/obs/logger.ts
+- [ ] T082 [P] Add logging to all job handlers
+- [ ] T083 [P] Create metrics collection in src/lib/obs/metrics.ts
+- [ ] T084 [P] Create database metrics views in migrations/013_metrics_views.sql
+- [ ] T085 [P] Create system metrics endpoint in server/api/metrics.get.ts
+- [ ] T086 [P] Add performance monitoring to all job handlers
+- [ ] T087 [P] Add quota usage tracking and alerting logic
+- [ ] T088 [P] Write observability tests in tests/unit/observability/
+- [ ] T089 [P] Write metrics calculation tests in tests/integration/metrics/
+- [ ] T090 Create comprehensive end-to-end test suite covering all quickstart scenarios
+- [ ] T091 [P] Set up performance benchmarking and load testing
+- [ ] T092 [P] Create operational runbook and troubleshooting documentation
+- [ ] T093 Validate complete system with 100+ channel simulation
 
 ## Dependencies
 

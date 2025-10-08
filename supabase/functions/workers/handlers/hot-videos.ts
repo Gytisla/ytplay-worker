@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { YouTubeVideosClient, type FetchVideosOptions } from '../../../../src/lib/youtube/videos.ts'
 import { createYouTubeClientFromEnv } from '../../../../src/lib/youtube/client.ts'
+import { logger } from '../../../../src/lib/obs/logger.ts'
 
 /**
  * REFRESH_HOT_VIDEOS job handler
@@ -19,35 +20,35 @@ export async function handleRefreshHotVideos(
     const youtubeClient = createYouTubeClientFromEnv()
     const videosClient = new YouTubeVideosClient(youtubeClient)
 
-    // Query for hot videos (published within last 7 days)
-    console.log('Querying for hot videos (published ≤7 days ago)')
+  // Query for hot videos (published within last 7 days)
+  logger.info('querying for hot videos')
     const { data: hotVideos, error: queryError } = await supabase
       .from('videos')
       .select('id, youtube_video_id, title')
       .gte('published_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
 
     if (queryError) {
-      console.error('Failed to query hot videos:', queryError)
+      logger.error('failed to query hot videos', { error: queryError })
       return { success: false, error: `Database query failed: ${queryError.message}` }
     }
 
     if (!hotVideos || hotVideos.length === 0) {
-      console.log('No hot videos found to refresh')
+      logger.info('no hot videos found')
       return { success: true, itemsProcessed: 0 }
     }
 
-    console.log(`Found ${hotVideos.length} hot videos to refresh`)
+    logger.info('found hot videos to refresh', { count: hotVideos.length })
 
     // Extract YouTube video IDs
     const videoIds = hotVideos.map(v => v.youtube_video_id).filter(Boolean) as string[]
 
     if (videoIds.length === 0) {
-      console.log('No valid YouTube video IDs found')
+      logger.info('no valid youtube video ids found')
       return { success: true, itemsProcessed: 0 }
     }
 
-    // Fetch current statistics from YouTube API
-    console.log(`Fetching statistics for ${videoIds.length} videos`)
+  // Fetch current statistics from YouTube API
+  logger.info('fetching video statistics', { count: videoIds.length })
     const fetchOptions: FetchVideosOptions = {
       ids: videoIds,
       config: {
@@ -59,7 +60,7 @@ export async function handleRefreshHotVideos(
     const videos = await videosClient.fetchVideos(fetchOptions)
 
     if (videos.length === 0) {
-      console.log('No videos returned from YouTube API')
+      logger.info('no videos returned from youtube api')
       return { success: true, itemsProcessed: 0 }
     }
 
@@ -75,27 +76,27 @@ export async function handleRefreshHotVideos(
       }))
 
     if (statsData.length === 0) {
-      console.log('No videos with statistics to capture')
+      logger.info('no videos with statistics to capture')
       return { success: true, itemsProcessed: 0 }
     }
 
-    // Store statistics snapshots
-    console.log(`Capturing statistics for ${statsData.length} videos`)
+  // Store statistics snapshots
+  logger.info('capturing video statistics', { count: statsData.length })
     const { error: captureError } = await supabase
       .rpc('capture_video_stats', {
         video_stats_array: statsData
       })
 
     if (captureError) {
-      console.error('Failed to capture video stats:', captureError)
+      logger.error('failed to capture video stats', { error: captureError })
       return { success: false, error: `Failed to store video statistics: ${captureError.message}` }
     }
 
-    console.log(`Successfully refreshed statistics for ${statsData.length} hot videos`)
-    return { success: true, itemsProcessed: statsData.length }
+  logger.info('successfully refreshed hot videos', { itemsProcessed: statsData.length })
+  return { success: true, itemsProcessed: statsData.length }
 
   } catch (error) {
-    console.error('Error in REFRESH_HOT_VIDEOS handler:', error)
+    logger.error('error in REFRESH_HOT_VIDEOS handler', { error })
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error during hot videos refresh'

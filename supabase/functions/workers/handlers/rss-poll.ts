@@ -3,6 +3,7 @@ import { RSSPollingOperations } from '../rss.ts'
 import { RSSParser } from '../../../../src/lib/rss/parser.ts'
 import { FeedStateManager } from '../../../../src/lib/rss/state.ts'
 import type { FeedState } from '../../../../src/lib/rss/state.ts'
+import { logger } from '../../../../src/lib/obs/logger.ts'
 
 /**
  * RSS_POLL_CHANNEL job handler
@@ -29,22 +30,22 @@ export async function handleRSSPollChannel(
     const rssOps = new RSSPollingOperations(supabase)
     const parser = new RSSParser()
 
-    // Get current feed state
-    console.log(`Getting feed state for channel ${channelId}`)
+  // Get current feed state
+  logger.info('getting feed state', { channelId })
     const currentState = await rssOps.getChannelFeed(channelId)
 
     if (!currentState) {
-      console.log(`No feed configuration found for channel ${channelId}`)
+      logger.warn('no feed configuration found', { channelId })
       return { success: false, error: `No RSS feed configured for channel ${channelId}` }
     }
 
     if (currentState.status !== 'active') {
-      console.log(`Feed is not active for channel ${channelId} (status: ${currentState.status})`)
+      logger.info('feed not active; skipping poll', { channelId, status: currentState.status })
       return { success: true, itemsProcessed: 0 }
     }
 
     // Fetch RSS feed content
-    console.log(`Fetching RSS feed from ${currentState.feedUrl}`)
+  logger.info('fetching rss feed', { channelId, url: currentState.feedUrl })
     const response = await fetch(currentState.feedUrl, {
       headers: {
         ...(currentState.lastETag && { 'If-None-Match': currentState.lastETag }),
@@ -54,7 +55,7 @@ export async function handleRSSPollChannel(
     })
 
     if (response.status === 304) {
-      console.log('Feed not modified since last poll')
+      logger.info('feed not modified since last poll', { channelId })
       // Update last polled time
       const updatedState = {
         ...currentState,
@@ -73,11 +74,11 @@ export async function handleRSSPollChannel(
 
     // Parse RSS content
     const xmlContent = await response.text()
-    console.log(`Parsing RSS feed (${xmlContent.length} characters)`)
-    const videos = parser.parseFeed(xmlContent)
+  logger.info('parsing rss feed', { channelId, sizeChars: xmlContent.length })
+  const videos = parser.parseFeed(xmlContent)
 
     if (videos.length === 0) {
-      console.log('No videos found in RSS feed')
+      logger.info('no videos found in rss feed', { channelId })
       const etag = response.headers.get('etag') ?? undefined
       const lastModified = response.headers.get('last-modified') ?? undefined
       const headers = {
@@ -89,7 +90,7 @@ export async function handleRSSPollChannel(
       return { success: true, itemsProcessed: 0 }
     }
 
-    console.log(`Found ${videos.length} videos in RSS feed`)
+  logger.info('found videos in rss feed', { channelId, count: videos.length })
 
     // Identify new videos based on publication date
     const lastVideoPublishedAt = currentState.lastVideoPublishedAt
@@ -97,14 +98,14 @@ export async function handleRSSPollChannel(
       ? videos.filter(video => video.publishedAt > lastVideoPublishedAt)
       : videos // If no last published date, consider all videos as new
 
-    console.log(`Identified ${newVideos.length} new videos since last poll`)
+  logger.info('identified new videos since last poll', { channelId, newCount: newVideos.length })
 
     // Extract video IDs for job enqueueing
     const newVideoIds = newVideos.map(v => v.videoId)
 
     // Enqueue jobs for new videos
     if (newVideoIds.length > 0) {
-      console.log(`Enqueueing jobs for ${newVideoIds.length} new videos`)
+      logger.info('enqueueing video jobs', { channelId, newVideoIdsCount: newVideoIds.length })
       await rssOps.enqueueVideoJobs(channelId, newVideoIds)
     }
 
@@ -133,18 +134,18 @@ export async function handleRSSPollChannel(
     }
     await rssOps.updateFeedState(updatedState)
 
-    console.log(`Successfully processed RSS feed for channel ${channelId}`)
-    return { success: true, itemsProcessed: newVideoIds.length }
+  logger.info('successfully processed rss feed', { channelId, itemsProcessed: newVideoIds.length })
+  return { success: true, itemsProcessed: newVideoIds.length }
 
   } catch (error) {
-    console.error(`Error in RSS_POLL_CHANNEL handler for ${channelId}:`, error)
+    logger.error('error in RSS_POLL_CHANNEL handler', { channelId, error })
 
     // Update feed state with error
     try {
       const rssOps = new RSSPollingOperations(supabase)
       await rssOps.updateFeedStateAfterError(channelId, error as Error)
     } catch (updateError) {
-      console.error('Failed to update feed state after error:', updateError)
+      logger.error('failed to update feed state after error', { channelId, updateError })
     }
 
     return {

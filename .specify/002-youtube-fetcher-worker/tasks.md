@@ -157,7 +157,7 @@ Backend-first monorepo structure:
 - [ ] T084 [P] Create database metrics views in migrations/013_metrics_views.sql
 - [ ] T085 [P] Create system metrics endpoint in server/api/metrics.get.ts
 - [ ] T086 [P] Add performance monitoring to all job handlers
-- [ ] T087 [P] Add quota usage tracking and alerting logic
+- [ ] T087 [P] Add quota usage tracking logic
 - [ ] T088 [P] Write observability tests in tests/unit/observability/
 - [ ] T089 [P] Write metrics calculation tests in tests/integration/metrics/
 - [ ] T090 Create comprehensive end-to-end test suite covering all quickstart scenarios
@@ -165,8 +165,8 @@ Backend-first monorepo structure:
 - [ ] T092 [P] Create operational runbook and troubleshooting documentation
 - [ ] T093 Validate complete system with 100+ channel simulation
 
-# Phase 9: Improvements
 - [x] T094 [P] Call queue worker supabase functuon with Database-scheduled processing
+ - [x] T095 [P] Create trigger to fill in channel_feeds automatically when new channel is added - https://www.youtube.com/feeds/videos.xml?channel_id=<channel_id>
 
 ## Dependencies
 

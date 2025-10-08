@@ -5,9 +5,10 @@
 </template>
 
 <script setup lang="ts">
-// This is a minimal app.vue for API-only Nuxt applications
-// In production, this page would typically not be accessible
+// This is a minimal app.vue for the application
 </script>
+
+<style src="~/assets/css/main.css"></style>
 
 <style scoped>
 /* Additional custom styles can go here */

@@ -1,8 +1,8 @@
 <template>
   <header class="w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-      <a href="/" class="flex items-center gap-3">
-        <span class="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center text-white font-semibold">YT</span>
+        <a href="/" class="flex items-center gap-3">
+        <span class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white font-semibold">YT</span>
         <span class="hidden sm:inline text-lg font-semibold text-gray-900 dark:text-gray-100">ytplay</span>
       </a>
 
@@ -18,7 +18,7 @@
         <button
           @click="toggleTheme"
           :aria-pressed="isDark.toString()"
-          class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+          class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-400"
           title="Toggle theme"
         >
           <svg v-if="isDark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">

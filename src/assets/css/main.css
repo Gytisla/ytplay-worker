@@ -1,0 +1,13 @@
+:root{
+	--color-surface: #ffffff;
+	--color-muted: #6b7280;
+	--color-primary: #ff2f2f; /* default primary */
+}
+
+.dark {
+	--color-surface: #0b1220;
+	--color-muted: #9ca3af;
+	--color-primary: #e62626;
+}
+
+/* Utility classes that use the variables can be added if needed, but prefer Tailwind utilities */

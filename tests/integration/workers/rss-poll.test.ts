@@ -2,7 +2,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { handleRSSPollChannel } from '../../../supabase/functions/workers/handlers/rss-poll'
 
 // Use vi.__mock__ to expose mock instances safely
-vi.mock('../../../src/workers/rss', async () => {
+// Mock the RSS operations module used by the handler (supabase/functions copy)
+vi.mock('../../../supabase/functions/workers/rss', async () => {
   const mockRSSOps = {
     getChannelFeed: vi.fn(),
     updateFeedState: vi.fn(),
@@ -43,12 +44,30 @@ const mockFetch = vi.fn()
 global.fetch = mockFetch as any
 
 function getMocks() {
-  return {
-    mockRSSOps: (vi as any).__mock__.rss.mockRSSOps,
-    mockParser: (vi as any).__mock__.parser.mockParser,
-    mockFeedStateManager: (vi as any).__mock__.state.mockFeedStateManager,
-    mockFetch
-  }
+  // Prefer importing the mocked modules and invoking their mocked constructors.
+  // This avoids timing issues where vi.__mock__ may not be populated yet.
+  return (async () => {
+  const rssMod = await import('../../../supabase/functions/workers/rss')
+    const parserMod = await import('../../../src/lib/rss/parser')
+    const stateMod = await import('../../../src/lib/rss/state')
+
+    const mockRSSOps = typeof (rssMod as any).RSSPollingOperations === 'function'
+      ? (rssMod as any).RSSPollingOperations()
+      : (vi as any).__mock__?.rss?.mockRSSOps
+
+    const mockParser = typeof (parserMod as any).RSSParser === 'function'
+      ? (parserMod as any).RSSParser()
+      : (vi as any).__mock__?.parser?.mockParser
+
+    const mockFeedStateManager = (stateMod as any).FeedStateManager ?? (vi as any).__mock__?.state?.mockFeedStateManager
+
+    return {
+      mockRSSOps,
+      mockParser,
+      mockFeedStateManager,
+      mockFetch
+    }
+  })()
 }
 
 describe('RSS_POLL_CHANNEL (integration - mocked DB/HTTP)', () => {

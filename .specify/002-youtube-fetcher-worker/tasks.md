@@ -133,7 +133,7 @@ Backend-first monorepo structure:
 - [x] T066 [P] Schedule REFRESH_HOT_VIDEOS jobs (hourly)
 - [x] T067 [P] Schedule REFRESH_VIDEO_STATS jobs (weekly rotation by channel hash)
 - [ ] T068 [P] Schedule REQUEUE_STUCK jobs (hourly cleanup)
-- [ ] T069 Apply cron scheduling to database
+- [x] T069 Apply cron scheduling to database
 - [ ] T070 [P] Write tests for schedule timing and dedup keys in tests/unit/cron/
 - [ ] T071 [P] Test schedule conflict resolution and job distribution
 - [ ] T072 Validate cron scheduling with time-accelerated testing

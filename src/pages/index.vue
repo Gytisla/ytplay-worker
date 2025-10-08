@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import Hero from '~/components/Hero.vue'
+import Hero from '~/components/home/Hero.vue'
 </script>
 
 <style>

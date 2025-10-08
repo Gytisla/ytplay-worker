@@ -30,7 +30,7 @@ BEGIN
     PERFORM enqueue_job(
       'RSS_POLL_CHANNEL',
       jsonb_build_object('channelId', v_youtube_id, 'feedUrl', rec.feed_url),
-      0,
+      7,
       'rss_poll:' || v_youtube_id
     );
     v_count := v_count + 1;
@@ -60,7 +60,7 @@ BEGIN
     PERFORM enqueue_job(
       'REFRESH_CHANNEL_STATS',
       jsonb_build_object('channelId', v_youtube_id),
-      0,
+      5,
       'refresh_channel_stats:' || v_youtube_id || ':' || v_today
     );
     v_count := v_count + 1;
@@ -83,7 +83,7 @@ DECLARE
   v_hour TEXT := to_char(now() at time zone 'UTC', 'YYYY-MM-DD-HH24');
 BEGIN
   -- Enqueue a single REFRESH_HOT_VIDEOS job with an hour-scoped dedup key
-  v_job_id := enqueue_job('REFRESH_HOT_VIDEOS', jsonb_build_object(), 0, 'refresh_hot_videos:' || v_hour);
+  v_job_id := enqueue_job('REFRESH_HOT_VIDEOS', jsonb_build_object(), 7, 'refresh_hot_videos:' || v_hour);
 
   IF v_job_id IS NOT NULL THEN
     RETURN 1;
@@ -106,7 +106,7 @@ DECLARE
   v_week TEXT := to_char(now() at time zone 'UTC', 'IYYY-IW'); -- ISO year-week
 BEGIN
   -- Enqueue a single REFRESH_VIDEO_STATS job that can perform the weekly rotation
-  v_job_id := enqueue_job('REFRESH_VIDEO_STATS', jsonb_build_object('mode', 'weekly'), 0, 'refresh_video_stats_weekly:' || v_week);
+  v_job_id := enqueue_job('REFRESH_VIDEO_STATS', jsonb_build_object('mode', 'weekly'), 3, 'refresh_video_stats_weekly:' || v_week);
 
   IF v_job_id IS NOT NULL THEN
     RETURN 1;

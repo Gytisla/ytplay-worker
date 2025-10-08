@@ -59,27 +59,86 @@ export class RSSParser {
    */
   parseFeed(xmlContent: string): ParsedVideoItem[] {
     try {
-      const parsed = this.parser.parse(xmlContent) as RSSFeed
+      const parsed = this.parser.parse(xmlContent) as any
 
-      // Check if this is valid RSS structure
-      if (!parsed.rss?.channel) {
-        throw new Error('Invalid RSS feed structure: missing rss or channel')
-      }
+      // RSS <rss><channel><item> handling
+      if (parsed.rss?.channel) {
+        // Empty feeds are valid, return empty array
+        if (!parsed.rss.channel.item) {
+          return []
+        }
 
-      // Empty feeds are valid, return empty array
-      if (!parsed.rss.channel.item) {
-        return []
-      }
-
-      const channel = parsed.rss.channel
-      const items = Array.isArray(channel.item) ? channel.item : [channel.item]
+        const channel = parsed.rss.channel
+        const items = Array.isArray(channel.item) ? channel.item : [channel.item]
 
         return items
-          .filter(item => item?.link)
-          .map(item => this.parseItem?.(item))
-          .filter((item): item is ParsedVideoItem => item !== null)
+          .filter((item: any) => item?.link)
+          .map((item: any) => this.parseItem?.(item) as ParsedVideoItem | null)
+          .filter((item: ParsedVideoItem | null): item is ParsedVideoItem => item !== null)
+      }
+
+      // Atom <feed><entry> handling (YouTube uses Atom for some feeds)
+      if (parsed.feed?.entry) {
+        const entries = Array.isArray(parsed.feed.entry) ? parsed.feed.entry : [parsed.feed.entry]
+
+        return entries
+          .map((entry: any) => this.parseAtomEntry(entry) as ParsedVideoItem | null)
+          .filter((item: ParsedVideoItem | null): item is ParsedVideoItem => item !== null)
+      }
+
+      throw new Error('Invalid RSS feed structure: missing rss or channel or feed/entry')
     } catch (error) {
       throw new Error(`Failed to parse RSS feed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  /**
+   * Parse individual Atom <entry> into video data
+   */
+  private parseAtomEntry(entry: any): ParsedVideoItem | null {
+    try {
+      // Try to get a link href - entry.link can be array or object
+      let link: string | undefined
+      if (Array.isArray(entry.link)) {
+        const alternate = entry.link.find((l: any) => !l['@_rel'] || l['@_rel'] === 'alternate')
+        link = alternate ? alternate['@_href'] || alternate.href || alternate : undefined
+      } else if (entry.link) {
+        link = entry.link['@_href'] || entry.link.href || entry.link
+      }
+
+      // fallback to id if link is missing
+      if (!link && entry.id) {
+        link = typeof entry.id === 'string' ? entry.id : (entry.id['#text'] || undefined)
+      }
+
+      const videoId = link ? this.extractVideoId(String(link)) : null
+      if (!videoId) return null
+
+      // published or updated
+      const pub = entry.published || entry.updated || entry['pubDate']
+      const publishedAt = pub ? this.parsePubDate(String(pub)) : null
+      if (!publishedAt) return null
+
+      const title = entry.title && (typeof entry.title === 'string' ? entry.title : entry.title['#text'])
+      const description = entry.summary && (typeof entry.summary === 'string' ? entry.summary : entry.summary['#text'])
+
+      // media:group thumbnail (YouTube Atom) or media:thumbnail
+      const thumbnailUrl = entry['media:group']?.['media:thumbnail']?.['@_url']
+        || entry['media:thumbnail']?.['@_url']
+
+      const result: ParsedVideoItem = {
+        videoId,
+        title: title ?? 'Untitled',
+        link: String(link),
+        publishedAt,
+      }
+
+      if (description) result.description = description
+      if (thumbnailUrl) result.thumbnailUrl = thumbnailUrl
+
+      return result
+    } catch {
+      return null
     }
   }
 
@@ -157,8 +216,8 @@ export class RSSParser {
    */
   validateFeed(xmlContent: string): boolean {
     try {
-      const parsed = this.parser.parse(xmlContent) as RSSFeed
-      return !!(parsed.rss?.channel?.item)
+      const parsed = this.parser.parse(xmlContent) as any
+      return !!(parsed.rss?.channel?.item || parsed.feed?.entry)
     } catch {
       return false
     }

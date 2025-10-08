@@ -74,8 +74,23 @@ export async function handleRSSPollChannel(
 
     // Parse RSS content
     const xmlContent = await response.text()
-  logger.info('parsing rss feed', { channelId, sizeChars: xmlContent.length })
-  const videos = parser.parseFeed(xmlContent)
+    const contentType = response.headers.get('content-type') ?? undefined
+    logger.info('parsing rss feed', { channelId, sizeChars: xmlContent.length, contentType })
+    let videos
+    try {
+      videos = parser.parseFeed(xmlContent)
+    } catch (parseError) {
+      // Log a short snippet and content-type to help debugging (don't log full secrets)
+      logger.error('Failed to parse RSS feed', {
+        channelId,
+        error: parseError instanceof Error ? parseError.message : String(parseError),
+        contentType,
+        snippet: xmlContent?.slice?.(0, 200) ?? undefined,
+        sizeChars: xmlContent?.length
+      })
+      // Re-throw so existing error handling updates feed state
+      throw parseError
+    }
 
     if (videos.length === 0) {
       logger.info('no videos found in rss feed', { channelId })

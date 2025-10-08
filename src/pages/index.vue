@@ -1,10 +1,10 @@
 <template>
   <div>
     <Hero />
-  <NewSection :loading="false" />
-
+    <div class="mt-8">
+      <NewSection :loading="false" />
+    </div>
     <TrendingSection :loading="false" />
-
     <TopChannelsSection :loading="false" />
   </div>
 

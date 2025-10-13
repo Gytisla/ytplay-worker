@@ -1,5 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { RSSPollingOperations } from '../rss.ts'
+import { DatabaseOperations } from '../db.ts'
+import type { Database } from '../../../types/supabase'
 import { RSSParser } from '../../../../src/lib/rss/parser.ts'
 import { FeedStateManager } from '../../../../src/lib/rss/state.ts'
 import type { FeedState } from '../../../../src/lib/rss/state.ts'
@@ -117,6 +119,52 @@ export async function handleRSSPollChannel(
 
     // Extract video IDs for job enqueueing
     const newVideoIds = newVideos.map(v => v.videoId)
+
+    // Upsert newly discovered videos into the database (idempotent)
+    if (newVideos.length > 0) {
+      try {
+        const dbOps = new DatabaseOperations(supabase as SupabaseClient<Database>)
+        // Ensure channel exists and get internal channel UUID
+        let channelRow = await dbOps.getChannelById(channelId)
+        if (!channelRow) {
+          // Create a minimal channel record if missing
+          await dbOps.upsertChannel({ youtube_channel_id: channelId, title: `Channel ${channelId}`, published_at: new Date().toISOString() })
+          channelRow = await dbOps.getChannelById(channelId)
+        }
+
+        if (channelRow) {
+          const videoPayload = newVideos.map(v => {
+            const p: Record<string, unknown> = {
+              youtube_video_id: v.videoId,
+              channel_id: channelRow!.id,
+              title: v.title,
+              published_at: v.publishedAt.toISOString(),
+            }
+            if (v.description) p.description = v.description
+            if (v.thumbnailUrl) p.thumbnail_url = v.thumbnailUrl
+            return p
+          })
+
+          if (videoPayload.length > 0) {
+            type UpsertVideoPayload = Array<{
+              youtube_video_id: string
+              channel_id: string
+              title?: string
+              description?: string
+              published_at?: string
+              thumbnail_url?: string
+            }>
+            logger.info('upserting discovered videos to db', { channelId, count: videoPayload.length })
+            await dbOps.upsertVideos(videoPayload as UpsertVideoPayload)
+          }
+        } else {
+          logger.warn('could not ensure channel exists for upserting videos', { channelId })
+        }
+      } catch (videosError) {
+        logger.error('Failed to upsert discovered videos', { channelId, error: videosError })
+        // Continue to enqueue jobs even if upsert fails
+      }
+    }
 
     // Enqueue jobs for new videos
     if (newVideoIds.length > 0) {

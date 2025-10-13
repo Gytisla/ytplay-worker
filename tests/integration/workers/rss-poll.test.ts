@@ -17,6 +17,20 @@ vi.mock('../../../supabase/functions/workers/rss', async () => {
   }
 })
 
+// Mock DatabaseOperations module used for upserting videos
+vi.mock('../../../supabase/functions/workers/db', async () => {
+  const mockDBOps = {
+    getChannelById: vi.fn(),
+    upsertChannel: vi.fn(),
+    upsertVideos: vi.fn()
+  }
+  const mock = { mockDBOps }
+  ;(vi as any).__mock__ = { ...((vi as any).__mock__ ?? {}), db: mock }
+  return {
+    DatabaseOperations: vi.fn().mockImplementation(() => mockDBOps)
+  }
+})
+
 vi.mock('../../../src/lib/rss/parser', async () => {
   const mockParser = { parseFeed: vi.fn() }
   const mock = { mockParser }
@@ -49,7 +63,8 @@ function getMocks() {
   return (async () => {
   const rssMod = await import('../../../supabase/functions/workers/rss')
     const parserMod = await import('../../../src/lib/rss/parser')
-    const stateMod = await import('../../../src/lib/rss/state')
+  const stateMod = await import('../../../src/lib/rss/state')
+  const dbMod = await import('../../../supabase/functions/workers/db')
 
     const mockRSSOps = typeof (rssMod as any).RSSPollingOperations === 'function'
       ? (rssMod as any).RSSPollingOperations()
@@ -60,11 +75,15 @@ function getMocks() {
       : (vi as any).__mock__?.parser?.mockParser
 
     const mockFeedStateManager = (stateMod as any).FeedStateManager ?? (vi as any).__mock__?.state?.mockFeedStateManager
+    const mockDBOps = typeof (dbMod as any).DatabaseOperations === 'function'
+      ? (dbMod as any).DatabaseOperations()
+      : (vi as any).__mock__?.db?.mockDBOps
 
     return {
       mockRSSOps,
       mockParser,
       mockFeedStateManager,
+      mockDBOps,
       mockFetch
     }
   })()
@@ -72,11 +91,14 @@ function getMocks() {
 
 describe('RSS_POLL_CHANNEL (integration - mocked DB/HTTP)', () => {
   beforeEach(async () => {
-    const { mockRSSOps, mockParser, mockFetch } = await getMocks()
+    const { mockRSSOps, mockParser, mockFetch, mockDBOps } = await getMocks()
     mockRSSOps.getChannelFeed.mockClear()
     mockRSSOps.updateFeedState.mockClear()
     mockRSSOps.updateFeedStateAfterError.mockClear()
     mockRSSOps.enqueueVideoJobs.mockClear()
+    mockDBOps.getChannelById?.mockClear()
+    mockDBOps.upsertChannel?.mockClear()
+    mockDBOps.upsertVideos?.mockClear()
     mockParser.parseFeed.mockClear()
     mockFetch.mockClear()
 
@@ -93,6 +115,9 @@ describe('RSS_POLL_CHANNEL (integration - mocked DB/HTTP)', () => {
     mockRSSOps.updateFeedState.mockResolvedValue(undefined)
     mockRSSOps.updateFeedStateAfterError.mockResolvedValue(undefined)
     mockRSSOps.enqueueVideoJobs.mockResolvedValue(undefined)
+  mockDBOps.getChannelById?.mockResolvedValue({ id: 'uuid-channel-1' })
+  mockDBOps.upsertChannel?.mockResolvedValue(undefined)
+  mockDBOps.upsertVideos?.mockResolvedValue(undefined)
     mockParser.parseFeed.mockReturnValue([])
     mockRSSOps.updateFeedState.mockImplementation((s: any, headers: any) => ({
       ...s,
@@ -103,7 +128,7 @@ describe('RSS_POLL_CHANNEL (integration - mocked DB/HTTP)', () => {
   })
 
   it('polls feed, parses and enqueues new videos', async () => {
-    const { mockRSSOps, mockParser, mockFetch } = await getMocks()
+  const { mockRSSOps, mockParser, mockFetch, mockDBOps } = await getMocks()
 
     const mockVideos = [
       { videoId: 'video123', publishedAt: new Date('2023-10-02T00:00:00Z') },
@@ -130,6 +155,11 @@ describe('RSS_POLL_CHANNEL (integration - mocked DB/HTTP)', () => {
     // Parser was invoked and enqueue was called with only the new video(s)
     expect(mockParser.parseFeed).toHaveBeenCalled()
     expect(mockRSSOps.enqueueVideoJobs).toHaveBeenCalled()
+  // Ensure DB upsert happened for discovered videos
+  expect(mockDBOps.upsertVideos).toHaveBeenCalled()
+  const upsertArgs = mockDBOps.upsertVideos.mock.calls[0][0]
+  expect(Array.isArray(upsertArgs)).toBe(true)
+  expect(upsertArgs.map((v: any) => v.youtube_video_id)).toEqual(expect.arrayContaining(['video123']))
     const enqueueArgs = mockRSSOps.enqueueVideoJobs.mock.calls[0]
     expect(enqueueArgs[0]).toBe('channel123')
     // ensure the job list contains the newer videoId

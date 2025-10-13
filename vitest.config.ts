@@ -26,11 +26,16 @@ export default defineConfig({
     ],
 
     // Run integration tests sequentially to avoid database conflicts
+    // Run tests sequentially to avoid database conflicts between workers
+    // Set maxConcurrency to 1 so tests that share external resources (DB) do not run in parallel.
+    maxConcurrency: 1,
     pool: 'threads',
     poolOptions: {
       threads: {
+        // singleThread ensures each worker uses a single thread for execution.
         singleThread: true,
-        isolate: false
+        // isolate prevents sharing VM state between test threads which can cause shared DB clients
+        isolate: true
       }
     },
 

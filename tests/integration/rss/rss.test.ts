@@ -49,6 +49,10 @@ describe('RSS Feed State Management Integration Tests', () => {
   beforeEach(async () => {
     // Clean up all tables used by RSS tests
     await client.query('TRUNCATE TABLE channels, channel_feeds, jobs, job_events RESTART IDENTITY CASCADE')
+    // Extra cleanup: remove any lingering channel_feeds that match YouTube RSS feed URLs
+    // This is defensive: in some CI/test isolation scenarios TRUNCATE may not clear rows created
+    // by other processes immediately, so also delete by pattern to avoid unique constraint conflicts.
+    await client.query("DELETE FROM channel_feeds WHERE feed_url LIKE 'https://www.youtube.com/feeds/videos.xml%'")
   })
 
   describe('Channel Feed Configuration', () => {

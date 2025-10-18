@@ -18,17 +18,23 @@
           <div class="flex flex-col md:flex-row gap-6">
             <img :src="channel.avatar" alt="" class="w-24 h-24 rounded-full object-cover mx-auto md:mx-0" />
             <div class="flex-1 text-center md:text-left">
-              <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-2">{{ channel.name }}</h1>
+              <div class="flex items-center justify-between mb-2">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">{{ channel.name }}</h1>
+                <button 
+                  @click="openInYouTube"
+                  class="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium text-sm"
+                >
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  </svg>
+                  Open in YouTube
+                </button>
+              </div>
               <p class="text-muted dark:text-gray-400 mb-4">{{ channel.description || 'No description available' }}</p>
               <div class="flex flex-wrap justify-center md:justify-start gap-4 text-sm mb-4">
                 <span class="text-muted dark:text-gray-400">{{ channel.subs }} subscribers</span>
                 <span class="text-muted dark:text-gray-400">{{ channel.videos }} videos</span>
                 <span class="text-muted dark:text-gray-400">Joined {{ channel.joined }}</span>
-              </div>
-              <div class="flex justify-center md:justify-start">
-                <button class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-500 transition font-medium">
-                  Subscribe
-                </button>
               </div>
             </div>
           </div>
@@ -438,6 +444,12 @@ async function changeSort(sort: 'new' | 'popular') {
 
   videoSort.value = sort
   await loadVideos(true) // Reset and reload with new sort
+}
+
+function openInYouTube() {
+  if (channel.value?.youtubeId) {
+    window.open(`https://www.youtube.com/channel/${channel.value.youtubeId}`, '_blank')
+  }
 }
 
 function updateCharts() {

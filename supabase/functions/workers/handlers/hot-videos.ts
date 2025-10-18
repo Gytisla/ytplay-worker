@@ -80,7 +80,7 @@ export async function handleRefreshHotVideos(
       duration: video.contentDetails?.duration || null,
       description: video.snippet?.description || null,
       title: video.snippet?.title || null,
-      thumbnail_url: video.snippet?.thumbnails?.default?.url || null,
+      thumbnail_url: video.snippet?.thumbnails?.high?.url || video.snippet?.thumbnails?.medium?.url || video.snippet?.thumbnails?.default?.url || null,
       tags: video.snippet?.tags || null,
       category_id: video.snippet?.categoryId || null,
       live_broadcast_content: video.snippet?.liveBroadcastContent || 'none',

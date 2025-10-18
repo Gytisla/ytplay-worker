@@ -43,6 +43,67 @@ export async function handleRefreshChannelStats(
       return { success: false, error: `No statistics available for channel ${channelId}` }
     }
 
+    // Check if channel metadata needs updating
+    logger.info('checking for channel metadata updates', { channelId })
+    const { data: existingChannel, error: fetchError } = await supabase
+      .from('channels')
+      .select('title, description, thumbnail_url, custom_url, country, default_language, topic_categories, keywords, privacy_status, is_linked, long_uploads_status, made_for_kids')
+      .eq('youtube_channel_id', channelId)
+      .single()
+
+    if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 is "not found"
+      logger.error('Failed to fetch existing channel data', { channelId, error: fetchError })
+      return { success: false, error: `Failed to fetch channel data: ${fetchError.message}` }
+    }
+
+    // Prepare updated channel data
+    const updatedChannelData = {
+      title: channel.snippet?.title || existingChannel?.title,
+      description: channel.snippet?.description || existingChannel?.description,
+      thumbnail_url: channel.snippet?.thumbnails?.high?.url || channel.snippet?.thumbnails?.medium?.url || channel.snippet?.thumbnails?.default?.url || existingChannel?.thumbnail_url,
+      custom_url: channel.snippet?.customUrl || existingChannel?.custom_url,
+      country: channel.snippet?.country || existingChannel?.country,
+      default_language: channel.snippet?.defaultLanguage || existingChannel?.default_language,
+      topic_categories: channel.topicDetails?.topicCategories || existingChannel?.topic_categories,
+      keywords: channel.snippet?.keywords ? channel.snippet.keywords.split(',').map((k: string) => k.trim()) : existingChannel?.keywords,
+      privacy_status: channel.status?.privacyStatus || existingChannel?.privacy_status,
+      is_linked: channel.status?.isLinked || existingChannel?.is_linked,
+      long_uploads_status: channel.status?.longUploadsStatus || existingChannel?.long_uploads_status,
+      made_for_kids: channel.status?.madeForKids || existingChannel?.made_for_kids,
+      last_fetched_at: new Date().toISOString(),
+    }
+
+    // Check if any metadata has changed
+    const hasMetadataChanged = !existingChannel || 
+      updatedChannelData.title !== existingChannel.title ||
+      updatedChannelData.description !== existingChannel.description ||
+      updatedChannelData.thumbnail_url !== existingChannel.thumbnail_url ||
+      updatedChannelData.custom_url !== existingChannel.custom_url ||
+      updatedChannelData.country !== existingChannel.country ||
+      updatedChannelData.default_language !== existingChannel.default_language ||
+      JSON.stringify(updatedChannelData.topic_categories) !== JSON.stringify(existingChannel.topic_categories) ||
+      JSON.stringify(updatedChannelData.keywords) !== JSON.stringify(existingChannel.keywords) ||
+      updatedChannelData.privacy_status !== existingChannel.privacy_status ||
+      updatedChannelData.is_linked !== existingChannel.is_linked ||
+      updatedChannelData.long_uploads_status !== existingChannel.long_uploads_status ||
+      updatedChannelData.made_for_kids !== existingChannel.made_for_kids
+
+    if (hasMetadataChanged) {
+      logger.info('updating channel metadata', { channelId })
+      const { error: updateError } = await supabase
+        .from('channels')
+        .update(updatedChannelData)
+        .eq('youtube_channel_id', channelId)
+
+      if (updateError) {
+        logger.error('Failed to update channel metadata', { channelId, error: updateError })
+        return { success: false, error: `Failed to update channel metadata: ${updateError.message}` }
+      }
+      logger.info('updated channel metadata', { channelId })
+    } else {
+      logger.info('channel metadata unchanged', { channelId })
+    }
+
     // Prepare statistics data for storage
     const statsData = {
       channel_id: channelId,

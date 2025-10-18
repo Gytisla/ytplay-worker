@@ -82,8 +82,8 @@ async function loadTopChannels() {
       id: `ch-${i}`,
       avatar,
       name: `Channel ${i + 1}`,
-      subs: `${Math.floor(Math.random() * 5) + 1}M`,
-      recent: Math.floor(Math.random() * 12) + 1,
+      subs: `${Math.floor(Math.random() * 10) + 1}M`,
+      recent: Math.floor(Math.random() * 50) + 1,
     }))
   } finally {
     localLoading.value = false

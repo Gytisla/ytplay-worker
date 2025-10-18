@@ -1,6 +1,6 @@
 <template>
-  <section class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary-600 to-primary-400 text-white p-8 md:p-12 lg:p-20">
-    <div class="absolute inset-0 pointer-events-none opacity-20 mix-blend-multiply" aria-hidden>
+  <section class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary-600 to-primary-400 dark:from-primary-700 dark:to-primary-500 text-white p-8 md:p-12 lg:p-20">
+    <div class="absolute inset-0 pointer-events-none opacity-20 mix-blend-multiply dark:opacity-30" aria-hidden>
       <svg class="w-full h-full" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 800 400">
         <defs>
           <linearGradient id="g" x1="0" x2="1">
@@ -17,37 +17,37 @@
         <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight drop-shadow-lg">
           Discover the web's freshest videos
         </h1>
-        <p class="mt-4 text-lg sm:text-xl text-white/90 max-w-2xl">
+        <p class="mt-4 text-lg sm:text-xl text-white/90 dark:text-white/95 max-w-2xl">
           Explore new, trending and top content across categories. Fast, beautiful, and built for discovery.
         </p>
 
         <div class="mt-6 flex items-center gap-3">
-          <a href="#new" class="inline-flex items-center gap-2 bg-white text-primary-700 font-semibold px-4 py-2 rounded-lg shadow hover:translate-y-[-1px] transition">Explore New</a>
-          <a href="#top" class="inline-flex items-center gap-2 border border-white/30 text-white px-4 py-2 rounded-lg hover:bg-white/10 transition">Top Charts</a>
+          <a href="#new" class="inline-flex items-center gap-2 bg-white dark:bg-gray-900 text-primary-700 dark:text-primary-300 font-semibold px-4 py-2 rounded-lg shadow hover:translate-y-[-1px] transition">Explore New</a>
+          <a href="#top" class="inline-flex items-center gap-2 border border-white/30 dark:border-white/40 text-white px-4 py-2 rounded-lg hover:bg-white/10 dark:hover:bg-white/5 transition">Top Charts</a>
         </div>
       </div>
 
       <div class="w-full md:w-96 hidden md:block">
-        <div v-if="loading" class="rounded-xl overflow-hidden shadow-lg bg-white/10 animate-pulse">
-          <div class="w-full h-56 bg-white/20"></div>
+        <div v-if="loading" class="rounded-xl overflow-hidden shadow-lg bg-white/10 dark:bg-white/5 animate-pulse">
+          <div class="w-full h-56 bg-white/20 dark:bg-white/10"></div>
           <div class="p-3">
-            <div class="h-4 bg-white/20 rounded mb-2"></div>
-            <div class="h-3 bg-white/20 rounded w-2/3"></div>
+            <div class="h-4 bg-white/20 dark:bg-white/10 rounded mb-2"></div>
+            <div class="h-3 bg-white/20 dark:bg-white/10 rounded w-2/3"></div>
           </div>
         </div>
         <div v-else-if="featuredVideo" class="rounded-xl overflow-hidden shadow-lg transform transition hover:scale-105">
           <img :src="featuredVideo.thumb || hero" alt="Featured video" class="w-full h-56 object-cover"/>
-          <div class="p-3 bg-white/10">
+          <div class="p-3 bg-white/10 dark:bg-white/5">
             <div class="text-sm font-semibold line-clamp-2">{{ featuredVideo.title }}</div>
-            <div class="text-sm text-white/90 mt-1">{{ featuredVideo.channel }}</div>
-            <div class="text-xs text-white/70 mt-1">{{ featuredVideo.views }} • {{ featuredVideo.age }}</div>
+            <div class="text-sm text-white/90 dark:text-white/95 mt-1">{{ featuredVideo.channel }}</div>
+            <div class="text-xs text-white/70 dark:text-white/80 mt-1">{{ featuredVideo.views }} • {{ featuredVideo.age }}</div>
           </div>
         </div>
         <div v-else class="rounded-xl overflow-hidden shadow-lg">
           <img :src="hero" alt="Hero preview" class="w-full h-56 object-cover bg-gray-200 dark:bg-gray-700"/>
-          <div class="p-3 bg-white/10">
+          <div class="p-3 bg-white/10 dark:bg-white/5">
             <div class="text-sm font-semibold">Featured</div>
-            <div class="text-sm text-white/90">A quick teaser of trending content.</div>
+            <div class="text-sm text-white/90 dark:text-white/95">A quick teaser of trending content.</div>
           </div>
         </div>
       </div>

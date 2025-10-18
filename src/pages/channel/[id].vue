@@ -14,7 +14,7 @@
 
       <!-- Channel Info -->
       <section v-if="channel" class="mb-8">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm mb-6">
           <div class="flex flex-col md:flex-row gap-6">
             <img :src="channel.avatar" alt="" class="w-24 h-24 rounded-full object-cover mx-auto md:mx-0" />
             <div class="flex-1 text-center md:text-left">
@@ -33,10 +33,144 @@
             </div>
           </div>
         </div>
+      <!-- Performance Analytics -->
+      <section class="mb-8">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-semibold">Performance Analytics</h2>
+            <select v-model="statsPeriod" @change="loadChannelStats" class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm" :disabled="!channelStats">
+              <option value="7">Last 7 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="90">Last 90 days</option>
+              <option value="365">Last year</option>
+            </select>
+          </div>
+
+          <!-- Summary Cards -->
+          <div v-if="channelStats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+              <div class="text-sm text-muted dark:text-gray-400">Subscribers</div>
+              <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.currentSubscribers) }}</div>
+              <div class="text-sm" :class="channelStats.summary.subscriberChange >= 0 ? 'text-green-600' : 'text-red-600'">
+                {{ channelStats.summary.subscriberChange >= 0 ? '+' : '' }}{{ formatNumber(channelStats.summary.subscriberChange) }}
+              </div>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+              <div class="text-sm text-muted dark:text-gray-400">Total Views</div>
+              <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.currentViews) }}</div>
+              <div class="text-sm" :class="channelStats.summary.viewChange >= 0 ? 'text-green-600' : 'text-red-600'">
+                {{ channelStats.summary.viewChange >= 0 ? '+' : '' }}{{ formatNumber(channelStats.summary.viewChange) }}
+              </div>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+              <div class="text-sm text-muted dark:text-gray-400">Videos</div>
+              <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.currentVideos) }}</div>
+              <div class="text-sm" :class="channelStats.summary.videoChange >= 0 ? 'text-green-600' : 'text-red-600'">
+                {{ channelStats.summary.videoChange >= 0 ? '+' : '' }}{{ formatNumber(channelStats.summary.videoChange) }}
+              </div>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+              <div class="text-sm text-muted dark:text-gray-400">Avg Watch Time</div>
+              <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.avgMinutesWatched) }}m</div>
+              <div class="text-sm text-muted dark:text-gray-400">per day</div>
+            </div>
+          </div>
+
+          <!-- Loading Summary Cards -->
+          <div v-else class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div v-for="i in 4" :key="`summary-skeleton-${i}`" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 animate-pulse">
+              <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-16 mb-2"></div>
+              <div class="h-8 bg-gray-200 dark:bg-gray-600 rounded w-20 mb-2"></div>
+              <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-12"></div>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Subscriber Growth Chart -->
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+              <h3 class="text-lg font-semibold mb-4">Subscriber Growth</h3>
+              <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
+                <div class="animate-pulse">
+                  <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
+                  <div class="h-32 bg-gray-200 dark:bg-gray-600 rounded w-full"></div>
+                </div>
+              </div>
+              <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-64 flex items-center justify-center">
+                <div class="text-center text-muted dark:text-gray-400">
+                  <div class="text-4xl mb-2">📊</div>
+                  <div class="text-sm">No data available for this period</div>
+                </div>
+              </div>
+              <div v-else class="relative h-64">
+                <canvas ref="subscriberChartRef" class="w-full h-full"></canvas>
+              </div>
+            </div>
+
+            <!-- View Growth Chart -->
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+              <h3 class="text-lg font-semibold mb-4">View Growth</h3>
+              <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
+                <div class="animate-pulse">
+                  <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
+                  <div class="h-32 bg-gray-200 dark:bg-gray-600 rounded w-full"></div>
+                </div>
+              </div>
+              <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-64 flex items-center justify-center">
+                <div class="text-center text-muted dark:text-gray-400">
+                  <div class="text-4xl mb-2">📈</div>
+                  <div class="text-sm">No data available for this period</div>
+                </div>
+              </div>
+              <div v-else class="relative h-64">
+                <canvas ref="viewChartRef" class="w-full h-full"></canvas>
+              </div>
+            </div>
+
+            <!-- Subscriber Gains/Losses -->
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+              <h3 class="text-lg font-semibold mb-4">Daily Subscriber Changes</h3>
+              <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
+                <div class="animate-pulse">
+                  <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-40 mb-4"></div>
+                  <div class="h-32 bg-gray-200 dark:bg-gray-600 rounded w-full"></div>
+                </div>
+              </div>
+              <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-64 flex items-center justify-center">
+                <div class="text-center text-muted dark:text-gray-400">
+                  <div class="text-4xl mb-2">📊</div>
+                  <div class="text-sm">No data available for this period</div>
+                </div>
+              </div>
+              <div v-else class="relative h-64">
+                <canvas ref="subscriberChangeChartRef" class="w-full h-full"></canvas>
+              </div>
+            </div>
+
+            <!-- View Gains -->
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+              <h3 class="text-lg font-semibold mb-4">Daily View Gains</h3>
+              <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
+                <div class="animate-pulse">
+                  <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
+                  <div class="h-32 bg-gray-200 dark:bg-gray-600 rounded w-full"></div>
+                </div>
+              </div>
+              <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-64 flex items-center justify-center">
+                <div class="text-center text-muted dark:text-gray-400">
+                  <div class="text-4xl mb-2">👁️</div>
+                  <div class="text-sm">No data available for this period</div>
+                </div>
+              </div>
+              <div v-else class="relative h-64">
+                <canvas ref="viewGainChartRef" class="w-full h-full"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- Videos Grid -->
-      <section>
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-xl font-semibold">Videos</h3>
           <div class="flex items-center gap-2">
@@ -82,7 +216,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, nextTick, onBeforeUnmount, onMounted, watch } from 'vue'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  LineController,
+  BarController,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js'
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  LineController,
+  BarController,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+)
 
 const route = useRoute()
 const channelId = route.params.id as string
@@ -93,8 +256,47 @@ const videos = ref<any[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
+// Stats data
+const channelStats = ref<any>(null)
+const statsPeriod = ref('30')
+
+// Chart refs
+const subscriberChartRef = ref<HTMLCanvasElement>()
+const viewChartRef = ref<HTMLCanvasElement>()
+const subscriberChangeChartRef = ref<HTMLCanvasElement>()
+const viewGainChartRef = ref<HTMLCanvasElement>()
+
+// Chart instances
+let subscriberChart: any = null
+let viewChart: any = null
+let subscriberChangeChart: any = null
+let viewGainChart: any = null
+
 // Load channel data
 await loadChannel()
+await loadChannelStats()
+
+// Ensure charts are updated after everything is mounted
+onMounted(() => {
+  if (channelStats.value) {
+    updateCharts()
+  }
+})
+
+// Watch for channelStats changes and update charts
+watch(channelStats, (newStats) => {
+  if (newStats) {
+    nextTick(() => updateCharts())
+  }
+})
+
+// Cleanup charts on unmount
+onBeforeUnmount(() => {
+  if (subscriberChart) subscriberChart.destroy()
+  if (viewChart) viewChart.destroy()
+  if (subscriberChangeChart) subscriberChangeChart.destroy()
+  if (viewGainChart) viewGainChart.destroy()
+})
 
 function navigateToVideo(videoId: string) {
   navigateTo(`/video/${videoId}`)
@@ -121,6 +323,185 @@ async function loadChannel() {
   } finally {
     loading.value = false
   }
+}
+
+async function loadChannelStats() {
+  try {
+    console.log('Loading channel stats for period:', statsPeriod.value)
+    const statsData = await $fetch(`/api/public/channel/${channelId}/stats`, {
+      query: { days: statsPeriod.value }
+    })
+    console.log('Received stats data:', statsData)
+    channelStats.value = statsData
+
+    // Update charts after data loads
+    await nextTick()
+    updateCharts()
+
+  } catch (err: any) {
+    console.error('Error loading channel stats:', err)
+    // Set empty stats on error so UI shows properly
+    channelStats.value = { channelId, days: parseInt(statsPeriod.value), stats: [], summary: null }
+  }
+}
+
+function updateCharts() {
+  console.log('updateCharts called with channelStats:', channelStats.value)
+  if (!channelStats.value) {
+    console.log('No channelStats, returning')
+    return
+  }
+
+  const stats = channelStats.value.stats || []
+  console.log('Stats array length:', stats.length)
+  const labels = stats.length > 0
+    ? stats.map((s: any) => new Date(s.date).toLocaleDateString())
+    : ['No data available']
+
+  console.log('Chart labels:', labels)
+
+  // Destroy existing charts
+  if (subscriberChart) subscriberChart.destroy()
+  if (viewChart) viewChart.destroy()
+  if (subscriberChangeChart) subscriberChangeChart.destroy()
+  if (viewGainChart) viewGainChart.destroy()
+
+  // Subscriber growth chart
+  if (subscriberChartRef.value) {
+    console.log('Creating subscriber chart with canvas:', subscriberChartRef.value)
+    subscriberChart = new ChartJS(subscriberChartRef.value, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Subscribers',
+          data: stats.length > 0 ? stats.map((s: any) => s.subscribers) : [0],
+          borderColor: 'rgb(59, 130, 246)',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            ticks: {
+              callback: (value) => formatNumber(Number(value))
+            }
+          }
+        }
+      }
+    })
+  }
+
+  // View growth chart
+  if (viewChartRef.value) {
+    viewChart = new ChartJS(viewChartRef.value, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Total Views',
+          data: stats.length > 0 ? stats.map((s: any) => s.views) : [0],
+          borderColor: 'rgb(16, 185, 129)',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            ticks: {
+              callback: (value) => formatNumber(Number(value))
+            }
+          }
+        }
+      }
+    })
+  }
+
+  // Subscriber change chart
+  if (subscriberChangeChartRef.value) {
+    subscriberChangeChart = new ChartJS(subscriberChangeChartRef.value, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Gained',
+          data: stats.length > 0 ? stats.map((s: any) => Math.max(0, s.subscriberGained)) : [0],
+          backgroundColor: 'rgba(16, 185, 129, 0.7)'
+        }, {
+          label: 'Lost',
+          data: stats.length > 0 ? stats.map((s: any) => Math.max(0, -s.subscriberLost)) : [0],
+          backgroundColor: 'rgba(239, 68, 68, 0.7)'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' as const }
+        },
+        scales: {
+          x: { stacked: true },
+          y: {
+            stacked: true,
+            ticks: {
+              callback: (value) => formatNumber(Number(value))
+            }
+          }
+        }
+      }
+    })
+  }
+
+  // View gain chart
+  if (viewGainChartRef.value) {
+    viewGainChart = new ChartJS(viewGainChartRef.value, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Daily Views',
+          data: stats.length > 0 ? stats.map((s: any) => s.viewGained) : [0],
+          backgroundColor: 'rgba(59, 130, 246, 0.7)'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) => formatNumber(Number(value))
+            }
+          }
+        }
+      }
+    })
+  }
+}
+
+function formatNumber(num: number): string {
+  if (num >= 1000000) {
+    return `${(num / 1000000).toFixed(1)}M`
+  } else if (num >= 1000) {
+    return `${(num / 1000).toFixed(1)}K`
+  }
+  return num.toString()
 }
 
 // Meta tags

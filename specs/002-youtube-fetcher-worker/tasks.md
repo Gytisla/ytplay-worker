@@ -171,25 +171,23 @@ Backend-first monorepo structure:
 
 # Phase P9: Front-end
 
-- [ ] T099 [P] Create Layout with Header, Content and Footer
- - [x] T099 [P] Create Layout with Header, Content and Footer
- - [x] T100 [P] Create Home Page
-- [ ] T101 [P] Create Top Channels Page
+- [x] T099 [P] Create Layout with Header, Content and Footer
+- [x] T100 [P] Create Home Page
+- [x] T101 [P] Create Top Channels Page
 - [ ] T102 [P] Create Top Videos Page
-- [ ] T103 [P] Create One Channel Page
- - [ ] T104 [P] Create Video Detail modal/page (no inline streaming)
- - [ ] T104 [P] Create Video Detail modal/page (no inline streaming)
- - [x] T105 [P] Implement theme selector in header (light/dark/system) with persistence
- - [ ] T106 [P] Implement search and category filters (server-side or client-side as appropriate)
- - [x] T107 [P] Implement discovery sections on home page: New, Trending, Top (with skeleton loaders)
- - [ ] T108 [P] Implement infinite scroll/pagination for lists with graceful fallback
- - [ ] T109 [P] Implement accessible keyboard navigation and focus management for card grids
- - [ ] T110 [P] Implement open graph and SSR meta tags for landing and category pages
- - [ ] T111 [P] Add small animation library or utilities (prefers-reduced-motion aware)
- - [ ] T112 [P] Create lightweight client-side caching for discovery endpoints
- - [ ] T113 [P] Write unit tests for UI components (Vitest + testing-library)
- - [ ] T114 [P] Write integration tests for public endpoints and SSR pages
- - [ ] T115 [P] Create end-to-end smoke test for discovery flow (landing -> open video detail)
+- [x] T103 [P] Create One Channel Page
+- [ ] T104 [P] Create Video Detail modal/page (no inline streaming)
+- [x] T105 [P] Implement theme selector in header (light/dark/system) with persistence
+- [ ] T106 [P] Implement search and category filters (server-side or client-side as appropriate)
+- [x] T107 [P] Implement discovery sections on home page: New, Trending, Top (with skeleton loaders)
+- [ ] T108 [P] Implement infinite scroll/pagination for lists with graceful fallback
+- [ ] T109 [P] Implement accessible keyboard navigation and focus management for card grids
+- [ ] T110 [P] Implement open graph and SSR meta tags for landing and category pages
+- [ ] T111 [P] Add small animation library or utilities (prefers-reduced-motion aware)
+- [ ] T112 [P] Create lightweight client-side caching for discovery endpoints
+- [ ] T113 [P] Write unit tests for UI components (Vitest + testing-library)
+- [ ] T114 [P] Write integration tests for public endpoints and SSR pages
+- [ ] T115 [P] Create end-to-end smoke test for discovery flow (landing -> open video detail)
  - [x] T116 [P] Setup supbase in front-end. for getting info from database.
 
 ## Public API Endpoints (server)

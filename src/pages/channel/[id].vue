@@ -174,8 +174,28 @@
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-xl font-semibold">Videos</h3>
           <div class="flex items-center gap-2">
-            <button class="text-sm px-3 py-1 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300">Latest</button>
-            <button class="text-sm px-3 py-1 rounded-md bg-primary-600 text-white hover:bg-primary-500 transition">Popular</button>
+            <button 
+              @click="changeSort('new')"
+              :class="[
+                'text-sm px-3 py-1 rounded-md border transition',
+                videoSort === 'new' 
+                  ? 'bg-primary-600 text-white border-primary-600' 
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+              ]"
+            >
+              Latest
+            </button>
+            <button 
+              @click="changeSort('popular')"
+              :class="[
+                'text-sm px-3 py-1 rounded-md border transition',
+                videoSort === 'popular' 
+                  ? 'bg-primary-600 text-white border-primary-600' 
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+              ]"
+            >
+              Popular
+            </button>
           </div>
         </div>
 
@@ -275,6 +295,9 @@ const videosLimit = 24
 const loadingMore = ref(false)
 const hasMoreVideos = ref(true)
 
+// Sort state
+const videoSort = ref<'new' | 'popular'>('new')
+
 // Stats data
 const channelStats = ref<any>(null)
 const statsPeriod = ref('30')
@@ -369,7 +392,8 @@ async function loadVideos(initial = false) {
     const response = await $fetch(`/api/public/channel/${channelId}/videos`, {
       query: {
         limit: videosLimit,
-        offset: videosOffset.value
+        offset: videosOffset.value,
+        sort: videoSort.value
       }
     }) as { videos: any[], hasMore: boolean }
 
@@ -407,6 +431,13 @@ async function loadChannelStats() {
     // Set empty stats on error so UI shows properly
     channelStats.value = { channelId, days: parseInt(statsPeriod.value), stats: [], summary: null }
   }
+}
+
+async function changeSort(sort: 'new' | 'popular') {
+  if (videoSort.value === sort) return // No change needed
+
+  videoSort.value = sort
+  await loadVideos(true) // Reset and reload with new sort
 }
 
 function updateCharts() {

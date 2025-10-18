@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
 
   const limit = Math.min(parseInt(query.limit as string) || 24, 50) // Max 50 videos
   const offset = Math.max(parseInt(query.offset as string) || 0, 0) // Start from offset
+  const sort = (query.sort as string) || 'new' // 'new' or 'popular'
 
   try {
     // Create Supabase client with service role for server-side queries
@@ -39,7 +40,7 @@ export default defineEventHandler(async (event) => {
         published_at
       `)
       .eq('channel_id', channelId)
-      .order('published_at', { ascending: false })
+      .order(sort === 'popular' ? 'view_count' : 'published_at', { ascending: false })
       .range(offset, offset + limit - 1)
 
     if (videosError) {

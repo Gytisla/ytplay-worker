@@ -14,6 +14,8 @@ export default defineEventHandler(async (event: any) => {
   const page = Math.max(1, parseInt(query.page as string || '1', 10))
   const limit = Math.min(50, Math.max(12, parseInt(query.limit as string || '24', 10)))
   const offset = (page - 1) * limit
+  const sort = query.sort as string || 'new'
+  const period = query.period as string || 'all'
 
   if (!categoryKey) {
     throw createError({
@@ -37,14 +39,23 @@ export default defineEventHandler(async (event: any) => {
       })
     }
 
-    // Get total video count for this category
-    const { count: totalCount } = await supabase
+    // Get total video count for this category (with period filter if needed)
+    let countQuery = supabase
       .from('videos')
       .select('*', { count: 'exact', head: true })
       .eq('category_id', category.id)
 
+    if (period !== 'all') {
+      const days = parseInt(period)
+      const dateFilter = new Date()
+      dateFilter.setDate(dateFilter.getDate() - days)
+      countQuery = countQuery.gte('published_at', dateFilter.toISOString())
+    }
+
+    const { count: totalCount } = await countQuery
+
     // Get paginated videos for this category
-    const { data: videos, error: videosError } = await supabase
+    let videosQuery = supabase
       .from('videos')
       .select(`
         id,
@@ -57,8 +68,25 @@ export default defineEventHandler(async (event: any) => {
         thumbnail_url
       `)
       .eq('category_id', category.id)
-      .order('published_at', { ascending: false })
-      .range(offset, offset + limit - 1)
+
+    // Apply period filter
+    if (period !== 'all') {
+      const days = parseInt(period)
+      const dateFilter = new Date()
+      dateFilter.setDate(dateFilter.getDate() - days)
+      videosQuery = videosQuery.gte('published_at', dateFilter.toISOString())
+    }
+
+    // Apply sorting
+    if (sort === 'popular') {
+      videosQuery = videosQuery.order('view_count', { ascending: false })
+    } else {
+      videosQuery = videosQuery.order('published_at', { ascending: false })
+    }
+
+    videosQuery = videosQuery.range(offset, offset + limit - 1)
+
+    const { data: videos, error: videosError } = await videosQuery
 
     if (videosError) {
       throw createError({

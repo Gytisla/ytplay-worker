@@ -45,6 +45,44 @@
           </div>
         </div>
 
+        <!-- Sorting Controls -->
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold">Videos</h2>
+          <div class="flex items-center gap-2">
+            <button
+              @click="changeSort('new')"
+              :class="[
+                'text-sm px-3 py-1 rounded-md border transition',
+                videoSort === 'new'
+                  ? 'bg-primary-600 text-white border-primary-600'
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+              ]"
+            >
+              Latest
+            </button>
+            <button
+              @click="changeSort('popular')"
+              :class="[
+                'text-sm px-3 py-1 rounded-md border transition',
+                videoSort === 'popular'
+                  ? 'bg-primary-600 text-white border-primary-600'
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+              ]"
+            >
+              Popular
+            </button>
+            <select
+              v-model="timePeriod"
+              @change="changeTimePeriod"
+              class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm"
+            >
+              <option value="all">All time</option>
+              <option value="30">Last 30 days</option>
+              <option value="7">Last 7 days</option>
+            </select>
+          </div>
+        </div>
+
         <!-- Videos Grid -->
         <div v-if="videos.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <NuxtLink
@@ -88,18 +126,16 @@
           <p class="text-gray-600">Videos will appear here as they are categorized.</p>
         </div>
 
-        <!-- Load More -->
-        <div v-if="hasMore && !loadingMore" class="text-center mt-8">
-          <button
-            @click="loadMore"
-            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Load More Videos
-          </button>
-        </div>
-
-        <div v-if="loadingMore" class="text-center mt-8">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+        <!-- Load More Trigger (invisible element for intersection observer) -->
+        <div
+          v-if="hasMore"
+          data-load-more-trigger
+          class="h-10 flex items-center justify-center mt-8"
+        >
+          <div v-if="isLoadingMore" class="flex items-center gap-2 text-muted dark:text-gray-400">
+            <div class="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 dark:border-gray-600 border-t-primary-600"></div>
+            <span class="text-sm">Loading more videos...</span>
+          </div>
         </div>
       </div>
     </div>
@@ -142,19 +178,43 @@ const categoryKey = Array.isArray(route.params.key) ? route.params.key[0] : rout
 const category = ref<Category | null>(null)
 const videos = ref<Video[]>([])
 const loading = ref(true)
-const loadingMore = ref(false)
 const error = ref<string | null>(null)
 const totalVideos = ref(0)
 const hasMore = ref(false)
 const page = ref(1)
 const pageSize = 24
 
+// Sorting state
+const videoSort = ref<'new' | 'popular'>('new')
+const timePeriod = ref<'all' | '7' | '30'>('all')
+
+// Infinite scroll state
+const isLoadingMore = ref(false)
+const observer = ref<IntersectionObserver | null>(null)
+
 const formatDuration = (duration: string | null) => {
   if (!duration) return '0:00'
 
-  // Parse ISO 8601 duration (PT4M13S) to minutes:seconds
+  console.log('Raw duration from API:', duration)
+
+  // Handle PostgreSQL INTERVAL format (e.g., "00:04:13")
+  if (duration.match(/^\d{2}:\d{2}:\d{2}$/)) {
+    const parts = duration.split(':').map(Number)
+    const hours = parts[0] || 0
+    const minutes = parts[1] || 0
+    const seconds = parts[2] || 0
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+    }
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`
+  }
+
+  // Handle ISO 8601 duration (PT4M13S)
   const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/)
-  if (!match) return '0:00'
+  if (!match) {
+    console.log('Duration format not recognized:', duration)
+    return '0:00'
+  }
 
   const hours = parseInt(match[1] || '0')
   const minutes = parseInt(match[2] || '0')
@@ -184,13 +244,25 @@ const formatDate = (dateString: string) => {
   })
 }
 
-const fetchCategory = async () => {
+const fetchCategory = async (resetPage = true) => {
   console.log('fetchCategory called with key:', categoryKey)
   try {
-    loading.value = true
+    if (resetPage) {
+      loading.value = true
+      page.value = 1
+    } else {
+      isLoadingMore.value = true
+    }
     error.value = null
 
-    const data = await $fetch<CategoryDetailResponse>(`/api/categories/${categoryKey}`)
+    const params = new URLSearchParams({
+      page: page.value.toString(),
+      limit: pageSize.toString(),
+      sort: videoSort.value,
+      period: timePeriod.value
+    })
+
+    const data = await $fetch<CategoryDetailResponse>(`/api/categories/${categoryKey}?${params}`)
     console.log('API response:', data)
 
     if (!data) {
@@ -198,39 +270,76 @@ const fetchCategory = async () => {
     }
 
     category.value = data.category
-    videos.value = data.videos
+    if (resetPage) {
+      videos.value = data.videos
+    } else {
+      videos.value = [...videos.value, ...data.videos]
+    }
     totalVideos.value = data.total_count
-    hasMore.value = data.videos.length === pageSize
+    hasMore.value = data.has_more
+    // Setup intersection observer after loading videos
+    nextTick(() => setupIntersectionObserver())
   } catch (err) {
     console.error('Failed to fetch category:', err)
     error.value = err instanceof Error ? err.message : 'Failed to load category'
   } finally {
     loading.value = false
+    isLoadingMore.value = false
   }
 }
 
-const loadMore = async () => {
-  if (loadingMore.value || !hasMore.value) return
+const changeSort = async (sort: 'new' | 'popular') => {
+  videoSort.value = sort
+  await fetchCategory(true)
+}
 
-  try {
-    loadingMore.value = true
-    page.value++
+const changeTimePeriod = async () => {
+  await fetchCategory(true)
+}
 
-    const data = await $fetch<CategoryDetailResponse>(`/api/categories/${categoryKey}`, {
-      query: { page: page.value, limit: pageSize }
-    })
-
-    if (data?.videos) {
-      videos.value.push(...data.videos)
-      hasMore.value = data.videos.length === pageSize
-    } else {
-      hasMore.value = false
+// Infinite scroll functions
+const setupIntersectionObserver = () => {
+  if (process.client) {
+    // Clean up existing observer
+    if (observer.value) {
+      observer.value.disconnect()
+      observer.value = null
     }
-  } catch (err) {
-    console.error('Failed to load more videos:', err)
-  } finally {
-    loadingMore.value = false
+
+    nextTick(() => {
+      const triggerElement = document.querySelector('[data-load-more-trigger]')
+      if (triggerElement) {
+        observer.value = new IntersectionObserver(
+          (entries) => {
+            const target = entries[0]
+            if (target?.isIntersecting && hasMore.value && !isLoadingMore.value) {
+              loadMoreVideos()
+            }
+          },
+          {
+            rootMargin: '200px'
+          }
+        )
+        observer.value.observe(triggerElement)
+      }
+    })
   }
+}
+
+const cleanupIntersectionObserver = () => {
+  if (observer.value) {
+    observer.value.disconnect()
+    observer.value = null
+  }
+}
+
+const loadMoreVideos = async () => {
+  if (isLoadingMore.value || !hasMore.value) return
+
+  isLoadingMore.value = true
+  page.value++
+  await fetchCategory(false)
+  isLoadingMore.value = false
 }
 
 onMounted(() => {
@@ -250,12 +359,19 @@ useHead(() => ({
 
 onMounted(() => {
   fetchCategory()
+  // Setup intersection observer after initial load
+  nextTick(() => setupIntersectionObserver())
+})
+
+// Watch for hasMore changes to setup/cleanup observer
+watch(hasMore, (newHasMore) => {
+  if (newHasMore) {
+    nextTick(() => setupIntersectionObserver())
+  } else {
+    cleanupIntersectionObserver()
+  }
 })
 </script>
-
-onMounted(() => {
-  fetchCategory()
-})
 
 <style scoped>
 .video-card {

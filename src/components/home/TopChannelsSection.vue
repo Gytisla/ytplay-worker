@@ -6,7 +6,7 @@
         <p class="text-sm text-muted dark:text-gray-400">Channels users are subscribing to right now.</p>
       </div>
       <div class="hidden sm:flex items-center gap-2">
-        <button class="text-sm px-3 py-1 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300">All</button>
+        <NuxtLink to="/top-channels" class="text-sm px-3 py-1 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">All</NuxtLink>
         <button class="text-sm px-3 py-1 rounded-md bg-primary-600 text-white hover:bg-primary-500 transition">Top</button>
       </div>
     </div>

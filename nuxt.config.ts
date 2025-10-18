@@ -3,6 +3,12 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
+  vite: {
+    optimizeDeps: {
+			include: ["@auth/core"],
+		}
+  },
+
   // Source directory configuration
   srcDir: 'src/',
 

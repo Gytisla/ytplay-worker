@@ -4,11 +4,12 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const section = (query.section as string) || 'new'
   const limit = Math.min(50, Math.max(1, parseInt(query.limit as string || '8', 10)))
+  const sort = (query.sort as string) || 'subscribers'
 
   // Get runtime config
   const config = useRuntimeConfig()
   
-  console.log('Discovery API called with:', { section, limit })
+  console.log('Discovery API called with:', { section, limit, sort })
   console.log('Config check:', {
     supabaseUrl: config.public?.supabase?.url,
     hasServiceKey: !!config.supabaseServiceKey
@@ -23,11 +24,19 @@ export default defineEventHandler(async (event) => {
   let result: any = { items: [], section, limit }
 
   if (section === 'channels') {
-    // Fetch popular channels ordered by subscriber count
+    // Determine sort column and direction
+    let sortColumn = 'subscriber_count'
+    let ascending = false
+
+    if (sort === 'views') {
+      sortColumn = 'view_count'
+    }
+
+    // Fetch popular channels ordered by specified criteria
     const { data, error } = await supabase
       .from('channels')
-      .select('id, youtube_channel_id, title, thumbnail_url, subscriber_count, video_count')
-      .order('subscriber_count', { ascending: false, nullsFirst: false })
+      .select('id, youtube_channel_id, title, thumbnail_url, subscriber_count, video_count, view_count')
+      .order(sortColumn, { ascending, nullsFirst: false })
       .limit(limit)
 
     if (error) {
@@ -45,9 +54,10 @@ export default defineEventHandler(async (event) => {
       avatar: ch.thumbnail_url,
       subs: ch.subscriber_count ? `${(ch.subscriber_count / 1000).toFixed(1)}K` : '—',
       recent: ch.video_count || 0,
+      views: formatViewCount(ch.view_count),
     }))
 
-    result = { channels, section, limit }
+    result = { channels, section, limit, sort }
   } else {
     // Handle video sections (new, trending, featured)
   let dbQuery = supabase
@@ -107,6 +117,18 @@ export default defineEventHandler(async (event) => {
   }
 
   return result
+
+  function formatViewCount(count: number | null): string {
+    if (!count) return '—'
+    
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}M`
+    } else if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}K`
+    } else {
+      return count.toString()
+    }
+  }
 
   function formatAge(d: Date) {
     const diff = Date.now() - d.getTime()

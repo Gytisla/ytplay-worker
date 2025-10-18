@@ -13,6 +13,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const limit = Math.min(parseInt(query.limit as string) || 24, 50) // Max 50 videos
+  const offset = Math.max(parseInt(query.offset as string) || 0, 0) // Start from offset
 
   try {
     // Create Supabase client with service role for server-side queries
@@ -39,7 +40,7 @@ export default defineEventHandler(async (event) => {
       `)
       .eq('channel_id', channelId)
       .order('published_at', { ascending: false })
-      .limit(limit)
+      .range(offset, offset + limit - 1)
 
     if (videosError) {
       console.error('Channel videos fetch error:', videosError)
@@ -63,7 +64,10 @@ export default defineEventHandler(async (event) => {
 
     return {
       videos: formattedVideos,
-      total: formattedVideos.length
+      total: formattedVideos.length,
+      offset,
+      limit,
+      hasMore: formattedVideos.length === limit
     }
 
   } catch (error) {

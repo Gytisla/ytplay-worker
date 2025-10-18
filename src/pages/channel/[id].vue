@@ -207,6 +207,19 @@
           </article>
         </div>
 
+        <!-- Loading more indicator -->
+        <div v-if="loadingMore" class="flex justify-center py-8">
+          <div class="flex items-center gap-2 text-muted dark:text-gray-400">
+            <div class="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 dark:border-gray-600 border-t-primary-600"></div>
+            <span class="text-sm">Loading more videos...</span>
+          </div>
+        </div>
+
+        <!-- No more videos indicator -->
+        <div v-else-if="videos.length > 0 && !hasMoreVideos" class="text-center py-8">
+          <p class="text-sm text-muted dark:text-gray-400">You've reached the end of the video list</p>
+        </div>
+
         <div v-else class="text-center py-12">
           <p class="text-muted dark:text-gray-400">No videos found for this channel.</p>
         </div>
@@ -256,6 +269,12 @@ const videos = ref<any[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
+// Pagination state
+const videosOffset = ref(0)
+const videosLimit = 24
+const loadingMore = ref(false)
+const hasMoreVideos = ref(true)
+
 // Stats data
 const channelStats = ref<any>(null)
 const statsPeriod = ref('30')
@@ -281,6 +300,9 @@ onMounted(() => {
   if (channelStats.value) {
     updateCharts()
   }
+
+  // Add scroll listener for infinite scrolling
+  window.addEventListener('scroll', handleScroll)
 })
 
 // Watch for channelStats changes and update charts
@@ -290,16 +312,27 @@ watch(channelStats, (newStats) => {
   }
 })
 
-// Cleanup charts on unmount
+// Cleanup charts and scroll listener on unmount
 onBeforeUnmount(() => {
   if (subscriberChart) subscriberChart.destroy()
   if (viewChart) viewChart.destroy()
   if (subscriberChangeChart) subscriberChangeChart.destroy()
   if (viewGainChart) viewGainChart.destroy()
+
+  window.removeEventListener('scroll', handleScroll)
 })
 
-function navigateToVideo(videoId: string) {
-  navigateTo(`/video/${videoId}`)
+function handleScroll() {
+  if (loadingMore.value || !hasMoreVideos.value) return
+
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+  const windowHeight = window.innerHeight
+  const documentHeight = document.documentElement.scrollHeight
+
+  // Load more when user is within 200px of the bottom
+  if (scrollTop + windowHeight >= documentHeight - 200) {
+    loadVideos()
+  }
 }
 
 async function loadChannel() {
@@ -311,17 +344,48 @@ async function loadChannel() {
     const channelData = await $fetch(`/api/public/channel/${channelId}`)
     channel.value = channelData
 
-    // Load channel videos
-    const videosData = await $fetch(`/api/public/channel/${channelId}/videos`, {
-      query: { limit: 24 }
-    }) as { videos: any[] }
-    videos.value = videosData.videos || []
+    // Load initial videos
+    await loadVideos(true)
 
   } catch (err: any) {
     error.value = String(err?.message ?? err)
     console.error('Error loading channel:', err)
   } finally {
     loading.value = false
+  }
+}
+
+async function loadVideos(initial = false) {
+  if (initial) {
+    videosOffset.value = 0
+    hasMoreVideos.value = true
+  }
+
+  if (!hasMoreVideos.value || loadingMore.value) return
+
+  try {
+    loadingMore.value = true
+
+    const response = await $fetch(`/api/public/channel/${channelId}/videos`, {
+      query: {
+        limit: videosLimit,
+        offset: videosOffset.value
+      }
+    }) as { videos: any[], hasMore: boolean }
+
+    if (initial) {
+      videos.value = response.videos
+    } else {
+      videos.value.push(...response.videos)
+    }
+
+    hasMoreVideos.value = response.hasMore
+    videosOffset.value += response.videos.length
+
+  } catch (err: any) {
+    console.error('Error loading videos:', err)
+  } finally {
+    loadingMore.value = false
   }
 }
 

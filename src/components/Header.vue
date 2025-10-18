@@ -6,13 +6,13 @@
         <span class="hidden sm:inline text-lg font-semibold text-gray-900 dark:text-gray-100">ytplay</span>
       </a>
 
-      <div class="flex-1 px-4">
+      <!-- <div class="flex-1 px-4">
         <input
           aria-label="Search"
           placeholder="Search videos, channels..."
           class="w-full max-w-xl mx-auto block px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
         />
-      </div>
+      </div> -->
 
       <div class="flex items-center gap-3">
         <NuxtLink
@@ -26,6 +26,12 @@
           class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition"
         >
           Top Channels
+        </NuxtLink>
+        <NuxtLink
+          to="/top-videos"
+          class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition"
+        >
+          Top Videos
         </NuxtLink>
         <button
           @click="toggleTheme"

@@ -452,6 +452,10 @@ function openInYouTube() {
   }
 }
 
+function navigateToVideo(videoId: string) {
+  navigateTo(`/video/${videoId}`)
+}
+
 function updateCharts() {
   console.log('updateCharts called with channelStats:', channelStats.value)
   if (!channelStats.value) {

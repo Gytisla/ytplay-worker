@@ -32,6 +32,7 @@
               <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-50 mb-2">{{ video.title }}</h1>
               <div class="flex items-center gap-4 text-sm text-muted dark:text-gray-400 mb-4">
                 <span>{{ video.views }} views</span>
+                <span v-if="video.duration">{{ video.duration }}</span>
                 <span>{{ video.uploaded }}</span>
               </div>
               <div class="text-gray-700 dark:text-gray-300 leading-relaxed">

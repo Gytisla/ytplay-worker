@@ -150,6 +150,47 @@ export type Database = {
           },
         ]
       }
+      categorization_rules: {
+        Row: {
+          active: boolean | null
+          category_id: string | null
+          conditions: Json
+          created_at: string | null
+          id: string
+          name: string
+          priority: number
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          category_id?: string | null
+          conditions: Json
+          created_at?: string | null
+          id?: string
+          name: string
+          priority: number
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          category_id?: string | null
+          conditions?: Json
+          created_at?: string | null
+          id?: string
+          name?: string
+          priority?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categorization_rules_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "video_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       channel_feeds: {
         Row: {
           channel_id: string
@@ -464,6 +505,39 @@ export type Database = {
         }
         Relationships: []
       }
+      video_categories: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          key: string | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          key?: string | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          key?: string | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       video_stats: {
         Row: {
           average_view_duration: unknown | null
@@ -557,6 +631,7 @@ export type Database = {
           title: string
           updated_at: string | null
           view_count: number | null
+          youtube_category_id: string | null
           youtube_video_id: string
         }
         Insert: {
@@ -588,6 +663,7 @@ export type Database = {
           title: string
           updated_at?: string | null
           view_count?: number | null
+          youtube_category_id?: string | null
           youtube_video_id: string
         }
         Update: {
@@ -619,9 +695,17 @@ export type Database = {
           title?: string
           updated_at?: string | null
           view_count?: number | null
+          youtube_category_id?: string | null
           youtube_video_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "videos_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "video_categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "videos_channel_id_fkey"
             columns: ["channel_id"]
@@ -693,7 +777,7 @@ export type Database = {
           channel_id: string | null
           channel_title: string | null
           comment_count: number | null
-          duration_seconds: number | null
+          duration: unknown | null
           engagement_rate_percent: number | null
           id: string | null
           last_stats_update: string | null
@@ -705,7 +789,6 @@ export type Database = {
           published_at: string | null
           title: string | null
           updated_at: string | null
-          video_id: string | null
           view_count: number | null
         }
         Relationships: [
@@ -727,6 +810,33 @@ export type Database = {
       }
     }
     Functions: {
+      ack_job: {
+        Args: { p_job_id: number }
+        Returns: {
+          attempt_count: number | null
+          completed_at: string | null
+          created_at: string | null
+          dedup_key: string | null
+          error_count: number | null
+          failed_at: string | null
+          id: string
+          job_type: string
+          last_error: string | null
+          locked_by: string | null
+          locked_until: string | null
+          max_attempts: number | null
+          payload: Json
+          priority: number | null
+          scheduled_at: string | null
+          started_at: string | null
+          status: string | null
+          updated_at: string | null
+        }
+      }
+      api_quota_status: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       can_access_channel: {
         Args: { channel_id_param: string }
         Returns: boolean
@@ -734,6 +844,22 @@ export type Database = {
       can_access_video: {
         Args: { video_id_param: string }
         Returns: boolean
+      }
+      capture_channel_stats: {
+        Args: { p_channel_id: string; stats_data: Json }
+        Returns: {
+          is_new_day: boolean
+          stats_id: string
+        }[]
+      }
+      capture_video_stats: {
+        Args: { video_stats_array: Json[] }
+        Returns: {
+          daily_change: number
+          hourly_change: number
+          stats_id: string
+          youtube_video_id: string
+        }[]
       }
       check_api_quota: {
         Args: { quota_type_param: string; requested_cost?: number }
@@ -750,13 +876,38 @@ export type Database = {
         Args: { job_id_param: string }
         Returns: boolean
       }
-      dequeue_jobs: {
-        Args: {
-          job_types_param?: string[]
-          limit_param?: number
-          lock_duration?: unknown
-          worker_id_param: string
+      dead_letter_job: {
+        Args: { p_job_id: number }
+        Returns: {
+          attempt_count: number | null
+          completed_at: string | null
+          created_at: string | null
+          dedup_key: string | null
+          error_count: number | null
+          failed_at: string | null
+          id: string
+          job_type: string
+          last_error: string | null
+          locked_by: string | null
+          locked_until: string | null
+          max_attempts: number | null
+          payload: Json
+          priority: number | null
+          scheduled_at: string | null
+          started_at: string | null
+          status: string | null
+          updated_at: string | null
         }
+      }
+      dequeue_jobs: {
+        Args:
+          | {
+              job_types_param?: string[]
+              limit_param?: number
+              lock_duration?: unknown
+              worker_id_param: string
+            }
+          | { p_job_type?: string; p_max_jobs?: number }
         Returns: {
           job_id: string
           job_type: string
@@ -765,14 +916,28 @@ export type Database = {
         }[]
       }
       enqueue_job: {
-        Args: {
-          dedup_key_param?: string
-          job_type_param: string
-          payload_param: Json
-          priority_param?: number
-          scheduled_at_param?: string
-        }
+        Args:
+          | {
+              dedup_key_param?: string
+              job_type_param: string
+              payload_param: Json
+              priority_param?: number
+              scheduled_at_param?: string
+            }
+          | { p_job_payload: Json; p_job_type: string; p_scheduled_at?: string }
         Returns: string
+      }
+      enqueue_process_queue: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      enqueue_refresh_hot_videos: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      enqueue_scheduled_rss_polls: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
       fail_job: {
         Args: { error_message_param?: string; job_id_param: string }
@@ -855,6 +1020,41 @@ export type Database = {
         }
         Returns: undefined
       }
+      queue_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      retry_job: {
+        Args: { p_job_id: number }
+        Returns: {
+          attempt_count: number | null
+          completed_at: string | null
+          created_at: string | null
+          dedup_key: string | null
+          error_count: number | null
+          failed_at: string | null
+          id: string
+          job_type: string
+          last_error: string | null
+          locked_by: string | null
+          locked_until: string | null
+          max_attempts: number | null
+          payload: Json
+          priority: number | null
+          scheduled_at: string | null
+          started_at: string | null
+          status: string | null
+          updated_at: string | null
+        }
+      }
+      schedule_refresh_channel_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      schedule_refresh_video_stats_weekly: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       secure_complete_job: {
         Args: { job_id_param: string }
         Returns: boolean
@@ -894,6 +1094,70 @@ export type Database = {
       update_api_budget: {
         Args: { quota_cost_param?: number; quota_type_param: string }
         Returns: undefined
+      }
+      upsert_channel: {
+        Args: { channel_data: Json }
+        Returns: {
+          branding_settings: Json | null
+          country: string | null
+          created_at: string | null
+          custom_url: string | null
+          default_language: string | null
+          description: string | null
+          featured_channels: string[] | null
+          id: string
+          is_linked: boolean | null
+          keywords: string[] | null
+          last_fetched_at: string | null
+          long_uploads_status: string | null
+          made_for_kids: boolean | null
+          privacy_status: string | null
+          published_at: string
+          status: string | null
+          subscriber_count: number | null
+          thumbnail_url: string | null
+          title: string
+          topic_categories: Json | null
+          updated_at: string | null
+          video_count: number | null
+          view_count: number | null
+          youtube_channel_id: string
+        }
+      }
+      upsert_videos: {
+        Args: { video_data: Json }
+        Returns: {
+          allowed_regions: string[] | null
+          blocked_regions: string[] | null
+          caption: boolean | null
+          category_id: string | null
+          channel_id: string
+          comment_count: number | null
+          created_at: string | null
+          default_audio_language: string | null
+          default_language: string | null
+          definition: string | null
+          description: string | null
+          dimension: string | null
+          duration: unknown | null
+          embeddable: boolean | null
+          id: string
+          last_fetched_at: string | null
+          licensed_content: boolean | null
+          like_count: number | null
+          live_broadcast_content: string | null
+          privacy_status: string | null
+          projection: string | null
+          published_at: string
+          status: string | null
+          tags: string[] | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string | null
+          view_count: number | null
+          youtube_category_id: string | null
+          youtube_video_id: string
+        }[]
       }
     }
     Enums: {

@@ -16,6 +16,12 @@
 
       <div class="flex items-center gap-3">
         <NuxtLink
+          to="/categories"
+          class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition"
+        >
+          Categories
+        </NuxtLink>
+        <NuxtLink
           to="/top-channels"
           class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition"
         >

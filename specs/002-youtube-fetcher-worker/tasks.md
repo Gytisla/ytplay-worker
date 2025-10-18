@@ -176,11 +176,11 @@ Backend-first monorepo structure:
 - [x] T101 [P] Create Top Channels Page
 - [ ] T102 [P] Create Top Videos Page
 - [x] T103 [P] Create One Channel Page
-- [ ] T104 [P] Create Video Detail modal/page (no inline streaming)
+- [x] T104 [P] Create Video Detail modal/page (no inline streaming)
 - [x] T105 [P] Implement theme selector in header (light/dark/system) with persistence
 - [ ] T106 [P] Implement search and category filters (server-side or client-side as appropriate)
 - [x] T107 [P] Implement discovery sections on home page: New, Trending, Top (with skeleton loaders)
-- [ ] T108 [P] Implement infinite scroll/pagination for lists with graceful fallback
+- [x] T108 [P] Implement infinite scroll/pagination for lists with graceful fallback
 - [ ] T109 [P] Implement accessible keyboard navigation and focus management for card grids
 - [ ] T110 [P] Implement open graph and SSR meta tags for landing and category pages
 - [ ] T111 [P] Add small animation library or utilities (prefers-reduced-motion aware)

@@ -29,13 +29,12 @@ SELECT
   vc.id,
   100,
   jsonb_build_object(
-    'channel_id', 'UC1234567890abcdef',  -- Replace with actual channel ID
-    'title_contains', 'podcast'
+    'channel_id', '8aa59585-6733-4e51-b73f-b285370eef5e'  -- Replace with actual channel ID
   ),
   true,
-  'High priority rule for podcast content from specific channel'
+  'High priority rule for travel content from specific channel'
 FROM video_categories vc
-WHERE vc.name = 'Podcasts'
+WHERE vc.name = 'Travel Vlogs'
 ON CONFLICT DO NOTHING;
 
 -- Medium-high priority: Travel content by title patterns

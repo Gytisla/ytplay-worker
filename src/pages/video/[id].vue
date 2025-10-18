@@ -34,7 +34,9 @@
                 <span>{{ video.views }} views</span>
                 <span>{{ video.uploaded }}</span>
               </div>
-              <p class="text-gray-700 dark:text-gray-300 leading-relaxed" v-html="formatDescription(video.description)"></p>
+              <div class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p v-html="displayDescription"></p>
+              </div>
             </div>
 
             <!-- Channel Info -->
@@ -59,6 +61,22 @@
               </div>
             </div>
           </div>
+          <div v-if="shouldShowToggle" class="flex justify-center mt-4">
+            <button 
+                    @click="descriptionExpanded = !descriptionExpanded"
+                    class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-md transition-colors duration-200"
+                >
+                <span>{{ descriptionExpanded ? 'Show less' : 'Show more' }}</span>
+                <svg 
+                    :class="['w-4 h-4 transition-transform duration-200', descriptionExpanded ? 'rotate-180' : '']" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+          </div>
         </div>
       </section>
 
@@ -74,12 +92,32 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 const route = useRoute()
 const videoId = route.params.id as string
 
 // Video data
 const video = ref<any>(null)
 const loading = ref(true)
+
+// Description collapse state
+const descriptionExpanded = ref(false)
+const descriptionMaxLength = 300
+
+// Computed property for description display
+const displayDescription = computed(() => {
+  if (!video.value?.description) return ''
+  const formatted = formatDescription(video.value.description)
+  if (descriptionExpanded.value || formatted.length <= descriptionMaxLength) {
+    return formatted
+  }
+  return formatted.substring(0, descriptionMaxLength) + '...'
+})
+
+const shouldShowToggle = computed(() => {
+  if (!video.value?.description) return false
+  return formatDescription(video.value.description).length > descriptionMaxLength
+})
 
 // Load video data
 await loadVideo()

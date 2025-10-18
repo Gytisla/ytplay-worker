@@ -23,7 +23,7 @@
       </template>
 
       <template v-else>
-        <article v-for="ch in channels" :key="ch.id" class="rounded-xl bg-white dark:bg-gray-800 shadow-sm p-3 flex items-center gap-3 transition hover:shadow-lg hover:-translate-y-1">
+        <NuxtLink v-for="ch in channels" :key="ch.id" :to="`/channel/${ch.id}`" class="rounded-xl bg-white dark:bg-gray-800 shadow-sm p-3 flex items-center gap-3 transition hover:shadow-lg hover:-translate-y-1 cursor-pointer">
           <img :src="ch.avatar" alt="" class="w-12 h-12 rounded-full object-cover" />
           <div class="flex-1">
             <div class="flex items-center justify-between gap-3">
@@ -32,8 +32,8 @@
             </div>
             <div class="text-xs text-muted dark:text-gray-400">{{ ch.recent }} videos</div>
           </div>
-          <!-- <button class="px-3 py-1 text-sm rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-primary-600">Subscribe</button> -->
-        </article>
+          <div class="px-3 py-1 text-sm rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-primary-600">View</div>
+        </NuxtLink>
       </template>
     </div>
   </section>

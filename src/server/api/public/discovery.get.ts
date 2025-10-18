@@ -39,7 +39,8 @@ export default defineEventHandler(async (event) => {
 
     // Format channel data
     const channels = (data || []).map((ch: any) => ({
-      id: ch.youtube_channel_id,
+      id: ch.id, // Use database ID for navigation
+      youtubeId: ch.youtube_channel_id, // Keep YouTube ID for reference
       name: ch.title,
       avatar: ch.thumbnail_url,
       subs: ch.subscriber_count ? `${(ch.subscriber_count / 1000).toFixed(1)}K` : '—',

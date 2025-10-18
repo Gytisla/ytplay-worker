@@ -33,6 +33,7 @@
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:reset": "supabase db reset",
+    "categorize:videos": "node scripts/categorize-existing-videos.js",
     "supabase:types": "supabase gen types typescript --local > types/supabase.ts",
     "migrate": "supabase migration up",
     "migrate:new": "supabase migration new",

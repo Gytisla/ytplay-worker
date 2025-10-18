@@ -5,6 +5,7 @@ import { YouTubeVideosClient, type FetchVideosOptions } from '../../../../src/li
 import type { VideoResource } from '../../../../src/lib/youtube/types.ts'
 import { createYouTubeClientFromEnv } from '../../../../src/lib/youtube/client.ts'
 import { logger } from '../../../../src/lib/obs/logger.ts'
+import { categorizeVideo } from '../../../../src/lib/categorization.ts'
 
 /**
  * BACKFILL_CHANNEL job handler
@@ -118,6 +119,12 @@ export async function handleBackfillChannel(
   logger.info('found videos in uploads playlist', { channelId, count: playlistItems.length })
 
       if (playlistItems.length > 0) {
+        // Check that we have a valid channel UUID
+        if (!channelUuid) {
+          logger.error('Cannot process videos without valid channel UUID', { channelId })
+          return { success: false, error: 'Failed to get channel UUID for video processing' }
+        }
+
         // Extract video IDs
         const videoIds = playlistItems
           .map(item => item.contentDetails?.videoId)
@@ -142,38 +149,49 @@ export async function handleBackfillChannel(
 
           logger.info('fetched detailed video data', { channelId, count: allVideos.length })
 
-        // Convert to database format
-        const videoData = allVideos.map(video => ({
-          youtube_video_id: video.id,
-          channel_id: channelUuid,
-          title: video.snippet?.title ?? '',
-          description: video.snippet?.description ?? '',
-          published_at: video.snippet?.publishedAt ?? new Date().toISOString(),
-          duration: video.contentDetails?.duration ?? null,
-          view_count: safeNumber(video.statistics?.viewCount),
-          like_count: safeNumber(video.statistics?.likeCount),
-          comment_count: safeNumber(video.statistics?.commentCount),
-          thumbnail_url:
-            video.snippet?.thumbnails?.maxres?.url ??
-            video.snippet?.thumbnails?.high?.url ??
-            video.snippet?.thumbnails?.medium?.url ??
-            video.snippet?.thumbnails?.default?.url ?? null,
-          tags: video.snippet?.tags ?? null,
-          category_id: video.snippet?.categoryId ?? null,
-          live_broadcast_content: video.snippet?.liveBroadcastContent ?? 'none',
-          default_language: video.snippet?.defaultLanguage ?? null,
-          default_audio_language: video.snippet?.defaultAudioLanguage ?? null,
-          licensed_content: video.contentDetails?.licensedContent ?? false,
-          projection: video.contentDetails?.projection ?? 'rectangular',
-          dimension: video.contentDetails?.dimension ?? '2d',
-          definition: video.contentDetails?.definition ?? 'hd',
-          caption: video.contentDetails?.caption ?? false,
-          allowed_regions: video.contentDetails?.regionRestriction?.allowed ?? null,
-          blocked_regions: video.contentDetails?.regionRestriction?.blocked ?? null,
-          privacy_status: video.status?.privacyStatus ?? 'public',
-          embeddable: video.status?.embeddable !== false,
-          status: 'active',
-          last_fetched_at: new Date().toISOString()
+        // Convert to database format with categorization
+        const videoData = await Promise.all(allVideos.map(async (video) => {
+          // Categorize the video
+          const categoryId = await categorizeVideo({
+            id: '', // Not needed for matching
+            youtube_video_id: video.id,
+            title: video.snippet?.title ?? '',
+            description: video.snippet?.description ?? '',
+            channel_id: channelUuid
+          }, supabase)
+
+          return {
+            youtube_video_id: video.id,
+            channel_id: channelUuid,
+            title: video.snippet?.title ?? '',
+            description: video.snippet?.description ?? '',
+            published_at: video.snippet?.publishedAt ?? new Date().toISOString(),
+            duration: video.contentDetails?.duration ?? null,
+            view_count: safeNumber(video.statistics?.viewCount),
+            like_count: safeNumber(video.statistics?.likeCount),
+            comment_count: safeNumber(video.statistics?.commentCount),
+            thumbnail_url:
+              video.snippet?.thumbnails?.maxres?.url ??
+              video.snippet?.thumbnails?.high?.url ??
+              video.snippet?.thumbnails?.medium?.url ??
+              video.snippet?.thumbnails?.default?.url ?? null,
+            tags: video.snippet?.tags ?? null,
+            category_id: categoryId ?? (video.snippet?.categoryId ?? null), // Use our category or YouTube's
+            live_broadcast_content: video.snippet?.liveBroadcastContent ?? 'none',
+            default_language: video.snippet?.defaultLanguage ?? null,
+            default_audio_language: video.snippet?.defaultAudioLanguage ?? null,
+            licensed_content: video.contentDetails?.licensedContent ?? false,
+            projection: video.contentDetails?.projection ?? 'rectangular',
+            dimension: video.contentDetails?.dimension ?? '2d',
+            definition: video.contentDetails?.definition ?? 'hd',
+            caption: video.contentDetails?.caption ?? false,
+            allowed_regions: video.contentDetails?.regionRestriction?.allowed ?? null,
+            blocked_regions: video.contentDetails?.regionRestriction?.blocked ?? null,
+            privacy_status: video.status?.privacyStatus ?? 'public',
+            embeddable: video.status?.embeddable !== false,
+            status: 'active',
+            last_fetched_at: new Date().toISOString()
+          }
         }))
 
         // Store videos in database

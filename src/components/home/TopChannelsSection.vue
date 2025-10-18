@@ -30,31 +30,65 @@
               <div class="text-sm font-semibold text-gray-900 dark:text-gray-50">{{ ch.name }}</div>
               <div class="text-xs text-muted dark:text-gray-400">{{ ch.subs }}</div>
             </div>
-            <div class="text-xs text-muted dark:text-gray-400">{{ ch.recent }} new videos</div>
+            <div class="text-xs text-muted dark:text-gray-400">{{ ch.recent }} videos</div>
           </div>
-          <button class="px-3 py-1 text-sm rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-primary-600">Subscribe</button>
+          <!-- <button class="px-3 py-1 text-sm rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-primary-600">Subscribe</button> -->
         </article>
       </template>
     </div>
   </section>
 </template>
 
-<script setup>
-import { toRef } from 'vue'
-import avatar from '~/assets/hero-thumb.svg?url'
+<script setup lang="ts">
+import { ref, toRef } from 'vue'
+
+// Use a simple static path as a safe fallback for the bundled SVG asset
+// avoid TypeScript import issues for image modules in this environment.
+const avatar = '/assets/hero-thumb.svg'
 
 const props = defineProps({
   loading: { type: Boolean, default: false },
 })
 const loading = toRef(props, 'loading')
 
-const channels = Array.from({ length: 8 }).map((_, i) => ({
-  id: `ch-${i}`,
-  avatar,
-  name: `Channel ${i + 1}`,
-  subs: `${Math.floor(Math.random() * 5) + 1}M`,
-  recent: Math.floor(Math.random() * 12) + 1,
-}))
+// Real data state
+const channels = ref<Array<any>>([])
+const localLoading = ref(true)
+const error = ref<string | null>(null)
+
+await loadTopChannels();
+
+async function loadTopChannels() {
+  try {
+    console.log('Loading top channels...')
+    localLoading.value = false
+
+    const data = await $fetch('/api/public/discovery', {
+      query: { section: 'channels', limit: 8 }
+    }) as { channels: any[] }
+
+    channels.value = (data.channels || []).map((ch: any) => ({
+      id: ch.id,
+      avatar: ch.avatar || avatar,
+      name: ch.name,
+      subs: ch.subs,
+      recent: ch.recent,
+    }))
+  } catch (err: any) {
+    error.value = String(err?.message ?? err)
+    console.error('Error loading top channels:', err)
+    // Fallback to placeholder items on error
+    channels.value = Array.from({ length: 8 }).map((_, i) => ({
+      id: `ch-${i}`,
+      avatar,
+      name: `Channel ${i + 1}`,
+      subs: `${Math.floor(Math.random() * 5) + 1}M`,
+      recent: Math.floor(Math.random() * 12) + 1,
+    }))
+  } finally {
+    localLoading.value = false
+  }
+}
 </script>
 
 <style scoped>

@@ -190,6 +190,7 @@ Backend-first monorepo structure:
  - [ ] T113 [P] Write unit tests for UI components (Vitest + testing-library)
  - [ ] T114 [P] Write integration tests for public endpoints and SSR pages
  - [ ] T115 [P] Create end-to-end smoke test for discovery flow (landing -> open video detail)
+ - [x] T116 [P] Setup supbase in front-end. for getting info from database.
 
 ## Public API Endpoints (server)
 

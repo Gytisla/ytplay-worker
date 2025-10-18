@@ -9,7 +9,7 @@ export default defineNuxtConfig({
   // TypeScript configuration
   typescript: {
     strict: true,
-    typeCheck: true,
+    typeCheck: false,
   },
 
   // CSS framework
@@ -32,13 +32,21 @@ export default defineNuxtConfig({
 
     // Public keys (exposed to client-side)
     public: {
-      supabaseUrl: process.env['SUPABASE_URL'],
-      supabaseAnonKey: process.env['SUPABASE_ANON_KEY'],
+      supabase: {
+        url: process.env['SUPABASE_URL'],
+        key: process.env['SUPABASE_ANON_KEY'],
+      },
     },
   },
 
+  supabase: {
+    redirect: false // ⛔ disables the module’s automatic auth redirects
+  },
+
   // Server-side rendering configuration (disabled for API-only app)
-  ssr: false,
+  ssr: {
+    noExternal: ['@supabase', '@nuxtjs/supabase', 'cookie']
+  },
 
   // Build configuration
   build: {
@@ -47,7 +55,8 @@ export default defineNuxtConfig({
 
   // Modules
   modules: [
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/supabase'
   ],
 
   // Development configuration

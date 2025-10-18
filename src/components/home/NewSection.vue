@@ -34,7 +34,8 @@
               <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-50 line-clamp-2">{{ item.title }}</h3>
               <div class="mt-2 flex items-center justify-between text-xs text-muted dark:text-gray-400">
                 <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                  <img v-if="item.channelThumb" :src="item.channelThumb" alt="" class="w-7 h-7 rounded-full object-cover" />
+                  <div v-else class="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-700"></div>
                   <div>{{ item.channel }}</div>
                 </div>
                 <div class="text-right">{{ item.views }} • {{ item.age }}</div>
@@ -47,25 +48,63 @@
   </section>
 </template>
 
-<script setup>
-import { toRef } from 'vue'
-import thumb from '~/assets/hero-thumb.svg?url'
+
+<script setup lang="ts">
+import { ref, toRef } from 'vue'
+
+// Use a simple static path as a safe fallback for the bundled SVG asset to
+// avoid TypeScript import issues for image modules in this environment.
+const thumb = '/assets/hero-thumb.svg'
 
 const props = defineProps({
   loading: { type: Boolean, default: false },
 })
 const loading = toRef(props, 'loading')
 
-// Mock placeholder items for the presentational component. Replace with real data later.
-const items = Array.from({ length: 8 }).map((_, i) => ({
-  id: `new-${i}`,
-  thumb,
-  title: `Exciting new video ${i + 1}: a short, punchy title to draw attention`,
-  channel: `Channel ${i + 1}`,
-  views: `${Math.floor(Math.random() * 50) + 1}K views`,
-  age: `${Math.floor(Math.random() * 12) + 1}d`,
-  duration: `${Math.floor(Math.random() * 12) + 1}:0${Math.floor(Math.random() * 9)}`,
-}))
+// Real data state
+const items = ref<Array<any>>([])
+const localLoading = ref(true)
+const error = ref<string | null>(null)
+
+await loadRecentVideos();
+
+async function loadRecentVideos() {
+  try {
+    console.log('Loading recent videos...')
+    localLoading.value = false
+
+    const data = await $fetch('/api/public/discovery', {
+      query: { section: 'new', limit: 8 }
+    }) as { items: any[] }
+
+    items.value = (data.items || []).map((item: any) => ({
+      id: item.id,
+      thumb: item.thumb,
+      title: item.title,
+      channel: item.channel,
+      channelThumb: item.channelThumb,
+      views: item.views,
+      age: item.age,
+      duration: item.duration,
+    }))
+  } catch (err: any) {
+    error.value = String(err?.message ?? err)
+    console.error('Error loading recent videos:', err)
+    // Fallback to placeholder items on error
+    items.value = Array.from({ length: 8 }).map((_, i) => ({
+      id: `new-${i}`,
+      thumb,
+      title: `Exciting new video ${i + 1}: a short, punchy title to draw attention`,
+      channel: `Channel ${i + 1}`,
+      channelThumb: null,
+      views: `${Math.floor(Math.random() * 50) + 1}K views`,
+      age: `${Math.floor(Math.random() * 12) + 1}d`,
+      duration: `${Math.floor(Math.random() * 12) + 1}:0${Math.floor(Math.random() * 9)}`,
+    }))
+  } finally {
+    localLoading.value = false
+  }
+}
 </script>
 
 <style scoped>

@@ -23,8 +23,8 @@
       </template>
 
       <template v-else>
-        <article v-for="item in items" :key="item.id" class="group bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden transition transform hover:-translate-y-1 hover:shadow-lg focus-within:shadow-lg">
-          <a href="#" class="block focus:outline-none">
+        <article v-for="item in items" :key="item.id" class="group bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden transition transform hover:-translate-y-1 hover:shadow-lg focus-within:shadow-lg cursor-pointer" @click="navigateToVideo(item.id)">
+          <div class="block focus:outline-none">
             <div class="relative">
               <img :src="item.thumb" alt="" class="w-full h-44 object-cover" />
               <span class="absolute left-3 top-3 bg-red-600 text-white text-xs px-2 py-1 rounded">TRENDING</span>
@@ -42,7 +42,7 @@
                 <div class="text-right">{{ item.views }} • {{ item.age }}</div>
               </div>
             </div>
-          </a>
+          </div>
         </article>
       </template>
     </div>
@@ -104,6 +104,10 @@ async function loadTrendingVideos() {
   } finally {
     localLoading.value = false
   }
+}
+
+function navigateToVideo(videoId: string) {
+  navigateTo(`/video/${videoId}`)
 }
 </script>
 

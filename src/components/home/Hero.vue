@@ -35,7 +35,7 @@
             <div class="h-3 bg-white/20 dark:bg-white/10 rounded w-2/3"></div>
           </div>
         </div>
-        <div v-else-if="featuredVideo" class="rounded-xl overflow-hidden shadow-lg transform transition hover:scale-105">
+        <div v-else-if="featuredVideo" class="rounded-xl overflow-hidden shadow-lg transform transition hover:scale-105 cursor-pointer" @click="navigateToVideo(featuredVideo.id)">
           <img :src="featuredVideo.thumb || hero" alt="Featured video" class="w-full h-56 object-cover"/>
           <div class="p-3 bg-white/10 dark:bg-white/5">
             <div class="text-sm font-semibold line-clamp-2">{{ featuredVideo.title }}</div>
@@ -81,6 +81,10 @@ async function loadFeaturedVideo() {
   } finally {
     loading.value = false
   }
+}
+
+function navigateToVideo(videoId: string) {
+  navigateTo(`/video/${videoId}`)
 }
 </script>
 

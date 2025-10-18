@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
       id: ch.youtube_channel_id,
       name: ch.title,
       avatar: ch.thumbnail_url,
-      subs: ch.subscriber_count ? `${(ch.subscriber_count / 1000000).toFixed(1)}M` : '—',
+      subs: ch.subscriber_count ? `${(ch.subscriber_count / 1000).toFixed(1)}K` : '—',
       recent: ch.video_count || 0,
     }))
 

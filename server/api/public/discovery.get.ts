@@ -5,11 +5,12 @@ export default defineEventHandler(async (event) => {
   const section = (query.section as string) || 'new'
   const limit = Math.min(50, Math.max(1, parseInt(query.limit as string || '8', 10)))
   const sort = (query.sort as string) || 'subscribers'
+  const period = query.period as string
 
   // Get runtime config
   const config = useRuntimeConfig()
   
-  console.log('Discovery API called with:', { section, limit, sort })
+  console.log('Discovery API called with:', { section, limit, sort, period })
   console.log('Config check:', {
     supabaseUrl: config.public?.supabase?.url,
     hasServiceKey: !!config.supabaseServiceKey
@@ -59,14 +60,14 @@ export default defineEventHandler(async (event) => {
 
     result = { channels, section, limit, sort }
   } else {
-    // Handle video sections (new, trending, featured)
+    // Handle video sections (new, trending, featured, popular)
   let dbQuery = supabase
     .from('videos')
     .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url)')
     .order('published_at', { ascending: false })
     .limit(limit)
 
-  // Add simple section handling
+  // Add section handling
   if (section === 'trending') {
     // Trending: recent videos (last 30 days) ordered by view count
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
@@ -83,6 +84,26 @@ export default defineEventHandler(async (event) => {
       .from('videos')
       .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url)')
       .gte('published_at', sevenDaysAgo)
+      .order('view_count', { ascending: false })
+      .limit(limit)
+  } else if (section === 'popular') {
+    // Popular videos based on period
+    let dateFilter = new Date()
+    if (period === 'today') {
+      dateFilter.setDate(dateFilter.getDate() - 1)
+    } else if (period === '7') {
+      dateFilter.setDate(dateFilter.getDate() - 7)
+    } else if (period === '30') {
+      dateFilter.setDate(dateFilter.getDate() - 30)
+    } else {
+      // Default to last 7 days
+      dateFilter.setDate(dateFilter.getDate() - 7)
+    }
+
+    dbQuery = supabase
+      .from('videos')
+      .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url)')
+      .gte('published_at', dateFilter.toISOString())
       .order('view_count', { ascending: false })
       .limit(limit)
   }

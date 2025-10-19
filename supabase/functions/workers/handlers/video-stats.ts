@@ -6,14 +6,21 @@ import { logger } from '../../../../src/lib/obs/logger.ts'
 /**
  * REFRESH_VIDEO_STATS job handler
  *
- * Updates video statistics and metadata for periodic refresh (weekly rotation):
- * 1. Identifies videos for channels matching the rotation criteria
+ * Updates video statistics and metadata for periodic refresh:
+ * - When video_ids are provided: refreshes specific videos
+ * - When channel criteria provided: refreshes videos based on channel rotation
+ * 1. Identifies videos to refresh based on payload criteria
  * 2. Fetches current statistics, content details, and snippet from YouTube API
  * 3. Updates videos table with latest data (view_count, description, etc.)
  * 4. Stores statistics snapshots for trend analysis
  */
 export async function handleRefreshVideoStats(
-  payload: { channelHashPrefix?: string; channelHashRange?: { min: number; max: number } },
+  payload: { 
+    channelHashPrefix?: string; 
+    channelHashRange?: { min: number; max: number };
+    video_ids?: string[];
+    channel_id?: string;
+  },
   supabase: SupabaseClient
 ): Promise<{ success: boolean; itemsProcessed?: number; error?: string }> {
   try {
@@ -21,7 +28,7 @@ export async function handleRefreshVideoStats(
     const youtubeClient = createYouTubeClientFromEnv()
     const videosClient = new YouTubeVideosClient(youtubeClient)
 
-  // Build query for videos to refresh based on channel rotation criteria
+  // Build query for videos to refresh based on channel rotation criteria or specific video IDs
   logger.info('querying videos for stats refresh', { payload })
 
     let query = supabase
@@ -34,14 +41,25 @@ export async function handleRefreshVideoStats(
         channels!inner(youtube_channel_id)
       `)
 
-    // Apply channel hash filtering for rotation
-    if (payload.channelHashPrefix) {
-      // Use substring of channel ID for rotation (first N characters)
-      query = query.ilike('channels.youtube_channel_id', `${payload.channelHashPrefix}%`)
-    } else if (payload.channelHashRange) {
-      // More complex rotation logic could be implemented here
-      // For now, we'll process all videos if no specific criteria
-  logger.info('channel hash range specified but not implemented; processing all', { payload })
+    // If specific video_ids are provided, query only those videos
+    if (payload.video_ids && payload.video_ids.length > 0) {
+      query = query.in('youtube_video_id', payload.video_ids)
+      logger.info('refreshing specific videos', { videoIds: payload.video_ids })
+    } else if (payload.channel_id) {
+      // Refresh all videos for a specific channel
+      // payload.channel_id is a YouTube channel ID, so we filter by channels.youtube_channel_id
+      query = query.eq('channels.youtube_channel_id', payload.channel_id)
+      logger.info('refreshing all videos for channel', { channelId: payload.channel_id })
+    } else {
+      // Apply channel hash filtering for rotation
+      if (payload.channelHashPrefix) {
+        // Use substring of channel ID for rotation (first N characters)
+        query = query.ilike('channels.youtube_channel_id', `${payload.channelHashPrefix}%`)
+      } else if (payload.channelHashRange) {
+        // More complex rotation logic could be implemented here
+        // For now, we'll process all videos if no specific criteria
+        logger.info('channel hash range specified but not implemented; processing all', { payload })
+      }
     }
 
     const { data: videosToRefresh, error: queryError } = await query

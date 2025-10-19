@@ -152,18 +152,26 @@ Deno.serve(async (req: Request) => {
         // Execute job handler
         const result = await handler(job.payload, supabase)
 
-        // Acknowledge job completion
-        const { error: ackError } = await supabase
-          .rpc('secure_complete_job', {
-            job_id_param: job.job_id
-          })
+        // Mark job as completed or failed based on handler result
+        if (result.success) {
+          const { error: ackError } = await supabase
+            .rpc('secure_complete_job', {
+              job_id_param: job.job_id
+            })
 
-        if (ackError) {
-          console.error(`Failed to acknowledge job ${job.job_id}:`, ackError)
-        }
+          if (ackError) {
+            console.error(`Failed to acknowledge job ${job.job_id}:`, ackError)
+          }
+        } else {
+          const { error: failError } = await supabase
+            .rpc('secure_fail_job', {
+              job_id_param: job.job_id,
+              error_message_param: result.error || 'Job handler returned success: false'
+            })
 
-        if (ackError) {
-          console.error(`Failed to acknowledge job ${job.job_id}:`, ackError)
+          if (failError) {
+            console.error(`Failed to mark job ${job.job_id} as failed:`, failError)
+          }
         }
 
         results.push({

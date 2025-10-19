@@ -148,7 +148,7 @@ function formatViewCount(count: number): string {
   } else if (count >= 1000) {
     return `${(count / 1000).toFixed(1)}K`
   }
-  return count.toString()
+  return count?.toString()
 }
 
 function formatUploadDate(dateString: string): string {

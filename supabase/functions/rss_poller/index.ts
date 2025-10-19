@@ -419,13 +419,20 @@ Deno.serve(async (req) => {
     const newVideos = FeedStateManager.filterNewVideos(currentState, videos)
 
     if (newVideos.length > 0) {
-      // Enqueue video hydration jobs for new videos
-      const jobInserts = newVideos.map(videoId => ({
+      // Batch video IDs into groups for efficient job processing
+      const batchSize = 50 // Match YouTube API batch size
+      const videoBatches: string[][] = []
+      for (let i = 0; i < newVideos.length; i += batchSize) {
+        videoBatches.push(newVideos.slice(i, i + batchSize))
+      }
+
+      // Enqueue batched video hydration jobs for new videos
+      const jobInserts = videoBatches.map((batch, index) => ({
         type: 'REFRESH_VIDEO_STATS',
         channel_id: channelId,
-        video_ids: [videoId],
+        video_ids: batch,
         priority: 7, // High priority for new videos
-        dedup_key: `refresh_video_stats_${videoId}`,
+        dedup_key: `refresh_video_stats_batch_${channelId}_${index}`,
       }))
 
       const { error: jobDbError } = await supabase

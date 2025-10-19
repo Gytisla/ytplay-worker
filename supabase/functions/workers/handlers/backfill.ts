@@ -15,6 +15,9 @@ import { categorizeVideo } from '../../../../src/lib/categorization.ts'
  * 2. Discovers all videos via uploads playlist
  * 3. Stores channel and video data in database
  * 4. Captures initial channel statistics
+ * 5. Updates channel status to active
+ * 6. Enqueues REFRESH_CHANNEL_STATS job
+ * 7. Enqueues REFRESH_VIDEO_STATS job for all videos
  */
 export async function handleBackfillChannel(
   payload: { channelId: string },
@@ -251,6 +254,40 @@ export async function handleBackfillChannel(
       logger.error('Failed to update channel status', { channelId, error: updateError })
       // Don't fail the job for this, but log it
       logger.warn('channel status not updated to active', { channelId })
+    }
+
+    // Step 6: Enqueue REFRESH_CHANNEL_STATS job
+    logger.info('enqueueing REFRESH_CHANNEL_STATS job', { channelId })
+    const { error: enqueueError } = await supabase.rpc('enqueue_job', {
+      job_type_param: 'REFRESH_CHANNEL_STATS',
+      payload_param: {
+        channelId: channelId,
+      },
+      priority_param: 5,
+      dedup_key_param: `refresh_channel_stats_${channelId}`,
+    })
+
+    if (enqueueError) {
+      logger.error('Failed to enqueue REFRESH_CHANNEL_STATS job', { channelId, error: enqueueError })
+      // Don't fail the entire job for enqueue failure
+      logger.warn('continuing despite REFRESH_CHANNEL_STATS enqueue failure', { channelId })
+    }
+
+    // Step 7: Enqueue REFRESH_VIDEO_STATS job for all videos in the channel
+    logger.info('enqueueing REFRESH_VIDEO_STATS job for channel', { channelId })
+    const { error: videoStatsEnqueueError } = await supabase.rpc('enqueue_job', {
+      job_type_param: 'REFRESH_VIDEO_STATS',
+      payload_param: {
+        channel_id: channelId,
+      },
+      priority_param: 6,
+      dedup_key_param: `refresh_video_stats_channel_${channelId}`,
+    })
+
+    if (videoStatsEnqueueError) {
+      logger.error('Failed to enqueue REFRESH_VIDEO_STATS job', { channelId, error: videoStatsEnqueueError })
+      // Don't fail the entire job for enqueue failure
+      logger.warn('continuing despite REFRESH_VIDEO_STATS enqueue failure', { channelId })
     }
 
   logger.info('successfully backfilled channel', { channelId, itemsProcessed: totalItemsProcessed })

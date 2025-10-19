@@ -7,11 +7,11 @@ declare global {
 }
 
 export default defineNuxtPlugin(() => {
-  // Google Analytics ID - you should add this to your environment variables
-  const GA_ID = 'GA_MEASUREMENT_ID' // Replace with your actual GA ID
+  // Google Analytics ID
+  const GA_ID = 'G-CH9Z7W3PXR'
 
   // Only load Google Analytics if GA_ID is set
-  if (!GA_ID || GA_ID === 'GA_MEASUREMENT_ID') {
+  if (!GA_ID) {
     console.warn('Google Analytics ID not configured')
     return
   }

@@ -61,6 +61,35 @@
       "freshContent": "Fresh Content"
     }
   },
+  "home": {
+    "sections": {
+      "new": {
+        "title": "New",
+        "description": "Freshly indexed videos curated for discovery — updated in near real-time."
+      },
+      "trending": {
+        "title": "Trending",
+        "description": "Popular videos gaining traction across the network."
+      },
+      "topChannels": {
+        "title": "Top Channels",
+        "description": "Channels users are subscribing to right now.",
+        "view": "View"
+      },
+      "popularToday": {
+        "title": "Most Popular Today",
+        "description": "Videos gaining the most views today."
+      },
+      "trendingWeek": {
+        "title": "Trending This Week",
+        "description": "Most popular videos from the past 7 days."
+      },
+      "topMonth": {
+        "title": "Top This Month",
+        "description": "Highest performing videos of the month."
+      }
+    }
+  },
   "header": {
     "brand": "ytplay",
     "categories": "Categories",
@@ -68,6 +97,36 @@
     "topVideos": "Top Videos",
     "searchPlaceholder": "Search videos, channels...",
     "toggleTheme": "Toggle theme"
+  },
+  "topChannelsPage": {
+    "title": "Top Channels",
+    "breadcrumb": "Top Channels",
+    "sortBySubscribers": "By Subscribers",
+    "sortByViews": "By Views",
+    "descriptionSubscribers": "Most popular channels by subscriber count",
+    "descriptionViews": "Most popular channels by total views",
+    "subscribers": "subscribers",
+    "views": "views",
+    "videos": "videos",
+    "noChannelsFound": "No channels found."
+  },
+  "topVideosPage": {
+    "title": "Top Videos",
+    "breadcrumb": "Top Videos",
+    "sortByViews": "By Views",
+    "sortByTrending": "Trending",
+    "descriptionViews": "Most popular videos by view count",
+    "descriptionTrending": "Most popular videos trending now",
+    "noVideosFound": "No videos found."
+  },
+  "categoriesPage": {
+    "title": "Categories",
+    "breadcrumb": "Categories",
+    "description": "Explore videos organized by category",
+    "videos": "videos",
+    "viewAll": "View All",
+    "noVideosInCategory": "No videos in this category yet.",
+    "noCategoriesFound": "No categories found."
   },
   "seo": {
     "home": {

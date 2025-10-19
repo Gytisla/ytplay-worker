@@ -1,6 +1,6 @@
 {
   "common": {
-    "home": "Pradinis",
+    "home": "Pradžia",
     "channels": "Kanalai",
     "videos": "Vaizdo įrašai",
     "popular": "Populiarūs",
@@ -61,6 +61,35 @@
       "freshContent": "Šviežias turininys"
     }
   },
+  "home": {
+    "sections": {
+      "new": {
+        "title": "Nauji",
+        "description": "Naujai indeksuoti vaizdo įrašai atradimui — atnaujinama beveik realiu laiku."
+      },
+      "trending": {
+        "title": "Tendencijos",
+        "description": "Populiarūs vaizdo įrašai, gaunantys dėmesį tinkle."
+      },
+      "topChannels": {
+        "title": "Geriausi kanalai",
+        "description": "Kanalai, kuriuos dabar prenumeruoja vartotojai.",
+        "view": "Žiūrėti"
+      },
+      "popularToday": {
+        "title": "Populiariausi šiandien",
+        "description": "Vaizdo įrašai, gaunantys daugiausiai peržiūrų šiandien."
+      },
+      "trendingWeek": {
+        "title": "Tendencijos šią savaitę",
+        "description": "Populiariausi vaizdo įrašai iš pastarųjų 7 dienų."
+      },
+      "topMonth": {
+        "title": "Geriausi šį mėnesį",
+        "description": "Geriausiai pasirodantys vaizdo įrašai šį mėnesį."
+      }
+    }
+  },
   "header": {
     "brand": "ytplay",
     "categories": "Kategorijos",
@@ -68,6 +97,36 @@
     "topVideos": "Top video",
     "searchPlaceholder": "Ieškoti vaizdo įrašų, kanalų...",
     "toggleTheme": "Perjungti temą"
+  },
+  "topChannelsPage": {
+    "title": "Geriausi kanalai",
+    "breadcrumb": "Geriausi kanalai",
+    "sortBySubscribers": "Pagal prenumeratorius",
+    "sortByViews": "Pagal peržiūras",
+    "descriptionSubscribers": "Populiariausi kanalai pagal prenumeratorių skaičių",
+    "descriptionViews": "Populiariausi kanalai pagal bendrą peržiūrų skaičių",
+    "subscribers": "prenumeratoriai",
+    "views": "peržiūros",
+    "videos": "vaizdo įrašai",
+    "noChannelsFound": "Kanalų nerasta."
+  },
+  "topVideosPage": {
+    "title": "Geriausi vaizdo įrašai",
+    "breadcrumb": "Geriausi vaizdo įrašai",
+    "sortByViews": "Pagal peržiūras",
+    "sortByTrending": "Tendencijos",
+    "descriptionViews": "Populiariausi vaizdo įrašai pagal peržiūrų skaičių",
+    "descriptionTrending": "Populiariausi vaizdo įrašai, kurie dabar populiarėja",
+    "noVideosFound": "Vaizdo įrašų nerasta."
+  },
+  "categoriesPage": {
+    "title": "Kategorijos",
+    "breadcrumb": "Kategorijos",
+    "description": "Tyrinėkite vaizdo įrašus pagal kategoriją",
+    "videos": "vaizdo įrašai",
+    "viewAll": "Žiūrėti visus",
+    "noVideosInCategory": "Šioje kategorijoje dar nėra vaizdo įrašų.",
+    "noCategoriesFound": "Kategorijų nerasta."
   },
   "seo": {
     "home": {

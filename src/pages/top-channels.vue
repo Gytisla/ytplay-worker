@@ -3,23 +3,23 @@
     <!-- Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Breadcrumb -->
-      <Breadcrumb :breadcrumbs="[{ label: 'Top Channels' }]" />
+      <Breadcrumb :breadcrumbs="[{ label: t('topChannelsPage.breadcrumb') }]" />
 
       <!-- Title and Controls -->
       <div class="mb-8">
         <div class="flex items-center justify-between mb-4">
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">Top Channels</h1>
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">{{ t('topChannelsPage.title') }}</h1>
           <div class="flex items-center gap-2">
             <button @click="sortBy = 'subscribers'" :class="['px-4 py-2 rounded-lg text-sm font-medium transition', sortBy === 'subscribers' ? 'bg-primary-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
-              By Subscribers
+              {{ t('topChannelsPage.sortBySubscribers') }}
             </button>
             <button @click="sortBy = 'views'" :class="['px-4 py-2 rounded-lg text-sm font-medium transition', sortBy === 'views' ? 'bg-primary-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
-              By Views
+              {{ t('topChannelsPage.sortByViews') }}
             </button>
           </div>
         </div>
         <p class="text-muted dark:text-gray-400">
-          Most popular channels {{ sortBy === 'subscribers' ? 'by subscriber count' : 'by total views' }}
+          {{ sortBy === 'subscribers' ? t('topChannelsPage.descriptionSubscribers') : t('topChannelsPage.descriptionViews') }}
         </p>
       </div>
 
@@ -57,7 +57,7 @@
               <div class="flex-1">
                 <h3 class="font-semibold text-gray-900 dark:text-gray-50 group-hover:text-primary-600 transition">{{ ch.name }}</h3>
                 <p class="text-sm text-muted dark:text-gray-400">
-                  {{ sortBy === 'subscribers' ? `${ch.subs} subscribers` : `${ch.views} views` }} • {{ ch.recent }} videos
+                  {{ sortBy === 'subscribers' ? `${ch.subs} ${t('topChannelsPage.subscribers')}` : `${ch.views} ${t('topChannelsPage.views')}` }} • {{ ch.recent }} {{ t('topChannelsPage.videos') }}
                 </p>
               </div>
 
@@ -79,7 +79,7 @@
         </div>
 
         <div v-else class="text-center py-12">
-          <p class="text-muted dark:text-gray-400">No channels found.</p>
+          <p class="text-muted dark:text-gray-400">{{ t('topChannelsPage.noChannelsFound') }}</p>
         </div>
       </section>
     </main>
@@ -88,6 +88,8 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+
+const { t } = useI18n()
 
 // Data state
 const channels = ref<any[]>([])
@@ -143,20 +145,20 @@ async function loadChannels() {
 
 // Meta tags
 useHead({
-  title: 'Top Channels - YouTube Player',
+  title: `${t('topChannelsPage.title')} - YouTube Player`,
   meta: [
     {
       name: 'description',
-      content: 'Discover the most popular YouTube channels by subscriber count and total views'
+      content: t('seo.topChannels.description')
     },
     // Open Graph
     {
       property: 'og:title',
-      content: 'Top Channels - YouTube Player'
+      content: t('seo.topChannels.ogTitle')
     },
     {
       property: 'og:description',
-      content: 'Discover the most popular YouTube channels by subscriber count and total views'
+      content: t('seo.topChannels.ogDescription')
     },
     {
       property: 'og:image',
@@ -181,11 +183,11 @@ useHead({
     },
     {
       name: 'twitter:title',
-      content: 'Top Channels - YouTube Player'
+      content: t('seo.topChannels.ogTitle')
     },
     {
       name: 'twitter:description',
-      content: 'Discover the most popular YouTube channels by subscriber count and total views'
+      content: t('seo.topChannels.ogDescription')
     },
     {
       name: 'twitter:image',

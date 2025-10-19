@@ -1,8 +1,8 @@
 <template>
   <section ref="sectionRef" id="top-channels">
     <div class="mb-6">
-      <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Top Channels</h2>
-      <p class="text-sm text-muted dark:text-gray-400">Channels users are subscribing to right now.</p>
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{{ t('home.sections.topChannels.title') }}</h2>
+      <p class="text-sm text-muted dark:text-gray-400">{{ t('home.sections.topChannels.description') }}</p>
     </div>
 
     <div class="mt-6 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -26,7 +26,7 @@
             </div>
             <div class="text-xs text-muted dark:text-gray-400">{{ ch.recent }} videos</div>
           </div>
-          <div class="px-3 py-1 text-sm rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-primary-600">View</div>
+          <div class="px-3 py-1 text-sm rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-primary-600">{{ t('home.sections.topChannels.view') }}</div>
         </NuxtLink>
       </template>
     </div>
@@ -36,6 +36,8 @@
 <script setup lang="ts">
 import { ref, toRef } from 'vue'
 import { useLazyLoadOnIntersection } from '../../composables/useLazyLoadOnIntersection'
+
+const { t } = useI18n()
 
 // Use a simple static path as a safe fallback for the bundled SVG asset
 // avoid TypeScript import issues for image modules in this environment.

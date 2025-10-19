@@ -3,13 +3,13 @@
     <!-- Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Breadcrumb -->
-      <Breadcrumb :breadcrumbs="[{ label: 'Categories' }]" />
+      <Breadcrumb :breadcrumbs="[{ label: t('categoriesPage.breadcrumb') }]" />
 
       <!-- Title -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">Categories</h1>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">{{ t('categoriesPage.title') }}</h1>
         <p class="text-muted dark:text-gray-400 mt-2">
-          Explore videos organized by category
+          {{ t('categoriesPage.description') }}
         </p>
       </div>
 
@@ -42,14 +42,14 @@
               </div>
               <div>
                 <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50">{{ category.name }}</h2>
-                <p class="text-sm text-muted dark:text-gray-400">{{ category.video_count || 0 }} videos</p>
+                <p class="text-sm text-muted dark:text-gray-400">{{ category.video_count || 0 }} {{ t('categoriesPage.videos') }}</p>
               </div>
             </div>
             <NuxtLink
               :to="`/categories/${category.key}`"
               class="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition text-sm font-medium"
             >
-              View All
+              {{ t('categoriesPage.viewAll') }}
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
               </svg>
@@ -86,13 +86,13 @@
 
           <!-- No videos message -->
           <div v-else class="text-center py-8">
-            <p class="text-muted dark:text-gray-400">No videos in this category yet.</p>
+            <p class="text-muted dark:text-gray-400">{{ t('categoriesPage.noVideosInCategory') }}</p>
           </div>
         </section>
       </div>
 
       <div v-else class="text-center py-12">
-        <p class="text-muted dark:text-gray-400">No categories found.</p>
+        <p class="text-muted dark:text-gray-400">{{ t('categoriesPage.noCategoriesFound') }}</p>
       </div>
     </main>
   </div>
@@ -100,6 +100,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+
+const { t } = useI18n()
 
 const categories = ref<any[]>([])
 const loading = ref(true)

@@ -3,23 +3,23 @@
     <!-- Content -->
     <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Breadcrumb -->
-      <Breadcrumb :breadcrumbs="[{ label: 'Top Videos' }]" />
+      <Breadcrumb :breadcrumbs="[{ label: t('topVideosPage.breadcrumb') }]" />
 
       <!-- Title and Controls -->
       <div class="mb-8">
         <div class="flex items-center justify-between mb-4">
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">Top Videos</h1>
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">{{ t('topVideosPage.title') }}</h1>
           <div class="flex items-center gap-2">
             <button @click="sortBy = 'views'" :class="['px-4 py-2 rounded-lg text-sm font-medium transition', sortBy === 'views' ? 'bg-red-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
-              By Views
+              {{ t('topVideosPage.sortByViews') }}
             </button>
             <button @click="sortBy = 'trending'" :class="['px-4 py-2 rounded-lg text-sm font-medium transition', sortBy === 'trending' ? 'bg-red-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
-              Trending
+              {{ t('topVideosPage.sortByTrending') }}
             </button>
           </div>
         </div>
         <p class="text-muted dark:text-gray-400">
-          Most popular videos {{ sortBy === 'views' ? 'by view count' : 'trending now' }}
+          {{ sortBy === 'views' ? t('topVideosPage.descriptionViews') : t('topVideosPage.descriptionTrending') }}
         </p>
       </div>
 
@@ -96,7 +96,7 @@
         </div>
 
         <div v-else class="text-center py-12">
-          <p class="text-muted dark:text-gray-400">No videos found.</p>
+          <p class="text-muted dark:text-gray-400">{{ t('topVideosPage.noVideosFound') }}</p>
         </div>
       </section>
     </main>
@@ -105,6 +105,8 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+
+const { t } = useI18n()
 
 // Data state
 const videos = ref<any[]>([])
@@ -161,20 +163,20 @@ async function loadVideos() {
 
 // Meta tags
 useHead({
-  title: 'Top Videos - YouTube Player',
+  title: `${t('topVideosPage.title')} - YouTube Player`,
   meta: [
     {
       name: 'description',
-      content: 'Discover the most popular YouTube videos by view count and trending content'
+      content: t('seo.topVideos.description')
     },
     // Open Graph
     {
       property: 'og:title',
-      content: 'Top Videos - YouTube Player'
+      content: t('seo.topVideos.ogTitle')
     },
     {
       property: 'og:description',
-      content: 'Discover the most popular YouTube videos by view count and trending content'
+      content: t('seo.topVideos.ogDescription')
     },
     {
       property: 'og:image',
@@ -199,11 +201,11 @@ useHead({
     },
     {
       name: 'twitter:title',
-      content: 'Top Videos - YouTube Player'
+      content: t('seo.topVideos.ogTitle')
     },
     {
       name: 'twitter:description',
-      content: 'Discover the most popular YouTube videos by view count and trending content'
+      content: t('seo.topVideos.ogDescription')
     },
     {
       name: 'twitter:image',

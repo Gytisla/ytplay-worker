@@ -1,8 +1,8 @@
 <template>
   <section ref="sectionRef" id="new">
     <div class="mb-6">
-      <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">New</h2>
-      <p class="text-sm text-muted dark:text-gray-400">Freshly indexed videos curated for discovery — updated in near real-time.</p>
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{{ t('home.sections.new.title') }}</h2>
+      <p class="text-sm text-muted dark:text-gray-400">{{ t('home.sections.new.description') }}</p>
     </div>
 
     <div class="mt-6 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -27,6 +27,8 @@ import { ref, toRef } from 'vue'
 import VideoCard from '~/components/VideoCard.vue'
 import VideoCardSkeleton from '~/components/VideoCardSkeleton.vue'
 import { useLazyLoadOnIntersection } from '../../composables/useLazyLoadOnIntersection'
+
+const { t } = useI18n()
 
 // Use a simple static path as a safe fallback for the bundled SVG asset to
 // avoid TypeScript import issues for image modules in this environment.

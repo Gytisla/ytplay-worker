@@ -87,6 +87,7 @@
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl font-semibold">Performance Analytics</h2>
             <select v-model="statsPeriod" @change="loadVideoStats" class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm" :disabled="!videoStats">
+              <option value="1">Today</option>
               <option value="7">Last 7 days</option>
               <option value="30">Last 30 days</option>
               <option value="90">Last 90 days</option>
@@ -120,7 +121,7 @@
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
               <div class="text-sm text-muted dark:text-gray-400">Avg Watch Time</div>
               <div class="text-2xl font-bold">{{ formatNumber(videoStats.summary.avgMinutesWatched) }}m</div>
-              <div class="text-sm text-muted dark:text-gray-400">per day</div>
+              <div class="text-sm text-muted dark:text-gray-400">{{ videoStats.isTodayView ? 'per hour' : 'per day' }}</div>
             </div>
           </div>
 
@@ -137,7 +138,7 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- View Growth Chart -->
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <h3 class="text-lg font-semibold mb-4">View Growth</h3>
+              <h3 class="text-lg font-semibold mb-4">{{ videoStats.isTodayView ? 'Hourly View Growth' : 'View Growth' }}</h3>
               <div v-if="!videoStats" class="relative h-64 flex items-center justify-center">
                 <div class="animate-pulse">
                   <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
@@ -157,7 +158,7 @@
 
             <!-- Like Growth Chart -->
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <h3 class="text-lg font-semibold mb-4">Like Growth</h3>
+              <h3 class="text-lg font-semibold mb-4">{{ videoStats.isTodayView ? 'Hourly Like Growth' : 'Like Growth' }}</h3>
               <div v-if="!videoStats" class="relative h-64 flex items-center justify-center">
                 <div class="animate-pulse">
                   <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
@@ -177,7 +178,7 @@
 
             <!-- Daily View Gains -->
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <h3 class="text-lg font-semibold mb-4">Daily View Gains</h3>
+              <h3 class="text-lg font-semibold mb-4">{{ videoStats.isTodayView ? 'Hourly View Gains' : 'Daily View Gains' }}</h3>
               <div v-if="!videoStats" class="relative h-64 flex items-center justify-center">
                 <div class="animate-pulse">
                   <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
@@ -197,7 +198,7 @@
 
             <!-- Comment Growth Chart -->
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <h3 class="text-lg font-semibold mb-4">Comment Growth</h3>
+              <h3 class="text-lg font-semibold mb-4">{{ videoStats.isTodayView ? 'Hourly Comment Growth' : 'Comment Growth' }}</h3>
               <div v-if="!videoStats" class="relative h-64 flex items-center justify-center">
                 <div class="animate-pulse">
                   <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
@@ -392,9 +393,19 @@ function updateCharts() {
   }
 
   const stats = videoStats.value.stats || []
-  console.log('Stats array length:', stats.length)
+  const isTodayView = videoStats.value.isTodayView
+  console.log('Stats array length:', stats.length, 'isTodayView:', isTodayView)
+
   const labels = stats.length > 0
-    ? stats.map((s: any) => new Date(s.date).toLocaleDateString())
+    ? stats.map((s: any) => {
+        if (isTodayView && s.hour !== undefined) {
+          // For today view, show hour labels
+          return `${s.hour}:00`
+        } else {
+          // For multi-day view, show date labels
+          return new Date(s.date).toLocaleDateString()
+        }
+      })
     : ['No data available']
 
   console.log('Chart labels:', labels)

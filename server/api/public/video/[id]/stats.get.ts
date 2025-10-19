@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const videoId = getRouterParam(event, 'id')
   const query = getQuery(event)
-  const days = Math.min(365, Math.max(7, parseInt(query.days as string || '30', 10)))
+  const days = Math.min(365, Math.max(1, parseInt(query.days as string || '30', 10)))
 
   if (!videoId) {
     throw createError({
@@ -72,42 +72,23 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Group stats by date (aggregate hourly data)
-    const dailyStats = (stats || []).reduce((acc: any, stat: any) => {
-      const dateKey = stat.date
-      if (!acc[dateKey]) {
-        acc[dateKey] = {
-          date: stat.date,
-          views: 0,
-          likes: 0,
-          comments: 0,
-          shares: 0,
-          viewGained: 0,
-          minutesWatched: 0
-        }
-      }
+    // Group stats by date/hour (for today show hourly, otherwise daily)
+    const isTodayView = days === 1
+    const statsData = isTodayView ? groupByHour(stats) : groupByDay(stats)
 
-      // Sum up the values for the day
-      acc[dateKey].views += stat.view_count || 0
-      acc[dateKey].likes += stat.like_count || 0
-      acc[dateKey].comments += stat.comment_count || 0
-      acc[dateKey].shares += stat.share_count || 0
-      acc[dateKey].viewGained += stat.view_gained || 0
-      acc[dateKey].minutesWatched += stat.estimated_minutes_watched || 0
-
-      return acc
-    }, {})
-
-    // Convert to array and sort by date
-    const formattedStats = Object.values(dailyStats).sort((a: any, b: any) =>
-      new Date(a.date).getTime() - new Date(b.date).getTime()
-    )
+    // Convert to array and sort
+    const formattedStats = Object.values(statsData).sort((a: any, b: any) => {
+      const aTime = new Date(`${a.date}${a.hour ? ` ${a.hour}:00:00` : ''}`).getTime()
+      const bTime = new Date(`${b.date}${b.hour ? ` ${b.hour}:00:00` : ''}`).getTime()
+      return aTime - bTime
+    })
 
     return {
       videoId,
       days,
       stats: formattedStats,
-      summary: calculateSummary(formattedStats)
+      summary: calculateSummary(formattedStats, isTodayView),
+      isTodayView
     }
 
   } catch (error) {
@@ -119,19 +100,68 @@ export default defineEventHandler(async (event) => {
   }
 })
 
-function calculateSummary(stats: any[]) {
+function groupByDay(stats: any[]) {
+  return stats.reduce((acc: any, stat: any) => {
+    const dateKey = stat.date
+    if (!acc[dateKey]) {
+      acc[dateKey] = {
+        date: stat.date,
+        views: 0,
+        likes: 0,
+        comments: 0,
+        shares: 0,
+        viewGained: 0,
+        minutesWatched: 0
+      }
+    }
+
+    // Take the maximum values for the day (since each record contains cumulative totals)
+    acc[dateKey].views = Math.max(acc[dateKey].views, stat.view_count || 0)
+    acc[dateKey].likes = Math.max(acc[dateKey].likes, stat.like_count || 0)
+    acc[dateKey].comments = Math.max(acc[dateKey].comments, stat.comment_count || 0)
+    acc[dateKey].shares = Math.max(acc[dateKey].shares, stat.share_count || 0)
+    acc[dateKey].viewGained = Math.max(acc[dateKey].viewGained, stat.view_gained || 0)
+    acc[dateKey].minutesWatched = Math.max(acc[dateKey].minutesWatched, stat.estimated_minutes_watched || 0)
+
+    return acc
+  }, {})
+}
+
+function groupByHour(stats: any[]) {
+  return stats.reduce((acc: any, stat: any) => {
+    const hourKey = `${stat.date}_${stat.hour}`
+    acc[hourKey] = {
+      date: stat.date,
+      hour: stat.hour,
+      views: stat.view_count || 0,
+      likes: stat.like_count || 0,
+      comments: stat.comment_count || 0,
+      shares: stat.share_count || 0,
+      viewGained: stat.view_gained || 0,
+      minutesWatched: stat.estimated_minutes_watched || 0
+    }
+    return acc
+  }, {})
+}
+
+function calculateSummary(stats: any[], isTodayView: boolean = false) {
   if (stats.length === 0) return null
 
   const latest = stats[stats.length - 1]
   const previous = stats.length > 1 ? stats[stats.length - 2] : null
 
+  // For today view, calculate changes differently (hourly vs daily)
+  const viewChange = previous ? latest.views - previous.views : 0
+  const likeChange = previous ? latest.likes - previous.likes : 0
+  const commentChange = previous ? latest.comments - previous.comments : 0
+
   return {
     currentViews: latest.views,
     currentLikes: latest.likes,
     currentComments: latest.comments,
-    viewChange: previous ? latest.views - previous.views : 0,
-    likeChange: previous ? latest.likes - previous.likes : 0,
-    commentChange: previous ? latest.comments - previous.comments : 0,
+    viewChange,
+    likeChange,
+    commentChange,
     totalViewGained: stats.reduce((sum, s) => sum + s.viewGained, 0),
     totalMinutesWatched: stats.reduce((sum, s) => sum + s.minutesWatched, 0),
     avgMinutesWatched: stats.length > 0 ? Math.round(stats.reduce((sum, s) => sum + s.minutesWatched, 0) / stats.length) : 0

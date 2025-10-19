@@ -40,53 +40,69 @@ async function resolveChannelHandle(handle) {
       throw new Error('YOUTUBE_API_KEY environment variable is required')
     }
 
-    // Try different approaches to resolve the handle
+    // Remove @ symbol for searching
+    const searchQuery = handle.startsWith('@') ? handle.substring(1) : handle
+    console.log(`Searching for: ${searchQuery}`)
 
-    // Method 1: Try using the handle directly as a channel ID
-    try {
-      const directUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${encodeURIComponent(handle)}&key=${apiKey}`
-      const directResponse = await fetch(directUrl)
-      const directData = await directResponse.json()
-
-      if (directData.items && directData.items.length > 0) {
-        const channel = directData.items[0]
-        console.log(`Resolved ${handle} to channel ID: ${channel.id}`)
-        console.log(`Channel title: ${channel.snippet?.title}`)
-        console.log(`Subscriber count: ${channel.statistics?.subscriberCount || 'N/A'}`)
-        return channel.id
-      }
-    } catch (error) {
-      console.log(`Direct handle lookup failed: ${error.message}`)
-    }
-
-    // Method 2: Use search API to find the channel
-    const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(handle)}&type=channel&key=${apiKey}&maxResults=1`
+    // Method 1: Search for the channel by username/handle
+    const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery)}&type=channel&key=${apiKey}&maxResults=5`
     const searchResponse = await fetch(searchUrl)
     const searchData = await searchResponse.json()
 
     if (searchData.items && searchData.items.length > 0) {
-      const channel = searchData.items[0]
-      const channelId = channel.id.channelId || channel.id
+      // Look for exact matches first
+      for (const item of searchData.items) {
+        const channelId = item.id.channelId
+        const channelTitle = item.snippet.title.toLowerCase()
+        const searchQueryLower = searchQuery.toLowerCase()
 
-      // Verify this is the correct channel by fetching channel details
-      const verifyUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${encodeURIComponent(channelId)}&key=${apiKey}`
-      const verifyResponse = await fetch(verifyUrl)
-      const verifyData = await verifyResponse.json()
+        // Check if the title matches the search query (exact or very close)
+        if (channelTitle.includes(searchQueryLower) || searchQueryLower.includes(channelTitle)) {
+          // Verify this is the correct channel by fetching channel details
+          const verifyUrl = `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${encodeURIComponent(channelId)}&key=${apiKey}`
+          const verifyResponse = await fetch(verifyUrl)
+          const verifyData = await verifyResponse.json()
 
-      if (verifyData.items && verifyData.items.length > 0) {
-        const verifiedChannel = verifyData.items[0]
-        console.log(`Resolved ${handle} to channel ID: ${channelId}`)
-        console.log(`Channel title: ${verifiedChannel.snippet?.title}`)
-        console.log(`Subscriber count: ${verifiedChannel.statistics?.subscriberCount || 'N/A'}`)
-        return channelId
+          if (verifyData.items && verifyData.items.length > 0) {
+            const verifiedChannel = verifyData.items[0]
+            console.log(`✅ Found matching channel:`)
+            console.log(`   Title: ${verifiedChannel.snippet?.title}`)
+            console.log(`   Channel ID: ${channelId}`)
+            console.log(`   Subscriber count: ${verifiedChannel.statistics?.subscriberCount || 'N/A'}`)
+            console.log(`   Custom URL: ${verifiedChannel.snippet?.customUrl || 'N/A'}`)
+
+            // Additional check: see if custom URL matches
+            const customUrl = verifiedChannel.snippet?.customUrl
+            if (customUrl && (customUrl.toLowerCase().includes(searchQueryLower) || searchQueryLower.includes(customUrl.toLowerCase()))) {
+              console.log(`✅ Custom URL match confirmed!`)
+              return channelId
+            }
+
+            // If no custom URL match but title is very close, still return it
+            return channelId
+          }
+        }
       }
+
+      // If no exact matches, show available options and ask user to choose
+      console.log(`\n❌ No exact matches found for "${handle}". Available channels:`)
+      searchData.items.forEach((item, index) => {
+        const channelId = item.id.channelId
+        const title = item.snippet.title
+        const description = item.snippet.description?.substring(0, 100) + '...'
+        console.log(`${index + 1}. ${title} (ID: ${channelId})`)
+        console.log(`   ${description}`)
+      })
+
+      console.log(`\n💡 Try using the direct channel ID instead of the handle.`)
+      console.log(`   You can find the channel ID in the channel's URL or by inspecting available options above.`)
     }
 
-    console.error(`No channel found for handle: ${handle}`)
+    console.error(`❌ No channel found for handle: ${handle}`)
     return null
 
   } catch (error) {
-    console.error(`Failed to resolve channel handle ${handle}:`, error.message)
+    console.error(`❌ Failed to resolve channel handle ${handle}:`, error.message)
     return null
   }
 }

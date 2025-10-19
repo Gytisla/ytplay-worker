@@ -19,10 +19,10 @@
   <NuxtLink
     v-else
     :to="`/video/${video.slug || video.id}`"
-    class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition cursor-pointer"
+    class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition cursor-pointer flex flex-col min-h-[280px]"
   >
     <!-- Thumbnail -->
-    <div class="aspect-video bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
+    <div class="aspect-video bg-gray-100 dark:bg-gray-700 relative overflow-hidden flex-shrink-0">
       <img
         :src="video.thumb"
         :alt="video.title"
@@ -72,28 +72,30 @@
     </div>
 
     <!-- Video Info -->
-    <div class="p-4">
-      <h3 class="font-semibold text-gray-900 dark:text-gray-50 mb-1 line-clamp-2">{{ video.title }}</h3>
-      <div class="flex items-center gap-2 text-sm text-muted dark:text-gray-400 mb-2">
-        <img v-if="video.channelThumb" :src="video.channelThumb" alt="" class="w-5 h-5 rounded-full object-cover" />
-        <div v-else class="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-        <NuxtLink
-          :to="`/channel/${video.channelSlug || video.channelId}`"
-          class="hover:text-primary-600 dark:hover:text-primary-400 transition"
-          @click.stop
-        >
-          {{ video.channel }}
-        </NuxtLink>
-      </div>
-      <div class="flex items-center justify-between text-sm text-muted dark:text-gray-400">
-        <span>{{ video.views }}</span>
-        <div v-if="video.trend" class="flex items-center gap-1 px-2 py-1 bg-green-50 dark:bg-green-900/20 rounded-full border border-green-200 dark:border-green-800">
-          <svg class="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-          </svg>
-          <span class="text-sm font-bold text-green-700 dark:text-green-300">+{{ formatNumber(video.trend.gain) }}</span>
+    <div class="p-4 flex flex-col flex-1">
+      <h3 class="font-semibold text-gray-900 dark:text-gray-50 mb-1 line-clamp-2 flex-shrink-0">{{ video.title }}</h3>
+      <div class="flex flex-col gap-2 text-sm text-muted dark:text-gray-400 mt-auto">
+        <div class="flex items-center gap-2">
+          <img v-if="video.channelThumb" :src="video.channelThumb" alt="" class="w-5 h-5 rounded-full object-cover" />
+          <div v-else class="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+          <NuxtLink
+            :to="`/channel/${video.channelSlug || video.channelId}`"
+            class="hover:text-primary-600 dark:hover:text-primary-400 transition"
+            @click.stop
+          >
+            {{ video.channel }}
+          </NuxtLink>
         </div>
-        <span>{{ formattedAge }}</span>
+        <div class="flex items-center justify-between">
+          <span>{{ video.views }}</span>
+          <div v-if="video.trend" class="flex items-center gap-1 px-2 py-1 bg-green-50 dark:bg-green-900/20 rounded-full border border-green-200 dark:border-green-800">
+            <svg class="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+            </svg>
+            <span class="text-sm font-bold text-green-700 dark:text-green-300">+{{ formatNumber(video.trend.gain) }}</span>
+          </div>
+          <span>{{ formattedAge }}</span>
+        </div>
       </div>
     </div>
   </NuxtLink>
@@ -104,8 +106,6 @@ import { ref, computed } from 'vue'
 
 // Provide a minimal declaration so the TS checker knows about the auto-imported `useI18n` in SFCs
 declare function useI18n(): { t: (key: string, ...args: any[]) => string }
-
-const { t } = useI18n()
 
 interface Props {
   video: {
@@ -159,7 +159,7 @@ const autoBadges = computed(() => {
   if (video.trend && ((video.trend.gain >= 3000 && video.trend.period === 'today') || (video.trend.gain >= 10000 && video.trend.period === '7') || (video.trend.gain >= 20000 && video.trend.period === '30'))) {
     badges.push({
       type: 'trending' as const,
-      text: 'TRENDING'
+      text: 'POPULIARUS'
     })
     badgeTypes.add('trending')
   }
@@ -176,7 +176,7 @@ const autoBadges = computed(() => {
         ageText === '4d' || ageText === '5d' || ageText === '6d' || ageText === '7d') {
       badges.push({
         type: 'new' as const,
-        text: 'NEW'
+        text: 'NAUJAS'
       })
       badgeTypes.add('new')
     }

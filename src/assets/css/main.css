@@ -10,4 +10,16 @@
 	--color-primary: #e62626;
 }
 
+/* Hide page until theme is applied to prevent flash of unstyled content */
+html {
+  visibility: hidden;
+  opacity: 0;
+}
+
+html.theme-applied {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+}
+
 /* Utility classes that use the variables can be added if needed, but prefer Tailwind utilities */

@@ -22,6 +22,12 @@
 
       <!-- Category Content -->
       <div v-else-if="category">
+        <!-- Breadcrumb -->
+        <Breadcrumb :breadcrumbs="[
+          { label: 'Categories', to: '/categories' },
+          { label: category.name }
+        ]" />
+
         <!-- Category Header -->
         <div class="mb-8">
           <div class="flex items-center mb-4">
@@ -39,9 +45,6 @@
 
           <div class="flex items-center space-x-6 text-sm text-gray-500">
             <span>{{ totalVideos }} videos</span>
-            <NuxtLink to="/categories" class="text-blue-600 hover:text-blue-800">
-              ← All categories
-            </NuxtLink>
           </div>
         </div>
 
@@ -143,6 +146,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, nextTick, onMounted, watch } from 'vue'
 interface Category {
   id: string
   name: string

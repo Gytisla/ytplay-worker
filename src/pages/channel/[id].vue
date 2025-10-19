@@ -1,16 +1,9 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <!-- Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-      <!-- Back Button -->
-      <div class="mb-6">
-        <NuxtLink to="/" class="flex items-center gap-2 text-muted dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-50 transition">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-          Back
-        </NuxtLink>
-      </div>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Breadcrumb -->
+      <Breadcrumb :breadcrumbs="[{ label: 'Channels', to: '/top-channels' }, { label: channel?.name || 'Channel' }]" />
 
       <!-- Channel Info -->
       <section v-if="channel" class="mb-8">

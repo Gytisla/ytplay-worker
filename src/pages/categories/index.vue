@@ -1,136 +1,114 @@
 <template>
-  <div class="categories-page">
-    <div class="container mx-auto px-4 py-8">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <!-- Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Back Link -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Video Categories</h1>
-        <p class="text-gray-600 dark:text-gray-400">Explore videos organized by topic and content type</p>
-      </div>
-
-      <!-- Loading State -->
-      <div v-if="loading" class="flex justify-center items-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-
-      <!-- Error State -->
-      <div v-else-if="error" class="text-center py-12">
-        <div class="text-red-600 mb-4">
-          <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        <NuxtLink to="/" class="flex items-center gap-2 text-muted dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-50 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
-        </div>
-        <h3 class="text-lg font-medium text-gray-900  dark:text-white mb-2">Failed to load categories</h3>
-        <p class="text-gray-600 dark:text-gray-400">{{ error }}</p>
+          Back to Home
+        </NuxtLink>
       </div>
 
-      <!-- Categories List -->
-      <div v-else class="space-y-3">
-        <div
-          v-for="category in categories"
-          :key="category.id"
-          class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm hover:shadow-md transition group"
-        >
-          <div class="flex items-center gap-6">
-            <!-- Category Icon -->
-            <div
-              class="w-16 h-16 rounded-lg flex items-center justify-center text-3xl flex-shrink-0"
-              :style="{ backgroundColor: category.color + '20', color: category.color }"
-            >
-              {{ category.icon }}
-            </div>
+      <!-- Title -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">Categories</h1>
+        <p class="text-muted dark:text-gray-400 mt-2">
+          Explore videos organized by category
+        </p>
+      </div>
 
-            <!-- Category Info -->
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center justify-between mb-2">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-50">{{ category.name }}</h3>
-                <span class="text-sm text-muted dark:text-gray-400">{{ category.video_count || 0 }} videos</span>
+      <!-- Categories with Videos -->
+      <div v-if="loading" class="space-y-12">
+        <div v-for="i in 6" :key="`cat-skel-${i}`" class="space-y-6">
+          <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse"></div>
+          <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div v-for="j in 4" :key="`vid-skel-${i}-${j}`" class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm animate-pulse">
+              <div class="aspect-video bg-gray-200 dark:bg-gray-700"></div>
+              <div class="p-4">
+                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
               </div>
-              <p class="text-gray-600 dark:text-gray-400 mb-3">{{ category.description }}</p>
-
-              <!-- Latest Videos Grid -->
-                            <!-- Latest Videos Grid -->
-              <div v-if="category.latest_videos && category.latest_videos.length > 0" class="mt-4">
-                <div class="flex items-center justify-between mb-3">
-                  <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-50">Latest Videos</h4>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  <NuxtLink
-                    v-for="video in category.latest_videos.slice(0, 4)"
-                    :key="video.id"
-                    :to="`/video/${video.youtube_video_id}`"
-                    class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group cursor-pointer"
-                  >
-                    <div class="aspect-video bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
-                      <img
-                        :src="video.thumbnail_url"
-                        :alt="video.title"
-                        class="w-full h-full object-cover group-hover:scale-105 transition"
-                        loading="lazy"
-                      />
-                      <div class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
-                        NEW
-                      </div>
-                    </div>
-                    <div class="p-4">
-                      <h5 class="font-semibold text-gray-900 dark:text-gray-50 mb-1 line-clamp-2">
-                        {{ video.title }}
-                      </h5>
-                      <p class="text-sm text-muted dark:text-gray-400">
-                        {{ formatDate(video.published_at) }}
-                      </p>
-                    </div>
-                  </NuxtLink>
-                </div>
-                <div v-if="category.latest_videos.length > 4" class="mt-3 text-center">
-                  <NuxtLink
-                    :to="`/categories/${category.key}`"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded-lg hover:from-primary-500 hover:to-primary-400 transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md"
-                  >
-                    <span>Discover {{ category.latest_videos.length - 4 }} more videos</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                  </NuxtLink>
-                </div>
-              </div>
-              <div v-else class="text-sm text-muted dark:text-gray-400 py-2">
-                No videos yet
-              </div>
-            </div>
-
-            <!-- View All Link -->
-            <div class="flex-shrink-0">
-              <NuxtLink
-                :to="`/categories/${category.key}`"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded-lg hover:from-primary-500 hover:to-primary-400 transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md"
-              >
-                <span>Explore</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </NuxtLink>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Empty State -->
-      <div v-if="!loading && !error && categories.length === 0" class="text-center py-12">
-        <div class="text-gray-400 mb-4">
-          <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-          </svg>
-        </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">No categories found</h3>
-        <p class="text-gray-600">Categories will appear here once videos are categorized.</p>
+      <div v-else-if="categories.length > 0" class="space-y-12">
+        <section v-for="category in categories" :key="category.id" class="space-y-6">
+          <!-- Category Header -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-lg flex items-center justify-center text-xl"
+                :style="{ backgroundColor: category.color + '20', color: category.color }"
+              >
+                {{ category.icon }}
+              </div>
+              <div>
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50">{{ category.name }}</h2>
+                <p class="text-sm text-muted dark:text-gray-400">{{ category.video_count || 0 }} videos</p>
+              </div>
+            </div>
+            <NuxtLink
+              :to="`/categories/${category.key}`"
+              class="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition text-sm font-medium"
+            >
+              View All
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </NuxtLink>
+          </div>
+
+          <!-- Videos Grid -->
+          <div v-if="category.latest_videos && category.latest_videos.length > 0" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <NuxtLink
+              v-for="video in category.latest_videos"
+              :key="video.id"
+              :to="`/video/${video.youtube_video_id}`"
+              class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group cursor-pointer"
+            >
+              <!-- Thumbnail -->
+              <div class="aspect-video bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
+                <img
+                  :src="video.thumbnail_url"
+                  :alt="video.title"
+                  class="w-full h-full object-cover group-hover:scale-105 transition"
+                  loading="lazy"
+                />
+              </div>
+
+              <!-- Video Info -->
+              <div class="p-4">
+                <h3 class="font-semibold text-gray-900 dark:text-gray-50 mb-1 line-clamp-2">{{ video.title }}</h3>
+                <div class="text-sm text-muted dark:text-gray-400">
+                  {{ formatDate(video.published_at) }}
+                </div>
+              </div>
+            </NuxtLink>
+          </div>
+
+          <!-- No videos message -->
+          <div v-else class="text-center py-8">
+            <p class="text-muted dark:text-gray-400">No videos in this category yet.</p>
+          </div>
+        </section>
       </div>
-    </div>
+
+      <div v-else class="text-center py-12">
+        <p class="text-muted dark:text-gray-400">No categories found.</p>
+      </div>
+    </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { CategoryWithVideos } from '~/types/category'
+import { ref } from 'vue'
 
-const categories = ref<CategoryWithVideos[]>([])
+const categories = ref<any[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
@@ -179,16 +157,25 @@ await fetchCategories()
 
 // SEO
 useHead({
-  title: 'Video Categories',
+  title: 'Categories - YouTube Player',
   meta: [
     {
       name: 'description',
-      content: 'Explore videos organized by topic and content type'
+      content: 'Explore videos organized by category'
     }
   ]
 })
 </script>
 
 <style scoped>
-/* No custom styles needed for the vertical list layout */
+.text-muted { color: rgba(17,24,39,0.6); }
+.dark .text-muted { color: rgba(148,163,184,0.8); }
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  overflow: hidden;
+}
 </style>

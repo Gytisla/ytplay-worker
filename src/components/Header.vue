@@ -69,17 +69,19 @@
           >
             {{ $t('header.topVideos') }}
           </NuxtLink>
-          <NuxtLink
-            to="/submit-channel"
-            :class="[
-              'px-3 py-2 text-sm font-medium rounded-md transition',
-              isActiveRoute('/submit-channel')
-                ? 'text-primary-600 dark:text-primary-400 font-semibold'
-                : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
-            ]"
-          >
-            {{ $t('header.submitChannel') }}
-          </NuxtLink>
+          <div class="ml-4 pl-4 border-l border-gray-300 dark:border-gray-600">
+            <NuxtLink
+              to="/submit-channel"
+              :class="[
+                'px-3 py-2 text-sm font-medium rounded-md transition',
+                isActiveRoute('/submit-channel')
+                  ? 'text-primary-600 dark:text-primary-400 font-semibold'
+                  : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
+              ]"
+            >
+              {{ $t('header.submitChannel') }}
+            </NuxtLink>
+          </div>
           <!-- <LanguageSwitcher /> -->
           <button
             @click="toggleTheme"
@@ -145,19 +147,21 @@
         >
           {{ $t('header.topVideos') }}
         </NuxtLink>
-        <NuxtLink
-          to="/submit-channel"
-          @click="mobileOpen = false"
-          :class="[
-            'px-3 py-2 rounded-md text-sm font-medium transition',
-            isActiveRoute('/submit-channel')
-              ? 'text-primary-600 dark:text-primary-400 font-semibold'
-              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-          ]"
-          :aria-current="isActiveRoute('/submit-channel') ? 'page' : null"
-        >
-          {{ $t('header.submitChannel') }}
-        </NuxtLink>
+        <div class="px-3 py-2 border-t border-gray-100 dark:border-gray-800">
+          <NuxtLink
+            to="/submit-channel"
+            @click="mobileOpen = false"
+            :class="[
+              'w-full block px-3 py-2 text-sm font-medium rounded-md transition text-center',
+              isActiveRoute('/submit-channel')
+                ? 'text-primary-600 dark:text-primary-400 font-semibold'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+            ]"
+            :aria-current="isActiveRoute('/submit-channel') ? 'page' : null"
+          >
+            {{ $t('header.submitChannel') }}
+          </NuxtLink>
+        </div>
         <div class="pt-2 border-t border-gray-100 dark:border-gray-800 mt-2">
           <button
             @click="toggleTheme(); mobileOpen = false"

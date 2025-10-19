@@ -69,6 +69,17 @@
           >
             {{ $t('header.topVideos') }}
           </NuxtLink>
+          <NuxtLink
+            to="/submit-channel"
+            :class="[
+              'px-3 py-2 text-sm font-medium rounded-md transition',
+              isActiveRoute('/submit-channel')
+                ? 'text-primary-600 dark:text-primary-400 font-semibold'
+                : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
+            ]"
+          >
+            Pasiūlyti kanalą
+          </NuxtLink>
           <!-- <LanguageSwitcher /> -->
           <button
             @click="toggleTheme"
@@ -133,6 +144,19 @@
           :aria-current="isActiveRoute('/top-videos') ? 'page' : null"
         >
           {{ $t('header.topVideos') }}
+        </NuxtLink>
+        <NuxtLink
+          to="/submit-channel"
+          @click="mobileOpen = false"
+          :class="[
+            'px-3 py-2 rounded-md text-sm font-medium transition',
+            isActiveRoute('/submit-channel')
+              ? 'text-primary-600 dark:text-primary-400 font-semibold'
+              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+          ]"
+          :aria-current="isActiveRoute('/submit-channel') ? 'page' : null"
+        >
+          Pasiūlyti kanalą
         </NuxtLink>
         <div class="pt-2 border-t border-gray-100 dark:border-gray-800 mt-2">
           <button

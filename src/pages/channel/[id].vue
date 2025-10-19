@@ -209,22 +209,26 @@
         </div>
 
         <div v-else-if="videos.length > 0" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <article v-for="video in videos" :key="video.id" class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group cursor-pointer" @click="navigateToVideo(video.slug || video.id)">
-            <div class="aspect-video bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
-              <img :src="video.thumbnail" :alt="video.title" class="w-full h-full object-cover group-hover:scale-105 transition" />
-              <div class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                {{ video.duration }}
-              </div>
-            </div>
-            <div class="p-4">
-              <h4 class="font-semibold text-gray-900 dark:text-gray-50 mb-1 line-clamp-2">{{ video.title }}</h4>
-              <div class="flex items-center justify-between text-sm text-muted dark:text-gray-400">
-                <span>{{ video.views }} views</span>
-                <span>{{ video.uploaded }}</span>
-              </div>
-            </div>
-          </article>
+          <VideoCard
+            v-for="video in videos"
+            :key="video.id"
+            :video="{
+              id: video.id,
+              slug: video.slug,
+              title: video.title,
+              thumb: video.thumbnail,
+              duration: video.duration,
+              channel: channel?.name || 'Unknown',
+              channelThumb: channel?.avatar,
+              channelSlug: channel?.slug,
+              channelId: channel?.id,
+              views: video.views,
+              age: video.age
+            }"
+          />
         </div>
+
+        hello {{ videos[0].uploaded }}
 
         <!-- Loading more indicator -->
         <div v-if="loadingMore" class="flex justify-center py-8">
@@ -249,7 +253,7 @@
 
 <script setup lang="ts">
 import { ref, nextTick, onBeforeUnmount, onMounted, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -281,7 +285,6 @@ ChartJS.register(
 )
 
 const route = useRoute()
-const router = useRouter()
 const channelId = route.params['id'] as string
 
 // ensure useHead is recognized (Nuxt auto-imported in most files)
@@ -465,10 +468,6 @@ function openInYouTube() {
   if (channel.value?.youtubeId) {
     window.open(`https://www.youtube.com/channel/${channel.value.youtubeId}`, '_blank')
   }
-}
-
-function navigateToVideo(videoId: string) {
-  router.push(`/video/${videoId}`)
 }
 
 function updateCharts() {

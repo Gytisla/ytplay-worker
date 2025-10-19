@@ -104,7 +104,8 @@ export default defineEventHandler(async (event) => {
         thumbnail: video.thumbnail_url,
         duration: formatDuration(video.duration),
         views: formatViewCount(video.view_count),
-        uploaded: formatUploadDate(video.published_at)
+        uploaded: formatUploadDate(video.published_at),
+        age: formatAge(video.published_at)
       }
     })
 
@@ -227,4 +228,15 @@ function formatUploadDate(dateString: string): string {
     }
     return `${years} years ago`
   }
+}
+
+function formatAge(d: Date | string): string {
+  const date = typeof d === 'string' ? new Date(d) : d
+  const diff = Date.now() - date.getTime()
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+  if (days === 0) return 'today'
+  if (days === 1) return '1d'
+  if (days < 30) return `${days}d`
+  const months = Math.floor(days / 30)
+  return `${months}mo`
 }

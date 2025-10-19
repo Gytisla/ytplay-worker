@@ -94,6 +94,7 @@ interface Props {
     channelId?: string
     views: string
     age: string
+    quality?: string
     trend?: {
       gain: number
       period: string
@@ -133,6 +134,8 @@ const autoBadges = computed(() => {
     })
     badgeTypes.add('trending')
   }
+
+  {{ video.age }}
 
   // Check for new badge: videos less than 7 days old
   if (video.age) {

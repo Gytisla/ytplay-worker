@@ -87,7 +87,7 @@
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl font-semibold">Performance Analytics</h2>
             <select v-model="statsPeriod" @change="loadVideoStats" class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm" :disabled="!videoStats">
-              <option value="1">Today</option>
+              <option v-if="canShowTodayStats" value="1">Today</option>
               <option value="7">Last 7 days</option>
               <option value="30">Last 30 days</option>
               <option value="90">Last 90 days</option>
@@ -96,37 +96,40 @@
           </div>
 
           <!-- Summary Cards -->
-          <div v-if="videoStats && videoStats.summary" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div v-if="videoStats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
               <div class="text-sm text-muted dark:text-gray-400">Views</div>
-              <div class="text-2xl font-bold">{{ formatNumber(videoStats.summary.currentViews) }}</div>
-              <div class="text-sm" :class="videoStats.summary.viewChange >= 0 ? 'text-green-600' : 'text-red-600'">
+              <div class="text-2xl font-bold">{{ videoStats.summary ? formatNumber(videoStats.summary.currentViews) : '0' }}</div>
+              <div v-if="videoStats.summary" class="text-sm" :class="videoStats.summary.viewChange >= 0 ? 'text-green-600' : 'text-red-600'">
                 {{ videoStats.summary.viewChange >= 0 ? '+' : '' }}{{ formatNumber(videoStats.summary.viewChange) }}
               </div>
+              <div v-else class="text-sm text-muted dark:text-gray-400">No data</div>
             </div>
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
               <div class="text-sm text-muted dark:text-gray-400">Likes</div>
-              <div class="text-2xl font-bold">{{ formatNumber(videoStats.summary.currentLikes) }}</div>
-              <div class="text-sm" :class="videoStats.summary.likeChange >= 0 ? 'text-green-600' : 'text-red-600'">
+              <div class="text-2xl font-bold">{{ videoStats.summary ? formatNumber(videoStats.summary.currentLikes) : '0' }}</div>
+              <div v-if="videoStats.summary" class="text-sm" :class="videoStats.summary.likeChange >= 0 ? 'text-green-600' : 'text-red-600'">
                 {{ videoStats.summary.likeChange >= 0 ? '+' : '' }}{{ formatNumber(videoStats.summary.likeChange) }}
               </div>
+              <div v-else class="text-sm text-muted dark:text-gray-400">No data</div>
             </div>
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
               <div class="text-sm text-muted dark:text-gray-400">Comments</div>
-              <div class="text-2xl font-bold">{{ formatNumber(videoStats.summary.currentComments) }}</div>
-              <div class="text-sm" :class="videoStats.summary.commentChange >= 0 ? 'text-green-600' : 'text-red-600'">
+              <div class="text-2xl font-bold">{{ videoStats.summary ? formatNumber(videoStats.summary.currentComments) : '0' }}</div>
+              <div v-if="videoStats.summary" class="text-sm" :class="videoStats.summary.commentChange >= 0 ? 'text-green-600' : 'text-red-600'">
                 {{ videoStats.summary.commentChange >= 0 ? '+' : '' }}{{ formatNumber(videoStats.summary.commentChange) }}
               </div>
+              <div v-else class="text-sm text-muted dark:text-gray-400">No data</div>
             </div>
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
               <div class="text-sm text-muted dark:text-gray-400">Avg Watch Time</div>
-              <div class="text-2xl font-bold">{{ formatNumber(videoStats.summary.avgMinutesWatched) }}m</div>
+              <div class="text-2xl font-bold">{{ videoStats.summary ? formatNumber(videoStats.summary.avgMinutesWatched) + 'm' : '0m' }}</div>
               <div class="text-sm text-muted dark:text-gray-400">{{ videoStats.isTodayView ? 'per hour' : 'per day' }}</div>
             </div>
           </div>
 
           <!-- Loading Summary Cards -->
-          <div v-else class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div v-if="!videoStats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div v-for="i in 4" :key="`summary-skeleton-${i}`" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 animate-pulse">
               <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-16 mb-2"></div>
               <div class="h-8 bg-gray-200 dark:bg-gray-600 rounded w-20 mb-2"></div>
@@ -304,8 +307,25 @@ const shouldShowToggle = computed(() => {
   return formatDescription(video.value.description).length > descriptionMaxLength
 })
 
+const canShowTodayStats = computed(() => {
+  if (!video.value?.publishedAt) return false
+  const uploadDate = new Date(video.value.publishedAt)
+  const sevenDaysAgo = new Date()
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+  return uploadDate >= sevenDaysAgo
+})
+
 // Load video data
 await loadVideo()
+
+// Set initial stats period based on video age
+if (video.value?.publishedAt) {
+  const uploadDate = new Date(video.value.publishedAt)
+  const sevenDaysAgo = new Date()
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+  statsPeriod.value = uploadDate >= sevenDaysAgo ? '1' : '30'
+}
+
 await loadVideoStats()
 
 // Ensure charts are updated after everything is mounted
@@ -319,6 +339,29 @@ onMounted(() => {
 watch(videoStats, (newStats) => {
   if (newStats) {
     nextTick(() => updateCharts())
+  }
+})
+
+// Watch for video changes to handle "Today" option availability
+watch(video, (newVideo) => {
+  if (newVideo && newVideo.publishedAt) {
+    const uploadDate = new Date(newVideo.publishedAt)
+    const sevenDaysAgo = new Date()
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+    const isNewVideo = uploadDate >= sevenDaysAgo
+
+    console.log('Video upload date:', uploadDate, 'Seven days ago:', sevenDaysAgo, 'isNewVideo:', isNewVideo)
+
+    // For new videos, switch to "Today" view
+    if (isNewVideo && statsPeriod.value !== '1') {
+      statsPeriod.value = '1'
+      loadVideoStats()
+    }
+    // For old videos, ensure we're not on "Today" (which would be hidden)
+    else if (!isNewVideo && statsPeriod.value === '1') {
+      statsPeriod.value = '30'
+      loadVideoStats()
+    }
   }
 })
 
@@ -486,7 +529,7 @@ function updateCharts() {
       data: {
         labels,
         datasets: [{
-          label: 'Daily View Gains',
+          label: isTodayView ? 'Hourly View Gains' : 'Daily View Gains',
           data: stats.length > 0 ? stats.map((s: any) => s.viewGained) : [0],
           backgroundColor: 'rgba(59, 130, 246, 0.8)',
           borderColor: 'rgb(59, 130, 246)',

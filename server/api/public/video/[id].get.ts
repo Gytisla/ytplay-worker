@@ -62,6 +62,7 @@ export default defineEventHandler(async (event) => {
       duration: formatDuration(video.duration),
       views: formatViewCount(video.view_count),
       uploaded: formatUploadDate(video.published_at),
+      publishedAt: video.published_at, // Raw date for date calculations
       channel: {
         id: video.channels.id,
         youtubeId: video.channels.youtube_channel_id,

@@ -101,7 +101,7 @@ export default defineEventHandler(async (event) => {
 })
 
 function groupByDay(stats: any[]) {
-  return stats.reduce((acc: any, stat: any) => {
+  const grouped = stats.reduce((acc: any, stat: any) => {
     const dateKey = stat.date
     if (!acc[dateKey]) {
       acc[dateKey] = {
@@ -125,10 +125,27 @@ function groupByDay(stats: any[]) {
 
     return acc
   }, {})
+
+  // Calculate view gains from view differences if not provided
+  const sortedDays: any[] = Object.values(grouped).sort((a: any, b: any) =>
+    new Date(a.date).getTime() - new Date(b.date).getTime()
+  )
+
+  for (let i = 0; i < sortedDays.length; i++) {
+    const current: any = sortedDays[i]
+    const previous: any = i > 0 ? sortedDays[i - 1] : null
+
+    // If view_gained is not provided or is 0, calculate from view difference
+    if (!current.viewGained || current.viewGained === 0) {
+      current.viewGained = previous ? Math.max(0, current.views - previous.views) : current.views
+    }
+  }
+
+  return grouped
 }
 
 function groupByHour(stats: any[]) {
-  return stats.reduce((acc: any, stat: any) => {
+  const grouped = stats.reduce((acc: any, stat: any) => {
     const hourKey = `${stat.date}_${stat.hour}`
     acc[hourKey] = {
       date: stat.date,
@@ -142,6 +159,23 @@ function groupByHour(stats: any[]) {
     }
     return acc
   }, {})
+
+  // Calculate view gains from view differences if not provided
+  const sortedHours: any[] = Object.values(grouped).sort((a: any, b: any) =>
+    new Date(`${a.date} ${a.hour}:00:00`).getTime() - new Date(`${b.date} ${b.hour}:00:00`).getTime()
+  )
+
+  for (let i = 0; i < sortedHours.length; i++) {
+    const current: any = sortedHours[i]
+    const previous: any = i > 0 ? sortedHours[i - 1] : null
+
+    // If view_gained is not provided or is 0, calculate from view difference
+    if (!current.viewGained || current.viewGained === 0) {
+      current.viewGained = previous ? Math.max(0, current.views - previous.views) : current.views
+    }
+  }
+
+  return grouped
 }
 
 function calculateSummary(stats: any[], isTodayView: boolean = false) {

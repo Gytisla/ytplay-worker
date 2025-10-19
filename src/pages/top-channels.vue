@@ -65,7 +65,7 @@
               <div v-if="index < 3" class="flex-shrink-0">
                 <div class="w-8 h-8 rounded-full flex items-center justify-center"
                      :class="index === 0 ? 'bg-yellow-100 dark:bg-yellow-900' :
-                            index === 1 ? 'bg-gray-100 dark:bg-gray-800' :
+                            index === 1 ? 'bg-gray-100 dark:bg-gray-700' :
                             'bg-orange-100 dark:bg-orange-900'">
                   <svg class="w-4 h-4" :class="index === 0 ? 'text-yellow-600' :
                                                index === 1 ? 'text-gray-600 dark:text-gray-400' :

@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <!-- Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-12">
       <!-- Breadcrumb -->
       <Breadcrumb :breadcrumbs="[{ label: 'Channels', to: '/top-channels' }, { label: channel?.name || 'Channel' }]" />
 
@@ -227,8 +227,6 @@
             }"
           />
         </div>
-
-        hello {{ videos[0].uploaded }}
 
         <!-- Loading more indicator -->
         <div v-if="loadingMore" class="flex justify-center py-8">

@@ -1,7 +1,7 @@
 <template>
   <!-- Clean Hero Section -->
-  <section class="relative pt-16 md:pt-24 pb-8 md:pb-16">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+  <section class="relative pt-8 md:pt-16 pb-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-12 text-center">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <!-- Main Heading -->
         <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-gray-900 dark:text-white">

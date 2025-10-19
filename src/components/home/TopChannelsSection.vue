@@ -47,6 +47,19 @@
         </template>
       </ClientOnly>
     </div>
+
+    <!-- CTA to view all channels -->
+    <div class="mt-6 text-center">
+      <NuxtLink
+        to="/top-channels"
+        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors group"
+      >
+        <span>{{ t('home.cta.viewAllChannels', 'View All Channels') }}</span>
+        <svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </NuxtLink>
+    </div>
   </section>
 </template>
 

@@ -6,7 +6,20 @@
         <h1 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-8">
           Pasiūlyti kanalą
         </h1>
-        <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+        <p class="text-lg text-  } catch (error: any) {
+    console.error('Submission error:', error)
+
+    // Handle different error types
+    if (error.statusCode === 409) {
+      submitError.value = error.statusMessage || 'Šis kanalas jau buvo pateiktas.'
+    } else if (error.statusCode === 429) {
+      submitError.value = error.statusMessage || 'Per daug pasiūlymų. Prašome palaukti.'
+    } else if (error.statusCode === 400) {
+      submitError.value = error.statusMessage || 'Neteisingi duomenys. Patikrinkite įvestį.'
+    } else {
+      submitError.value = 'Įvyko klaida siunčiant pasiūlymą. Prašome bandyti vėliau.'
+    }
+  } finally {k:text-gray-300 max-w-2xl mx-auto">
           Turite mėgstamą YouTube kanalą? Pasiūlykite jį mūsų platformai!
         </p>
         <p class="text-sm text-gray-500 dark:text-gray-400 mt-4">
@@ -165,7 +178,16 @@
               </div>
             </div>
 
-            <!-- Submit Button -->
+            <!-- Hidden honeypot field for spam detection -->
+            <div class="hidden">
+              <label for="website">Website (leave empty)</label>
+              <input
+                id="website"
+                v-model="honeypot"
+                type="text"
+                autocomplete="off"
+              />
+            </div>
             <button
               type="submit"
               :disabled="!canSubmit || isSubmitting"
@@ -218,6 +240,8 @@ import { ref, computed } from 'vue'
 // Form state
 const submissionType = ref('')
 const channelInput = ref('')
+const honeypot = ref('') // Hidden field for spam detection
+const pageLoadTime = ref(Date.now()) // For minimum submission time check
 const isSubmitting = ref(false)
 const submitSuccess = ref(false)
 const submitError = ref('')
@@ -316,6 +340,19 @@ function isValidYouTubeUrl(url: string) {
 
 async function handleSubmit() {
   if (!canSubmit.value) return
+
+  // Check honeypot field (basic spam protection)
+  if (honeypot.value.trim()) {
+    submitError.value = 'Forma buvo užpildyta neteisingai.'
+    return
+  }
+
+  // Minimum time check (prevent instant submissions)
+  const timeSinceLoad = Date.now() - pageLoadTime.value
+  if (timeSinceLoad < 3000) { // 3 seconds minimum
+    submitError.value = 'Prašome palaukti prieš siunčiant.'
+    return
+  }
 
   isSubmitting.value = true
   submitError.value = ''

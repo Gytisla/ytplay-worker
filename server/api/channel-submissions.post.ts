@@ -39,6 +39,34 @@ export default defineEventHandler(async (event: any) => {
       })
     }
 
+    // Get client IP for rate limiting (optional in development)
+    const clientIP = getClientIP(event)
+    
+    // Skip rate limiting if we can't identify the client (development/staging)
+    if (!clientIP) {
+      console.warn('Unable to identify client IP - skipping rate limiting')
+    }
+
+    // Rate limiting: Check submissions from this IP in the last hour (only if we have an IP)
+    if (clientIP) {
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+      const { data: recentSubmissions, error: rateLimitError } = await supabase
+        .from('channel_submissions')
+        .select('id, submitted_at')
+        .eq('client_ip', clientIP)
+        .gte('submitted_at', oneHourAgo)
+
+      if (rateLimitError) {
+        console.error('Rate limit check error:', rateLimitError)
+        // Continue with submission but log the error
+      } else if (recentSubmissions && recentSubmissions.length >= 3) {
+        throw createError({
+          statusCode: 429,
+          statusMessage: 'Per daug pasiūlymų. Prašome palaukti valandą prieš teikiant naują pasiūlymą.'
+        })
+      }
+    }
+
     // Additional validation based on type
     let validationError = null
     switch (submissionType) {
@@ -71,13 +99,15 @@ export default defineEventHandler(async (event: any) => {
       })
     }
 
-    // Check for duplicate pending submissions
+    // Check for duplicate submissions (both pending and recently approved/rejected)
     const { data: existingSubmission, error: checkError } = await supabase
       .from('channel_submissions')
-      .select('id')
+      .select('id, status, submitted_at')
       .eq('submission_type', submissionType)
       .eq('submitted_value', channelInput)
-      .eq('status', 'pending')
+      .neq('status', 'duplicate') // Allow resubmission of duplicates
+      .order('submitted_at', { ascending: false })
+      .limit(1)
       .single()
 
     if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = no rows returned
@@ -88,20 +118,38 @@ export default defineEventHandler(async (event: any) => {
     }
 
     if (existingSubmission) {
-      throw createError({
-        statusCode: 409,
-        statusMessage: 'This channel has already been submitted and is pending review'
-      })
+      const timeSinceSubmission = Date.now() - new Date(existingSubmission.submitted_at).getTime()
+      const hoursSinceSubmission = timeSinceSubmission / (1000 * 60 * 60)
+
+      if (existingSubmission.status === 'pending') {
+        throw createError({
+          statusCode: 409,
+          statusMessage: 'Šis kanalas jau buvo pasiūlytas ir laukia peržiūros.'
+        })
+      } else if (hoursSinceSubmission < 24) {
+        // Don't allow resubmission within 24 hours for rejected/approved items
+        throw createError({
+          statusCode: 409,
+          statusMessage: 'Šis kanalas jau buvo peržiūrėtas. Naujas pasiūlymas galimas po 24 valandų.'
+        })
+      }
     }
 
     // Insert the submission
+    const submissionData: any = {
+      submission_type: submissionType,
+      submitted_value: channelInput,
+      status: 'pending'
+    }
+    
+    // Only include client_ip if we have it
+    if (clientIP) {
+      submissionData.client_ip = clientIP
+    }
+
     const { data: submission, error: insertError } = await supabase
       .from('channel_submissions')
-      .insert({
-        submission_type: submissionType,
-        submitted_value: channelInput,
-        status: 'pending'
-      })
+      .insert(submissionData)
       .select()
       .single()
 
@@ -139,3 +187,27 @@ export default defineEventHandler(async (event: any) => {
     })
   }
 })
+
+// Helper function to get client IP
+function getClientIP(event: any): string | null {
+  // Try different headers that might contain the real IP
+  const forwardedFor = event.node.req.headers['x-forwarded-for']
+  const realIP = event.node.req.headers['x-real-ip']
+  const cfConnectingIP = event.node.req.headers['cf-connecting-ip']
+
+  // x-forwarded-for can be a comma-separated list, take the first one
+  if (forwardedFor) {
+    return Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor.split(',')[0].trim()
+  }
+
+  if (realIP) {
+    return Array.isArray(realIP) ? realIP[0] : realIP
+  }
+
+  if (cfConnectingIP) {
+    return Array.isArray(cfConnectingIP) ? cfConnectingIP[0] : cfConnectingIP
+  }
+
+  // Fallback to connection remote address
+  return event.node.req.socket?.remoteAddress || null
+}

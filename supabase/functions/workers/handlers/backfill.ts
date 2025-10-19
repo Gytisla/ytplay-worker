@@ -176,7 +176,8 @@ export async function handleBackfillChannel(
               video.snippet?.thumbnails?.medium?.url ??
               video.snippet?.thumbnails?.default?.url ?? null,
             tags: video.snippet?.tags ?? null,
-            category_id: categoryId ?? (video.snippet?.categoryId ?? null), // Use our category or YouTube's
+            youtube_category_id: video.snippet?.categoryId ?? null, // Store YouTube's category ID
+            category_id: categoryId, // Use our categorization system result
             live_broadcast_content: video.snippet?.liveBroadcastContent ?? 'none',
             default_language: video.snippet?.defaultLanguage ?? null,
             default_audio_language: video.snippet?.defaultAudioLanguage ?? null,

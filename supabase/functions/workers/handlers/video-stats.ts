@@ -102,7 +102,7 @@ export async function handleRefreshVideoStats(
       title: video.snippet?.title || null,
       thumbnail_url: video.snippet?.thumbnails?.high?.url || video.snippet?.thumbnails?.medium?.url || video.snippet?.thumbnails?.default?.url || null,
       tags: video.snippet?.tags || null,
-      category_id: video.snippet?.categoryId || null,
+      youtube_category_id: video.snippet?.categoryId || null, // Update YouTube's category ID
       live_broadcast_content: video.snippet?.liveBroadcastContent || 'none',
       default_audio_language: video.snippet?.defaultAudioLanguage || null,
       default_language: video.snippet?.defaultLanguage || null,

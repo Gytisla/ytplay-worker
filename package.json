@@ -27,7 +27,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "format:ci": "prettier --check . --no-error-on-unmatched-pattern",
-    "types:generate": "supabase gen types typescript --local > types/supabase.ts",
+    "types:generate": "supabase gen types typescript --local > src/types/database.ts",
     "ci": "pnpm lint:ci && pnpm typecheck:ci && pnpm format:ci && pnpm test:all",
     "ci:quick": "pnpm lint:ci && pnpm typecheck:ci && pnpm test:ci",
     "supabase:start": "supabase start",

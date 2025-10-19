@@ -3,6 +3,9 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
+  // Compatibility date for Nitro
+  compatibilityDate: '2025-10-19',
+
   vite: {
     optimizeDeps: {
 			include: ["@auth/core"],
@@ -26,6 +29,7 @@ export default defineNuxtConfig({
     experimental: {
       wasm: true,
     },
+    compatibilityDate: '2025-10-19',
   },
 
   // Runtime config for environment variables

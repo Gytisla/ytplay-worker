@@ -28,6 +28,27 @@
     <div class="mb-12">
       <TopChannelsSection :loading="false" />
     </div>
+    
+    <!-- Submit Channel CTA -->
+    <div class="max-w-4xl mx-auto px-4 mb-16">
+      <div class="bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 rounded-2xl p-8 md:p-12 text-center border border-primary-200 dark:border-primary-800">
+        <h3 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+          {{ $t('home.cta.submitChannel.title') }}
+        </h3>
+        <p class="text-lg text-gray-600 dark:text-gray-300 mb-8">
+          {{ $t('home.cta.submitChannel.description') }}
+        </p>
+        <NuxtLink
+          to="/submit-channel"
+          class="inline-flex items-center px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
+        >
+          {{ $t('home.cta.submitChannel.button') }}
+          <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+        </NuxtLink>
+      </div>
+    </div>
   </div>
 
 </template>

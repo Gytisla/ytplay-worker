@@ -163,6 +163,13 @@
         "title": "Geriausi šį mėnesį",
         "description": "Geriausiai pasirodantys vaizdo įrašai šį mėnesį."
       }
+    },
+    "cta": {
+      "submitChannel": {
+        "title": "Nerandi savo mėgstamo kanalo?",
+        "description": "Padėkite mums išplėsti mūsų kanalų kolekciją!",
+        "button": "Pasiūlyti kanalą"
+      }
     }
   },
   "header": {

@@ -161,6 +161,13 @@
         "title": "Top This Month",
         "description": "Highest performing videos of the month."
       }
+    },
+    "cta": {
+      "submitChannel": {
+        "title": "Can't find your favorite channel?",
+        "description": "Help us expand our channel collection!",
+        "button": "Submit Channel"
+      }
     }
   },
   "header": {

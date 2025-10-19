@@ -86,7 +86,26 @@ SELECT
     vs.view_count as latest_views,
     vs.like_count as latest_likes,
     vs.comment_count as latest_comments,
-    vs.date as last_stats_update
+    vs.date as last_stats_update,
+    -- View gains (calculated from video_stats) - added at the end
+    GREATEST(0, v.view_count - COALESCE((
+        SELECT view_count FROM video_stats 
+        WHERE video_id = v.id 
+        AND date >= CURRENT_DATE - INTERVAL '1 day'
+        ORDER BY date DESC, hour DESC LIMIT 1
+    ), 0)) as gain_24h,
+    GREATEST(0, v.view_count - COALESCE((
+        SELECT view_count FROM video_stats 
+        WHERE video_id = v.id 
+        AND date >= CURRENT_DATE - INTERVAL '7 days'
+        ORDER BY date DESC, hour DESC LIMIT 1
+    ), 0)) as gain_7d,
+    GREATEST(0, v.view_count - COALESCE((
+        SELECT view_count FROM video_stats 
+        WHERE video_id = v.id 
+        AND date >= CURRENT_DATE - INTERVAL '30 days'
+        ORDER BY date DESC, hour DESC LIMIT 1
+    ), 0)) as gain_30d
 FROM videos v
 JOIN channels c ON v.channel_id = c.id
 LEFT JOIN video_stats vs ON v.id = vs.video_id
@@ -448,7 +467,7 @@ ON channel_feeds (last_polled_at);
 -- ===========================================
 
 COMMENT ON VIEW channel_performance IS 'Aggregated view of channel metrics including growth rates and activity scores';
-COMMENT ON VIEW video_performance IS 'Video performance metrics with engagement rates and performance scores';
+COMMENT ON VIEW video_performance IS 'Video performance metrics with engagement rates, performance scores, and view gains over different time periods';
 COMMENT ON VIEW job_queue_status IS 'Real-time job queue monitoring with processing statistics';
 COMMENT ON VIEW api_usage_summary IS 'Hourly API usage aggregation for monitoring and billing';
 

@@ -57,7 +57,12 @@
     <!-- Today -->
     <div v-if="todayHasContent" class="mb-12">
       <div class="mb-6">
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{{ t('home.sections.popularToday.title') }}</h2>
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+          </svg>
+          {{ t('home.sections.popularToday.title') }}
+        </h2>
         <p class="text-sm text-muted dark:text-gray-400">{{ t('home.sections.popularToday.description') }}</p>
       </div>
       <PopularVideosSection :period="'today'" @has-content="onTodayContent" />
@@ -66,7 +71,12 @@
     <!-- Last 7 Days -->
     <div v-if="weekHasContent" class="mb-12">
       <div class="mb-6">
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{{ t('home.sections.trendingWeek.title') }}</h2>
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+          </svg>
+          {{ t('home.sections.trendingWeek.title') }}
+        </h2>
         <p class="text-sm text-muted dark:text-gray-400">{{ t('home.sections.trendingWeek.description') }}</p>
       </div>
       <PopularVideosSection :period="'7'" @has-content="onWeekContent" />
@@ -75,7 +85,12 @@
     <!-- Last 30 Days -->
     <div v-if="monthHasContent">
       <div class="mb-6">
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{{ t('home.sections.topMonth.title') }}</h2>
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+          </svg>
+          {{ t('home.sections.topMonth.title') }}
+        </h2>
         <p class="text-sm text-muted dark:text-gray-400">{{ t('home.sections.topMonth.description') }}</p>
       </div>
       <PopularVideosSection :period="'30'" @has-content="onMonthContent" />

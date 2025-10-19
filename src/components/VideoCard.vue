@@ -64,6 +64,12 @@
       </div>
       <div class="flex items-center justify-between text-sm text-muted dark:text-gray-400">
         <span>{{ video.views }}</span>
+        <div v-if="video.trend" class="flex items-center gap-1 px-2 py-1 bg-green-50 dark:bg-green-900/20 rounded-full border border-green-200 dark:border-green-800">
+          <svg class="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+          </svg>
+          <span class="text-sm font-bold text-green-700 dark:text-green-300">+{{ formatNumber(video.trend.gain) }}</span>
+        </div>
         <span>{{ video.age }}</span>
       </div>
     </div>
@@ -86,6 +92,10 @@ interface Props {
     channelId?: string
     views: string
     age: string
+    trend?: {
+      gain: number
+      period: string
+    }
   }
   badge?: {
     type: 'new' | 'trending' | 'ranking' | 'custom'
@@ -104,6 +114,17 @@ setTimeout(() => {
     imageLoaded.value = true
   }
 }, 3000)
+
+// Format large numbers
+function formatNumber(num: number): string {
+  if (num >= 1000000) {
+    return `${(num / 1000000).toFixed(1)}M`
+  } else if (num >= 1000) {
+    return `${(num / 1000).toFixed(1)}K`
+  } else {
+    return num.toString()
+  }
+}
 </script>
 
 <style scoped>

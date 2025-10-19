@@ -1,6 +1,6 @@
 <template>
   <div class="category-detail-page">
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4 pt-2 pb-8">
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-12">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -24,7 +24,7 @@
       <div v-else-if="category">
         <!-- Breadcrumb -->
         <Breadcrumb :breadcrumbs="[
-          { label: 'Categories', to: '/categories' },
+          { label: 'Kategorijos', to: '/categories' },
           { label: category.name }
         ]" />
 
@@ -88,34 +88,24 @@
 
         <!-- Videos Grid -->
         <div v-if="videos.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          <NuxtLink
+          <VideoCard
             v-for="video in videos"
             :key="video.id"
-            :to="`/video/${video.slug || video.youtube_video_id}`"
-            class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group cursor-pointer"
-          >
-            <!-- Thumbnail -->
-            <div class="aspect-video bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
-              <img
-                :src="video.thumbnail_url"
-                :alt="video.title"
-                class="w-full h-full object-cover group-hover:scale-105 transition"
-                loading="lazy"
-              />
-              <div class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
-                {{ formatDuration(video.duration) }}
-              </div>
-            </div>
-
-            <!-- Video Info -->
-            <div class="p-4">
-              <h3 class="font-semibold text-gray-900 dark:text-gray-50 mb-1 line-clamp-2">{{ video.title }}</h3>
-              <div class="flex items-center justify-between text-sm text-muted dark:text-gray-400">
-                <span>{{ formatNumber(video.view_count) }} views</span>
-                <span>{{ formatDate(video.published_at) }}</span>
-              </div>
-            </div>
-          </NuxtLink>
+            :video="{
+              id: video.id,
+              slug: video.slug,
+              title: video.title,
+              thumb: video.thumbnail,
+              duration: video.duration,
+              channel: video.channel,
+              channelThumb: video.channelThumb,
+              channelSlug: video.channelSlug,
+              channelId: video.channelId,
+              views: video.views,
+              age: video.age,
+              category: category
+            }"
+          />
         </div>
 
         <!-- Empty State -->
@@ -161,11 +151,15 @@ interface Video {
   youtube_video_id: string
   slug: string
   title: string
-  description: string | null
-  published_at: string
-  duration: string | null
-  view_count: number | null
-  thumbnail_url: string | null
+  thumbnail: string | null
+  duration: string
+  views: string
+  uploaded: string
+  age: string
+  channel: string
+  channelThumb: string | null
+  channelSlug: string | null
+  channelId: string
 }
 
 interface CategoryDetailResponse {
@@ -196,55 +190,6 @@ const timePeriod = ref<'all' | '7' | '30'>('all')
 // Infinite scroll state
 const isLoadingMore = ref(false)
 const observer = ref<IntersectionObserver | null>(null)
-
-const formatDuration = (duration: string | null) => {
-  if (!duration) return '0:00'
-
-  // Handle PostgreSQL INTERVAL format (e.g., "00:04:13")
-  if (duration.match(/^\d{2}:\d{2}:\d{2}$/)) {
-    const parts = duration.split(':').map(Number)
-    const hours = parts[0] || 0
-    const minutes = parts[1] || 0
-    const seconds = parts[2] || 0
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-    }
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`
-  }
-
-  // Handle ISO 8601 duration (PT4M13S)
-  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/)
-  if (!match) {
-    return '0:00'
-  }
-
-  const hours = parseInt(match[1] || '0')
-  const minutes = parseInt(match[2] || '0')
-  const seconds = parseInt(match[3] || '0')
-
-  if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-  }
-  return `${minutes}:${seconds.toString().padStart(2, '0')}`
-}
-
-const formatNumber = (num: number) => {
-  if (num >= 1000000) {
-    return (num / 1000000).toFixed(1) + 'M'
-  }
-  if (num >= 1000) {
-    return (num / 1000).toFixed(1) + 'K'
-  }
-  return num.toString()
-}
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
-}
 
 const fetchCategory = async (resetPage = true) => {
   try {

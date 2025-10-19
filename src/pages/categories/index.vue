@@ -94,30 +94,24 @@
 
           <!-- Videos Grid -->
           <div v-if="category.latest_videos && category.latest_videos.length > 0" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            <NuxtLink
+            <VideoCard
               v-for="video in category.latest_videos"
               :key="video.id"
-              :to="`/video/${video.slug || video.youtube_video_id}`"
-              class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group cursor-pointer"
-            >
-              <!-- Thumbnail -->
-              <div class="aspect-video bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
-                <img
-                  :src="video.thumbnail_url"
-                  :alt="video.title"
-                  class="w-full h-full object-cover group-hover:scale-105 transition"
-                  loading="lazy"
-                />
-              </div>
-
-              <!-- Video Info -->
-              <div class="p-4">
-                <h3 class="font-semibold text-gray-900 dark:text-gray-50 mb-1 line-clamp-2">{{ video.title }}</h3>
-                <div class="text-sm text-muted dark:text-gray-400">
-                  {{ formatDate(video.published_at) }}
-                </div>
-              </div>
-            </NuxtLink>
+              :video="{
+                id: video.id,
+                slug: video.slug,
+                title: video.title,
+                thumb: video.thumbnail,
+                duration: video.duration,
+                channel: video.channel,
+                channelThumb: video.channelThumb,
+                channelSlug: video.channelSlug,
+                channelId: video.channelId,
+                views: video.views,
+                age: video.age,
+                category: category
+              }"
+            />
           </div>
 
           <!-- No videos message -->
@@ -156,17 +150,16 @@ interface CategoryWithVideos {
     youtube_video_id: string
     slug: string
     title: string
-    thumbnail_url: string | null
-    published_at: string
+    thumbnail: string | null
+    duration: string
+    views: string
+    uploaded: string
+    age: string
+    channel: string
+    channelThumb: string | null
+    channelSlug: string | null
+    channelId: string
   }>
-}
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  })
 }
 
 const fetchCategories = async () => {

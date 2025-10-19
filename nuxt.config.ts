@@ -62,8 +62,38 @@ export default defineNuxtConfig({
   // Modules
   modules: [
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/supabase'
+    '@nuxtjs/supabase',
+    '@nuxtjs/i18n'
   ],
+
+  // Internationalization configuration
+  i18n: {
+    locales: [
+      {
+        code: 'en',
+        name: 'English',
+        iso: 'en-US',
+        file: 'en.json'
+      },
+      {
+        code: 'lt',
+        name: 'Lietuvių',
+        iso: 'lt-LT',
+        file: 'lt.json'
+      }
+    ],
+    defaultLocale: 'lt',
+    strategy: 'prefix_except_default',
+    lazy: true,
+    langDir: '../src/locales/',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      redirectOn: 'root',
+      alwaysRedirect: false,
+      fallbackLocale: 'en'
+    }
+  },
 
   // Development configuration
   devServer: {

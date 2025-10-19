@@ -1,0 +1,72 @@
+{
+  "common": {
+    "home": "Pradinis",
+    "channels": "Kanalai",
+    "videos": "Vaizdo įrašai",
+    "popular": "Populiarūs",
+    "trending": "Tendencijos",
+    "new": "Nauji",
+    "search": "Paieška",
+    "loading": "Kraunama...",
+    "error": "Klaida",
+    "retry": "Bandyti dar kartą",
+    "viewCount": "peržiūrų",
+    "subscriberCount": "prenumeratorių",
+    "videoCount": "vaizdo įrašų",
+    "today": "Šiandien",
+    "week": "Šią savaitę",
+    "month": "Šį mėnesį",
+    "allTime": "Visuomet"
+  },
+  "navigation": {
+    "discover": "Atrasti",
+    "browse": "Naršyti",
+    "favorites": "Mėgstamiausi",
+    "settings": "Nustatymai"
+  },
+  "video": {
+    "watch": "Žiūrėti",
+    "duration": "Trukmė",
+    "published": "Paskelbta",
+    "description": "Aprašymas",
+    "relatedVideos": "Susiję vaizdo įrašai"
+  },
+  "channel": {
+    "subscribe": "Prenumeruoti",
+    "subscribed": "Prenumeruojama",
+    "unsubscribe": "Atsisakyti prenumeratos",
+    "latestVideos": "Naujausi vaizdo įrašai",
+    "about": "Apie"
+  },
+  "search": {
+    "placeholder": "Ieškoti kanalų arba vaizdo įrašų...",
+    "noResults": "Rezultatų nerasta",
+    "resultsFor": "Rezultatai pagal"
+  },
+  "errors": {
+    "networkError": "Tinklo klaida. Patikrinkite ryšį.",
+    "serverError": "Serverio klaida. Bandykite vėliau.",
+    "notFound": "Turinys nerastas.",
+    "unauthorized": "Neturite teisės prieiti prie šio turinio."
+  },
+  "hero": {
+    "discover": "Atrask Lietuviškus",
+    "videos": "Vaizdo įrašus",
+    "subtitle": "Naršykite naujausius YouTube vaizdo įrašus iš mėgstamų kanalų. Būkite informuoti apie tendencijas ir atraskite naujus kūrėjus.",
+    "exploreVideos": "Vaizdo įrašai",
+    "browseCategories": "Kategorijos",
+    "stats": {
+      "videos": "Vaizdo įrašų",
+      "channels": "Kanalų",
+      "freshContent": "Šviežias turininys"
+    }
+  },
+  "header": {
+    "brand": "ytplay",
+    "categories": "Kategorijos",
+    "topChannels": "Top kanalai",
+    "topVideos": "Top video",
+    "searchPlaceholder": "Ieškoti vaizdo įrašų, kanalų...",
+    "toggleTheme": "Perjungti temą"
+  }
+}

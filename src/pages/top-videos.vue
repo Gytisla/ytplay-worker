@@ -37,62 +37,28 @@
         </div>
 
         <div v-else-if="videos.length > 0" class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          <NuxtLink
+          <VideoCard
             v-for="(video, index) in videos"
             :key="video.id"
-            :to="`/video/${video.slug || video.id}`"
-            class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group cursor-pointer relative"
-          >
-            <!-- Ranking Badge -->
-            <div class="absolute top-3 left-3 z-10 flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold"
-                 :class="index === 0 ? 'bg-yellow-500 text-white' :
-                        index === 1 ? 'bg-gray-400 text-white' :
-                        index === 2 ? 'bg-orange-600 text-white' :
-                        'bg-gray-800/80 text-white'">
-              {{ index + 1 }}
-            </div>
-
-            <!-- Medal for Top 3 -->
-            <div v-if="index < 3" class="absolute top-3 right-3 z-10">
-              <div class="w-8 h-8 rounded-full flex items-center justify-center"
-                   :class="index === 0 ? 'bg-yellow-100 dark:bg-yellow-900' :
-                          index === 1 ? 'bg-gray-100 dark:bg-gray-800' :
-                          'bg-orange-100 dark:bg-orange-900'">
-                <svg class="w-4 h-4" :class="index === 0 ? 'text-yellow-600' :
-                                             index === 1 ? 'text-gray-600 dark:text-gray-400' :
-                                             'text-orange-600'" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                </svg>
-              </div>
-            </div>
-
-            <!-- Thumbnail -->
-            <div class="aspect-video bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
-              <img
-                :src="video.thumb"
-                :alt="video.title"
-                class="w-full h-full object-cover group-hover:scale-105 transition"
-                loading="lazy"
-              />
-              <div class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
-                {{ video.duration }}
-              </div>
-            </div>
-
-            <!-- Video Info -->
-            <div class="p-4">
-              <h3 class="font-semibold text-gray-900 dark:text-gray-50 mb-1 line-clamp-2">{{ video.title }}</h3>
-              <div class="flex items-center gap-2 text-sm text-muted dark:text-gray-400 mb-2">
-                <img v-if="video.channelThumb" :src="video.channelThumb" alt="" class="w-5 h-5 rounded-full object-cover" />
-                <div v-else class="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                <span>{{ video.channel }}</span>
-              </div>
-              <div class="flex items-center justify-between text-sm text-muted dark:text-gray-400">
-                <span>{{ video.views }}</span>
-                <span>{{ video.age }}</span>
-              </div>
-            </div>
-          </NuxtLink>
+            :video="{
+              id: video.id,
+              slug: video.slug,
+              title: video.title,
+              thumb: video.thumb,
+              duration: video.duration,
+              channel: video.channel,
+              channelThumb: video.channelThumb,
+              channelSlug: video.channelSlug,
+              channelId: video.channelId,
+              views: video.views,
+              age: video.age,
+              trend: video.trend
+            }"
+            :ranking="{
+              position: index + 1,
+              showMedal: index < 3
+            }"
+          />
         </div>
 
         <div v-else class="text-center py-12">

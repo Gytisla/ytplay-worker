@@ -32,8 +32,29 @@
       <div class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
         {{ video.duration }}
       </div>
+      <!-- Ranking Badge -->
+      <div v-if="ranking" class="absolute top-3 left-3 z-10 flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold"
+           :class="ranking.position === 1 ? 'bg-yellow-500 text-white' :
+                  ranking.position === 2 ? 'bg-gray-400 text-white' :
+                  ranking.position === 3 ? 'bg-orange-600 text-white' :
+                  'bg-gray-800/80 text-white'">
+        {{ ranking.position }}
+      </div>
+      <!-- Medal for Top 3 -->
+      <div v-if="ranking && ranking.showMedal && ranking.position <= 3" class="absolute top-3 right-3 z-10">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center"
+             :class="ranking.position === 1 ? 'bg-yellow-100 dark:bg-yellow-900' :
+                    ranking.position === 2 ? 'bg-gray-100 dark:bg-gray-800' :
+                    'bg-orange-100 dark:bg-orange-900'">
+          <svg class="w-4 h-4" :class="ranking.position === 1 ? 'text-yellow-600' :
+                                       ranking.position === 2 ? 'text-gray-600 dark:text-gray-400' :
+                                       'text-orange-600'" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        </div>
+      </div>
       <!-- Optional badges -->
-      <div v-if="autoBadges.length > 0" class="absolute top-2 left-2 flex gap-1">
+      <div v-if="autoBadges.length > 0" :class="ranking ? 'absolute top-2 right-2 flex gap-1' : 'absolute top-2 right-2 flex gap-1'">
         <span
           v-for="(badge, index) in autoBadges"
           :key="index"
@@ -94,7 +115,6 @@ interface Props {
     channelId?: string
     views: string
     age: string
-    quality?: string
     trend?: {
       gain: number
       period: string
@@ -107,9 +127,13 @@ interface Props {
     type: 'new' | 'trending' | 'ranking' | 'custom'
     text: string
   }>
+  ranking?: {
+    position: number
+    showMedal?: boolean
+  }
 }
 
-const { video, badge: externalBadge } = defineProps<Props>()
+const { video, badge: externalBadge, ranking } = defineProps<Props>()
 
 // Track image loading state
 const imageLoaded = ref(false)

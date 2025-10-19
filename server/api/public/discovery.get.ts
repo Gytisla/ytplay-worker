@@ -225,20 +225,98 @@ export default defineEventHandler(async (event) => {
 
         result = { items, section, limit }
       }
-    } else {
-      // Handle other video sections (new, trending, featured)
-      let dbQuery: any
+    } else if (section === 'trending') {
+      // Trending: recent videos (last 30 days) with performance data
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+      const { data, error } = await supabase
+        .from('video_performance')
+        .select(`
+          youtube_video_id,
+          slug,
+          title,
+          thumbnail_url,
+          channel_title,
+          channel_slug,
+          channel_thumbnail_url,
+          channel_id,
+          view_count,
+          duration,
+          published_at,
+          gain_24h,
+          gain_7d,
+          gain_30d
+        `)
+        .gte('published_at', thirtyDaysAgo)
+        .order('view_count', { ascending: false })
+        .limit(limit)
 
-      if (section === 'trending') {
-        // Trending: recent videos (last 30 days) ordered by view count
-        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-        dbQuery = supabase
+      if (!error && data && data.length > 0) {
+        result = {
+          items: data.map((r: any) => ({
+            id: r.youtube_video_id,
+            slug: r.slug,
+            title: r.title,
+            thumb: r.thumbnail_url,
+            channel: r.channel_title,
+            channelThumb: r.channel_thumbnail_url || null,
+            channelSlug: r.channel_slug || null,
+            channelId: r.channel_id,
+            published_at: r.published_at,
+            views: r.view_count ? `${r.view_count.toLocaleString()} views` : '—',
+            age: formatAge(new Date(r.published_at)),
+            duration: r.duration ?? '—',
+            trend: {
+              gain: r.gain_24h || r.gain_7d || r.gain_30d || 0,
+              period: r.gain_24h ? 'today' : r.gain_7d ? '7' : r.gain_30d ? '30' : 'all'
+            }
+          })),
+          section,
+          limit
+        }
+      } else {
+        // Fallback to basic videos query if no performance data
+        const { data: fallbackData, error: fallbackError } = await supabase
           .from('videos')
           .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
           .gte('published_at', thirtyDaysAgo)
           .order('view_count', { ascending: false })
           .limit(limit)
-      } else if (section === 'top') {
+
+        if (fallbackError) {
+          throw createError({
+            statusCode: 500,
+            statusMessage: fallbackError.message || 'Database error'
+          })
+        }
+
+        result = {
+          items: (fallbackData || []).map((r: any) => ({
+            id: r.youtube_video_id,
+            slug: r.slug,
+            title: r.title,
+            thumb: r.thumbnail_url,
+            channel: r.channels?.title || 'Unknown',
+            channelThumb: r.channels?.thumbnail_url || null,
+            channelSlug: r.channels?.slug || null,
+            channelId: r.channel_id,
+            published_at: r.published_at,
+            views: r.view_count ? `${r.view_count.toLocaleString()} views` : '—',
+            age: formatAge(new Date(r.published_at)),
+            duration: r.duration ?? '—',
+            trend: {
+              gain: 0,
+              period: 'all'
+            }
+          })),
+          section,
+          limit
+        }
+      }
+    } else {
+      // Handle other video sections (new, featured, top) with dbQuery pattern
+      let dbQuery: any
+
+      if (section === 'top') {
         // Top videos: all-time highest viewed videos
         dbQuery = supabase
           .from('videos')

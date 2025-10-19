@@ -16,13 +16,15 @@
     "today": "Šiandien",
     "week": "Šią savaitę",
     "month": "Šį mėnesį",
-    "allTime": "Visuomet"
+    "allTime": "Visuomet",
+    "top": "Geriausi"
   },
   "navigation": {
     "discover": "Atrasti",
     "browse": "Naršyti",
     "favorites": "Mėgstamiausi",
-    "settings": "Nustatymai"
+    "settings": "Nustatymai",
+    "home": "Pradžia"
   },
   "video": {
     "watch": "Žiūrėti",
@@ -43,11 +45,21 @@
     "noResults": "Rezultatų nerasta",
     "resultsFor": "Rezultatai pagal"
   },
-  "errors": {
+  "error": {
     "networkError": "Tinklo klaida. Patikrinkite ryšį.",
     "serverError": "Serverio klaida. Bandykite vėliau.",
     "notFound": "Turinys nerastas.",
-    "unauthorized": "Neturite teisės prieiti prie šio turinio."
+    "unauthorized": "Neturite teisės prieiti prie šio turinio.",
+    "404": {
+      "title": "Puslapis nerastas",
+      "description": "Atsiprašome, puslapis, kurio ieškote, neegzistuoja. Jis galėjo būti perkeltas, ištrintas arba įvedėte neteisingą URL.",
+      "goHome": "Grįžti į pradžią",
+      "goBack": "Grįžti atgal",
+      "popularPages": "Populiarūs puslapiai",
+      "explore": "Tyrinėkite",
+      "learnMore": "Sužinoti daugiau",
+      "footer": "Jei manote, kad tai klaida, susisiekite su mumis."
+    }
   },
   "hero": {
     "discover": "Atrask Lietuviškus",
@@ -96,7 +108,8 @@
     "topChannels": "Top kanalai",
     "topVideos": "Top vaizdo įrašai",
     "searchPlaceholder": "Ieškoti vaizdo įrašų, kanalų...",
-    "toggleTheme": "Perjungti temą"
+    "toggleTheme": "Perjungti temą",
+    "openMenu": "Atidaryti meniu"
   },
   "topChannelsPage": {
     "title": "Geriausi kanalai",

@@ -26,9 +26,9 @@
         <div>
           <h4 class="text-sm font-semibold mb-3">{{ $t('footer.resources') }}</h4>
           <ul class="space-y-2 text-sm text-muted dark:text-gray-400">
-            <li><a class="hover:underline" href="/about">{{ $t('footer.resourcesLinks.about') }}</a></li>
-            <li><a class="hover:underline" href="/privacy">{{ $t('footer.resourcesLinks.privacy') }}</a></li>
-            <li><a class="hover:underline" href="/terms">{{ $t('footer.resourcesLinks.terms') }}</a></li>
+            <li><NuxtLink class="hover:underline" to="/about">{{ $t('footer.resourcesLinks.about') }}</NuxtLink></li>
+            <li><NuxtLink class="hover:underline" to="/privacy">{{ $t('footer.resourcesLinks.privacy') }}</NuxtLink></li>
+            <li><NuxtLink class="hover:underline" to="/terms">{{ $t('footer.resourcesLinks.terms') }}</NuxtLink></li>
           </ul>
         </div>
       </div>

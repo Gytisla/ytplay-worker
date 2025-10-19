@@ -223,7 +223,8 @@
               channelSlug: channel?.slug,
               channelId: channel?.id,
               views: video.views,
-              age: video.age
+              age: video.age,
+              category: video.category
             }"
           />
         </div>

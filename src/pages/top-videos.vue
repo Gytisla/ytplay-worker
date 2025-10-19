@@ -52,7 +52,7 @@
               channelId: video.channelId,
               views: video.views,
               age: video.age,
-              trend: video.trend
+              category: video.category
             }"
             :ranking="{
               position: index + 1,
@@ -101,13 +101,18 @@ async function loadVideos() {
 
     videos.value = (data.items || []).map((video: any) => ({
       id: video.id,
-      thumb: video.thumb,
+      slug: video.slug,
       title: video.title,
+      thumb: video.thumb,
       channel: video.channel,
       channelThumb: video.channelThumb,
+      channelSlug: video.channelSlug,
+      channelId: video.channelId,
       views: video.views,
       age: video.age,
       duration: video.duration,
+      trend: video.trend,
+      category: video.category
     }))
   } catch (err: any) {
     error.value = String(err?.message ?? err)

@@ -23,6 +23,20 @@
           <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
             <div class="flex-1">
               <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-50 mb-2">{{ video.title }}</h1>
+              
+              <!-- Category Badge -->
+              <div v-if="video.category" class="mb-3 flex-shrink-0">
+                <NuxtLink
+                  :to="`/categories/${video.category.key}`"
+                  class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full transition-all duration-200 hover:scale-105 hover:shadow-md hover:shadow-current/20"
+                  :style="{ backgroundColor: video.category.color + '20', color: video.category.color }"
+                  @click.stop
+                >
+                  <span class="text-xs">{{ video.category.icon }}</span>
+                  <span>{{ video.category.name }}</span>
+                </NuxtLink>
+              </div>
+              
               <div class="flex items-center gap-4 text-sm text-muted dark:text-gray-400 mb-4">
                 <span>{{ video.views }} views</span>•
                 <span v-if="video.duration">{{ video.duration }}</span>•

@@ -71,13 +71,13 @@
 
     <!-- Video Info -->
     <div class="p-4 flex flex-col flex-1">
-      <h3 class="font-semibold text-gray-900 dark:text-gray-50 mb-1 line-clamp-2 flex-shrink-0">{{ video.title }}</h3>
+      <h3 class="font-semibold text-gray-900 dark:text-gray-50 mb-1 line-clamp-2 flex-shrink-0 transition-colors duration-200 hover:text-red-600 dark:hover:text-red-400">{{ video.title }}</h3>
       
       <!-- Category Badge -->
       <div v-if="video.category" class="mb-2 flex-shrink-0">
         <NuxtLink
           :to="`/categories/${video.category.key}`"
-          class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full transition-colors"
+          class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full transition-all duration-200 hover:scale-105 hover:shadow-md hover:shadow-current/20"
           :style="{ backgroundColor: video.category.color + '20', color: video.category.color }"
           @click.stop
         >

@@ -81,7 +81,15 @@ export default defineEventHandler(async (event) => {
         thumbnail_url,
         duration,
         view_count,
-        published_at
+        published_at,
+        category_id,
+        video_categories (
+          id,
+          name,
+          key,
+          color,
+          icon
+        )
       `)
       .eq('channel_id', resolvedChannelId)
       .order(sort === 'popular' ? 'view_count' : 'published_at', { ascending: false })
@@ -105,7 +113,14 @@ export default defineEventHandler(async (event) => {
         duration: formatDuration(video.duration),
         views: formatViewCount(video.view_count),
         uploaded: formatUploadDate(video.published_at),
-        age: formatAge(video.published_at)
+        age: formatAge(video.published_at),
+        category: (video.video_categories as any) ? {
+          id: (video.video_categories as any).id,
+          name: (video.video_categories as any).name,
+          key: (video.video_categories as any).key,
+          color: (video.video_categories as any).color,
+          icon: (video.video_categories as any).icon
+        } : null
       }
     })
 

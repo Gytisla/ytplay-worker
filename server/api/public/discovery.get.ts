@@ -75,41 +75,56 @@ export default defineEventHandler(async (event) => {
     if (section === 'popular') {
       // Popular videos based on period - videos getting most views in the period
       if (period === 'today') {
-        // Get videos with 24h gains - use regular videos query with category join
-        const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-        const { data, error } = await supabase
-          .from('videos')
-          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, category_id, channels(title, thumbnail_url, slug), video_categories(id, name, key, color, icon)')
-          .gte('published_at', yesterday)
-          .gt('view_count', 0)
-          .order('view_count', { ascending: false })
+        // Get videos with 24h gains from video_performance view
+        const { data: performanceData, error: performanceError } = await supabase
+          .from('video_performance')
+          .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_24h')
+          .gt('gain_24h', 0)
+          .order('gain_24h', { ascending: false })
           .limit(limit)
 
-        if (!error && data && data.length > 0) {
+        if (!performanceError && performanceData && performanceData.length > 0) {
+          // Get category data for popular videos
+          const videoIds = performanceData.map((r: any) => r.youtube_video_id)
+          const { data: categoryData, error: categoryError } = await supabase
+            .from('videos')
+            .select('youtube_video_id, category_id, video_categories(id, name, key, color, icon)')
+            .in('youtube_video_id', videoIds)
+
+          // Create category lookup map
+          const categoryMap = new Map()
+          if (!categoryError && categoryData) {
+            categoryData.forEach((item: any) => {
+              if (item.video_categories) {
+                categoryMap.set(item.youtube_video_id, item.video_categories)
+              }
+            })
+          }
+
           result = {
-            items: data.map((r: any) => ({
+            items: performanceData.map((r: any) => ({
               id: r.youtube_video_id,
               slug: r.slug,
               title: r.title,
               thumb: r.thumbnail_url,
-              channel: r.channels?.title || 'Unknown',
-              channelThumb: r.channels?.thumbnail_url || null,
-              channelSlug: r.channels?.slug || null,
+              channel: r.channel_title,
+              channelThumb: r.channel_thumbnail_url || null,
+              channelSlug: r.channel_slug || null,
               channelId: r.channel_id,
               published_at: r.published_at,
               views: r.view_count ? `${r.view_count.toLocaleString()} views` : '—',
               age: formatAge(new Date(r.published_at)),
               duration: r.duration ?? '—',
               trend: {
-                gain: 0, // We'll calculate this differently
+                gain: r.gain_24h,
                 period: 'today'
               },
-              category: r.video_categories ? {
-                id: r.video_categories.id,
-                name: r.video_categories.name,
-                key: r.video_categories.key,
-                color: r.video_categories.color,
-                icon: r.video_categories.icon
+              category: categoryMap.get(r.youtube_video_id) ? {
+                id: categoryMap.get(r.youtube_video_id).id,
+                name: categoryMap.get(r.youtube_video_id).name,
+                key: categoryMap.get(r.youtube_video_id).key,
+                color: categoryMap.get(r.youtube_video_id).color,
+                icon: categoryMap.get(r.youtube_video_id).icon
               } : null
             })),
             section,
@@ -117,41 +132,56 @@ export default defineEventHandler(async (event) => {
           }
         }
       } else if (period === '7') {
-        // Get videos with 7-day gains - use regular videos query with category join
-        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-        const { data, error } = await supabase
-          .from('videos')
-          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, category_id, channels(title, thumbnail_url, slug), video_categories(id, name, key, color, icon)')
-          .gte('published_at', sevenDaysAgo)
-          .gt('view_count', 0)
-          .order('view_count', { ascending: false })
+        // Get videos with 7-day gains from video_performance view
+        const { data: performanceData, error: performanceError } = await supabase
+          .from('video_performance')
+          .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_7d')
+          .gt('gain_7d', 0)
+          .order('gain_7d', { ascending: false })
           .limit(limit)
 
-        if (!error && data && data.length > 0) {
+        if (!performanceError && performanceData && performanceData.length > 0) {
+          // Get category data for popular videos
+          const videoIds = performanceData.map((r: any) => r.youtube_video_id)
+          const { data: categoryData, error: categoryError } = await supabase
+            .from('videos')
+            .select('youtube_video_id, category_id, video_categories(id, name, key, color, icon)')
+            .in('youtube_video_id', videoIds)
+
+          // Create category lookup map
+          const categoryMap = new Map()
+          if (!categoryError && categoryData) {
+            categoryData.forEach((item: any) => {
+              if (item.video_categories) {
+                categoryMap.set(item.youtube_video_id, item.video_categories)
+              }
+            })
+          }
+
           result = {
-            items: data.map((r: any) => ({
+            items: performanceData.map((r: any) => ({
               id: r.youtube_video_id,
               slug: r.slug,
               title: r.title,
               thumb: r.thumbnail_url,
-              channel: r.channels?.title || 'Unknown',
-              channelThumb: r.channels?.thumbnail_url || null,
-              channelSlug: r.channels?.slug || null,
+              channel: r.channel_title,
+              channelThumb: r.channel_thumbnail_url || null,
+              channelSlug: r.channel_slug || null,
               channelId: r.channel_id,
               published_at: r.published_at,
               views: r.view_count ? `${r.view_count.toLocaleString()} views` : '—',
               age: formatAge(new Date(r.published_at)),
               duration: r.duration ?? '—',
               trend: {
-                gain: 0, // We'll calculate this differently
+                gain: r.gain_7d,
                 period: '7'
               },
-              category: r.video_categories ? {
-                id: r.video_categories.id,
-                name: r.video_categories.name,
-                key: r.video_categories.key,
-                color: r.video_categories.color,
-                icon: r.video_categories.icon
+              category: categoryMap.get(r.youtube_video_id) ? {
+                id: categoryMap.get(r.youtube_video_id).id,
+                name: categoryMap.get(r.youtube_video_id).name,
+                key: categoryMap.get(r.youtube_video_id).key,
+                color: categoryMap.get(r.youtube_video_id).color,
+                icon: categoryMap.get(r.youtube_video_id).icon
               } : null
             })),
             section,
@@ -159,41 +189,56 @@ export default defineEventHandler(async (event) => {
           }
         }
       } else if (period === '30') {
-        // Get videos with 30-day gains - use regular videos query with category join
-        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-        const { data, error } = await supabase
-          .from('videos')
-          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, category_id, channels(title, thumbnail_url, slug), video_categories(id, name, key, color, icon)')
-          .gte('published_at', thirtyDaysAgo)
-          .gt('view_count', 0)
-          .order('view_count', { ascending: false })
+        // Get videos with 30-day gains from video_performance view
+        const { data: performanceData, error: performanceError } = await supabase
+          .from('video_performance')
+          .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_30d')
+          .gt('gain_30d', 0)
+          .order('gain_30d', { ascending: false })
           .limit(limit)
 
-        if (!error && data && data.length > 0) {
+        if (!performanceError && performanceData && performanceData.length > 0) {
+          // Get category data for popular videos
+          const videoIds = performanceData.map((r: any) => r.youtube_video_id)
+          const { data: categoryData, error: categoryError } = await supabase
+            .from('videos')
+            .select('youtube_video_id, category_id, video_categories(id, name, key, color, icon)')
+            .in('youtube_video_id', videoIds)
+
+          // Create category lookup map
+          const categoryMap = new Map()
+          if (!categoryError && categoryData) {
+            categoryData.forEach((item: any) => {
+              if (item.video_categories) {
+                categoryMap.set(item.youtube_video_id, item.video_categories)
+              }
+            })
+          }
+
           result = {
-            items: data.map((r: any) => ({
+            items: performanceData.map((r: any) => ({
               id: r.youtube_video_id,
               slug: r.slug,
               title: r.title,
               thumb: r.thumbnail_url,
-              channel: r.channels?.title || 'Unknown',
-              channelThumb: r.channels?.thumbnail_url || null,
-              channelSlug: r.channels?.slug || null,
+              channel: r.channel_title,
+              channelThumb: r.channel_thumbnail_url || null,
+              channelSlug: r.channel_slug || null,
               channelId: r.channel_id,
               published_at: r.published_at,
               views: r.view_count ? `${r.view_count.toLocaleString()} views` : '—',
               age: formatAge(new Date(r.published_at)),
               duration: r.duration ?? '—',
               trend: {
-                gain: 0, // We'll calculate this differently
+                gain: r.gain_30d,
                 period: '30'
               },
-              category: r.video_categories ? {
-                id: r.video_categories.id,
-                name: r.video_categories.name,
-                key: r.video_categories.key,
-                color: r.video_categories.color,
-                icon: r.video_categories.icon
+              category: categoryMap.get(r.youtube_video_id) ? {
+                id: categoryMap.get(r.youtube_video_id).id,
+                name: categoryMap.get(r.youtube_video_id).name,
+                key: categoryMap.get(r.youtube_video_id).key,
+                color: categoryMap.get(r.youtube_video_id).color,
+                icon: categoryMap.get(r.youtube_video_id).icon
               } : null
             })),
             section,
@@ -290,6 +335,23 @@ export default defineEventHandler(async (event) => {
         .limit(limit)
 
       if (!error && data && data.length > 0) {
+        // Get category data for trending videos
+        const videoIds = data.map((r: any) => r.youtube_video_id)
+        const { data: categoryData, error: categoryError } = await supabase
+          .from('videos')
+          .select('youtube_video_id, category_id, video_categories(id, name, key, color, icon)')
+          .in('youtube_video_id', videoIds)
+
+        // Create category lookup map
+        const categoryMap = new Map()
+        if (!categoryError && categoryData) {
+          categoryData.forEach((item: any) => {
+            if (item.video_categories) {
+              categoryMap.set(item.youtube_video_id, item.video_categories)
+            }
+          })
+        }
+
         result = {
           items: data.map((r: any) => ({
             id: r.youtube_video_id,
@@ -307,7 +369,14 @@ export default defineEventHandler(async (event) => {
             trend: {
               gain: r.gain_24h || r.gain_7d || r.gain_30d || 0,
               period: r.gain_24h ? 'today' : r.gain_7d ? '7' : r.gain_30d ? '30' : 'all'
-            }
+            },
+            category: categoryMap.get(r.youtube_video_id) ? {
+              id: categoryMap.get(r.youtube_video_id).id,
+              name: categoryMap.get(r.youtube_video_id).name,
+              key: categoryMap.get(r.youtube_video_id).key,
+              color: categoryMap.get(r.youtube_video_id).color,
+              icon: categoryMap.get(r.youtube_video_id).icon
+            } : null
           })),
           section,
           limit

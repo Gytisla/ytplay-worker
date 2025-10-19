@@ -1,5 +1,5 @@
 <template>
-  <section id="top-channels" class="mb-8">
+  <section ref="sectionRef" id="top-channels" class="mb-8">
     <div class="flex items-center justify-between mb-4">
       <div>
         <h2 class="text-2xl font-semibold">Top Channels</h2>
@@ -41,6 +41,7 @@
 
 <script setup lang="ts">
 import { ref, toRef } from 'vue'
+import { useLazyLoadOnIntersection } from '../../composables/useLazyLoadOnIntersection'
 
 // Use a simple static path as a safe fallback for the bundled SVG asset
 // avoid TypeScript import issues for image modules in this environment.
@@ -51,17 +52,21 @@ const props = defineProps({
 })
 const loading = toRef(props, 'loading')
 
+// Ref for intersection observer
+const sectionRef = ref<HTMLElement | null>(null)
+
 // Real data state
 const channels = ref<Array<any>>([])
 const localLoading = ref(true)
 const error = ref<string | null>(null)
 
-await loadTopChannels();
+// Lazy load on intersection
+const { isLoaded } = useLazyLoadOnIntersection(sectionRef, loadTopChannels, { delay: 300 })
 
 async function loadTopChannels() {
   try {
     console.log('Loading top channels...')
-    localLoading.value = false
+    localLoading.value = true
 
     const data = await $fetch('/api/public/discovery', {
       query: { section: 'channels', limit: 8 }

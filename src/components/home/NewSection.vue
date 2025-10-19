@@ -1,5 +1,5 @@
 <template>
-  <section id="new" class="mb-8">
+  <section ref="sectionRef" id="new" class="mb-8">
     <div class="flex items-center justify-between mb-4">
       <div>
         <h2 class="text-2xl font-semibold">New</h2>
@@ -13,36 +13,15 @@
 
     <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       <template v-if="loading">
-        <div v-for="i in 8" :key="`skeleton-${i}`" class="rounded-2xl bg-white dark:bg-gray-800 shadow-sm overflow-hidden animate-pulse">
-          <div class="w-full h-44 bg-gray-200 dark:bg-gray-700"></div>
-          <div class="p-3">
-            <div class="h-4 bg-gray-200 dark:bg-gray-700 w-3/4 rounded mb-2"></div>
-            <div class="h-3 bg-gray-200 dark:bg-gray-700 w-1/3 rounded"></div>
-          </div>
-        </div>
+        <VideoCardSkeleton v-for="i in 8" :key="`skeleton-${i}`" />
       </template>
       <template v-else>
-        <article v-for="item in items" :key="item.id" class="group bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden transition transform hover:-translate-y-1 hover:shadow-lg focus-within:shadow-lg cursor-pointer" @click="navigateToVideo(item.slug || item.id)">
-          <div class="block focus:outline-none">
-            <div class="relative">
-              <img :src="item.thumb" alt="" class="w-full h-44 object-cover" />
-              <span class="absolute left-3 top-3 bg-black/60 text-white text-xs px-2 py-1 rounded">NEW</span>
-              <div class="absolute right-3 bottom-3 bg-white/90 dark:bg-black/60 text-xs px-2 py-1 rounded text-muted dark:text-gray-200">{{ item.duration }}</div>
-            </div>
-
-            <div class="p-3">
-              <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-50 line-clamp-2">{{ item.title }}</h3>
-              <div class="mt-2 flex items-center justify-between text-xs text-muted dark:text-gray-400">
-                <div class="flex items-center gap-2">
-                  <img v-if="item.channelThumb" :src="item.channelThumb" alt="" class="w-7 h-7 rounded-full object-cover" />
-                  <div v-else class="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                  <div>{{ item.channel }}</div>
-                </div>
-                <div class="text-right">{{ item.views }} • {{ item.age }}</div>
-              </div>
-            </div>
-          </div>
-        </article>
+        <VideoCard
+          v-for="item in items"
+          :key="item.id"
+          :video="item"
+          :badge="{ type: 'new', text: 'NEW' }"
+        />
       </template>
     </div>
   </section>
@@ -51,6 +30,9 @@
 
 <script setup lang="ts">
 import { ref, toRef } from 'vue'
+import VideoCard from '~/components/VideoCard.vue'
+import VideoCardSkeleton from '~/components/VideoCardSkeleton.vue'
+import { useLazyLoadOnIntersection } from '../../composables/useLazyLoadOnIntersection'
 
 // Use a simple static path as a safe fallback for the bundled SVG asset to
 // avoid TypeScript import issues for image modules in this environment.
@@ -61,17 +43,21 @@ const props = defineProps({
 })
 const loading = toRef(props, 'loading')
 
+// Ref for intersection observer
+const sectionRef = ref<HTMLElement | null>(null)
+
 // Real data state
 const items = ref<Array<any>>([])
 const localLoading = ref(true)
 const error = ref<string | null>(null)
 
-await loadRecentVideos();
+// Lazy load on intersection
+const { isLoaded } = useLazyLoadOnIntersection(sectionRef, loadRecentVideos, { delay: 100 })
 
 async function loadRecentVideos() {
   try {
     console.log('Loading recent videos...')
-    localLoading.value = false
+    localLoading.value = true
 
     const data = await $fetch('/api/public/discovery', {
       query: { section: 'new', limit: 8 }
@@ -105,10 +91,6 @@ async function loadRecentVideos() {
   } finally {
     localLoading.value = false
   }
-}
-
-function navigateToVideo(videoId: string) {
-  navigateTo(`/video/${videoId}`)
 }
 </script>
 

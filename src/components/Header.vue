@@ -1,6 +1,9 @@
 
 <template>
-  <header class="w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+  <header
+    class="fixed top-0 left-0 right-0 z-50 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 transition-transform duration-300 ease-in-out shadow-sm"
+    :class="{ '-translate-y-full': isHidden }"
+  >
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
       <NuxtLink to="/" class="flex items-center gap-3">
         <span class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white font-semibold">YT</span>
@@ -153,6 +156,9 @@ const THEME_KEY = 'ytplay_theme'
 const theme = ref('system')
 const isDark = ref(false)
 const mobileOpen = ref(false)
+const isHidden = ref(false)
+const lastScrollY = ref(0)
+const scrollThreshold = 50 // Minimum scroll distance before hiding/showing
 
 // Computed property to check if a route is active
 const isActiveRoute = (path) => {
@@ -197,6 +203,29 @@ function onKeydown(e) {
   }
 }
 
+function onScroll() {
+  if (typeof window === 'undefined') return
+
+  const currentScrollY = window.scrollY
+
+  // Only apply hide/show behavior on mobile screens
+  if (window.innerWidth >= 640) { // sm breakpoint
+    isHidden.value = false
+    return
+  }
+
+  // Show header when scrolling up or at the very top
+  if (currentScrollY < lastScrollY.value || currentScrollY < scrollThreshold) {
+    isHidden.value = false
+  }
+  // Hide header when scrolling down past threshold
+  else if (currentScrollY > lastScrollY.value && currentScrollY > scrollThreshold) {
+    isHidden.value = true
+  }
+
+  lastScrollY.value = currentScrollY
+}
+
 onMounted(() => {
   if (typeof localStorage !== 'undefined') {
     const stored = localStorage.getItem(THEME_KEY)
@@ -204,7 +233,10 @@ onMounted(() => {
   } else theme.value = 'system'
   applyTheme(theme.value)
   
-  if (typeof window !== 'undefined') window.addEventListener('keydown', onKeydown)
+  if (typeof window !== 'undefined') {
+    window.addEventListener('keydown', onKeydown)
+    window.addEventListener('scroll', onScroll, { passive: true })
+  }
   
   // Fallback: ensure content is visible even if theme application fails
   // setTimeout(() => {
@@ -215,7 +247,10 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown)
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('keydown', onKeydown)
+    window.removeEventListener('scroll', onScroll)
+  }
 })
 </script>
 

@@ -186,5 +186,72 @@
       "privacy": "Privatumas",
       "terms": "Sąlygos"
     }
+  },
+  "about": {
+    "hero": {
+      "title": "YTPlay.lt",
+      "subtitle": "Atraskite geriausius vaizdo įrašus ir kanalus",
+      "description": "Moderni platforma, padedanti atrasti naujus, populiarius ir geriausius vaizdo įrašus bei kanalus lietuviškoje erdvėje."
+    },
+    "features": {
+      "title": "Kaip naudotis platforma",
+      "newVideos": {
+        "title": "Nauji vaizdo įrašai",
+        "description": "Atraskite naujausius vaizdo įrašus iš lietuviškų kanalų. Sekite, kas ką tik buvo paskelbta ir nepraleiskite įdomiausio turinio."
+      },
+      "trending": {
+        "title": "Tendencijos",
+        "description": "Sužinokite, kurie vaizdo įrašai šiuo metu yra populiariausi. Matykite realiu laiku atnaujinamus populiarumo reitingus."
+      },
+      "topVideos": {
+        "title": "Geriausi vaizdo įrašai",
+        "description": "Naršykite geriausiai įvertintus ir žiūrimiausius vaizdo įrašus. Atraskite aukščiausios kokybės turinį iš lietuviškų kanalų."
+      }
+    },
+    "channels": {
+      "title": "Geriausi kanalai",
+      "description": "Atraskite populiariausius lietuviškus kanalus pagal prenumeratorių skaičių, peržiūrų skaičių ir įsitraukimą. Sekite kanalus, kurie kuria kokybiškiausią turinį.",
+      "categories": {
+        "videos": "Vaizdo įrašai",
+        "community": "Bendruomenė",
+        "news": "Naujienos",
+        "education": "Švietimas"
+      }
+    },
+    "lithuanianFocus": {
+      "title": "Sutelktą į lietuvišką turinį",
+      "language": {
+        "title": "Lietuvių kalba",
+        "description": "Visi vaizdo įrašai ir kanalai yra lietuvių kalba. Atraskite turinį, kuris yra artimas ir suprantamas lietuviškai."
+      },
+      "community": {
+        "title": "Vietinė bendruomenė",
+        "description": "Palaikome lietuviškus kūrėjus ir kanalus. Padėkite augti lietuviškam turiniui internete."
+      }
+    },
+    "contact": {
+      "title": "Susisiekite su mumis",
+      "description": "Turite klausimų ar pasiūlymų? Susisiekite su mumis el. paštu arba per socialinius tinklus.",
+      "info": {
+        "title": "Kontaktinė informacija",
+        "email": "El. paštas",
+        "website": "Tinklalapis"
+      },
+      "form": {
+        "title": "Parašykite mums",
+        "name": "Vardas",
+        "email": "El. paštas",
+        "message": "Žinutė",
+        "namePlaceholder": "Jūsų vardas",
+        "emailPlaceholder": "jusuemail.lt",
+        "messagePlaceholder": "Jūsų žinutė...",
+        "submit": "Siųsti žinutę (greitai)",
+        "overlay": {
+          "title": "Kontaktinė forma jau greitai",
+          "description": "Šiuo metu kontaktinė forma neveikia. Susisiekite su mumis tiesiogiai el. paštu.",
+          "emailButton": "Rašyti el. paštu"
+        }
+      }
+    }
   }
 }

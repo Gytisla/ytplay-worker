@@ -186,5 +186,72 @@
       "privacy": "Privacy",
       "terms": "Terms"
     }
+  },
+  "about": {
+    "hero": {
+      "title": "YTPlay.lt",
+      "subtitle": "Discover top videos & channels",
+      "description": "A modern platform to help you find new, trending, and top videos and channels in the Lithuanian space."
+    },
+    "features": {
+      "title": "How to use the platform",
+      "newVideos": {
+        "title": "New videos",
+        "description": "Discover the latest videos from Lithuanian channels. Stay up to date with the newest and most interesting content."
+      },
+      "trending": {
+        "title": "Trending",
+        "description": "Find out which videos are currently most popular. See real-time popularity rankings."
+      },
+      "topVideos": {
+        "title": "Top videos",
+        "description": "Browse the highest-rated and most-watched videos. Discover the highest quality content from Lithuanian channels."
+      }
+    },
+    "channels": {
+      "title": "Top channels",
+      "description": "Discover the most popular Lithuanian channels by subscriber count, view count, and engagement. Follow channels that create the highest quality content.",
+      "categories": {
+        "videos": "Videos",
+        "community": "Community",
+        "news": "News",
+        "education": "Education"
+      }
+    },
+    "lithuanianFocus": {
+      "title": "Focused on Lithuanian content",
+      "language": {
+        "title": "Lithuanian language",
+        "description": "All videos and channels are in Lithuanian. Discover content that is close and understandable in Lithuanian."
+      },
+      "community": {
+        "title": "Local community",
+        "description": "We support Lithuanian creators and channels. Help Lithuanian content grow online."
+      }
+    },
+    "contact": {
+      "title": "Contact us",
+      "description": "Have questions or suggestions? Contact us by email or through social networks.",
+      "info": {
+        "title": "Contact information",
+        "email": "Email",
+        "website": "Website"
+      },
+      "form": {
+        "title": "Write to us",
+        "name": "Name",
+        "email": "Email",
+        "message": "Message",
+        "namePlaceholder": "Your name",
+        "emailPlaceholder": "youremail.com",
+        "messagePlaceholder": "Your message...",
+        "submit": "Send message (coming soon)",
+        "overlay": {
+          "title": "Contact form coming soon",
+          "description": "The contact form is currently not working. Contact us directly by email.",
+          "emailButton": "Write email"
+        }
+      }
+    }
   }
 }

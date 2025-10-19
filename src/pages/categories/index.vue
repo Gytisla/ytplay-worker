@@ -32,7 +32,7 @@
       <div v-else-if="categories.length > 0" class="space-y-12">
         <section v-for="category in categories" :key="category.id" class="space-y-6">
           <!-- Category Header -->
-          <div class="flex items-center justify-between">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div class="flex items-center gap-4">
               <div
                 class="w-12 h-12 rounded-lg flex items-center justify-center text-xl"
@@ -47,7 +47,7 @@
             </div>
             <NuxtLink
               :to="`/categories/${category.key}`"
-              class="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition text-sm font-medium"
+              class="flex items-center gap-2 px-3 py-1 sm:px-4 sm:py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition text-xs sm:text-sm font-medium"
             >
               {{ t('categoriesPage.viewAll') }}
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

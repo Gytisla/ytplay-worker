@@ -49,7 +49,7 @@
         </div>
 
         <!-- Sorting Controls -->
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
           <h2 class="text-xl font-semibold">Videos</h2>
           <div class="flex items-center gap-2">
             <button

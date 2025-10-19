@@ -11,7 +11,7 @@
           <div class="flex flex-col md:flex-row gap-6">
             <img :src="channel.avatar" alt="" class="w-24 h-24 rounded-full object-cover mx-auto md:mx-0" />
             <div class="flex-1 text-center md:text-left">
-              <div class="flex items-center justify-between mb-2">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                 <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">{{ channel.name }}</h1>
                 <button 
                   @click="openInYouTube"
@@ -35,7 +35,7 @@
       <!-- Performance Analytics -->
       <section class="mb-8">
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
-          <div class="flex items-center justify-between mb-6">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
             <h2 class="text-2xl font-semibold">Performance Analytics</h2>
             <select v-model="statsPeriod" @change="loadChannelStats" class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm" :disabled="!channelStats">
               <option value="7">Last 7 days</option>

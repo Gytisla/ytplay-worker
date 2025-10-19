@@ -7,7 +7,7 @@
 
       <!-- Title and Controls -->
       <div class="mb-8">
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
           <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">{{ t('topChannelsPage.title') }}</h1>
           <div class="flex items-center gap-2">
             <button @click="sortBy = 'subscribers'" :class="['px-4 py-2 rounded-lg text-sm font-medium transition', sortBy === 'subscribers' ? 'bg-primary-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">

@@ -182,7 +182,7 @@ Backend-first monorepo structure:
 - [x] T107 [P] Implement discovery sections on home page: New, Trending, Top (with skeleton loaders)
 - [x] T108 [P] Implement infinite scroll/pagination for lists with graceful fallback
 - [ ] T109 [P] Implement accessible keyboard navigation and focus management for card grids
-- [ ] T110 [P] Implement open graph and SSR meta tags for landing and category pages
+- [x] T110 [P] Implement open graph and SSR meta tags for landing and category pages
 - [ ] T111 [P] Add small animation library or utilities (prefers-reduced-motion aware)
 - [ ] T112 [P] Create lightweight client-side caching for discovery endpoints
 - [ ] T113 [P] Write unit tests for UI components (Vitest + testing-library)

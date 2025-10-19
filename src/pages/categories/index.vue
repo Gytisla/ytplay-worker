@@ -148,13 +148,47 @@ const fetchCategories = async () => {
 
 await fetchCategories()
 
-// SEO
+// SEO and Open Graph meta tags
 useHead({
-  title: 'Categories - YouTube Player',
+  title: () => $t('seo.categories.title'),
   meta: [
     {
       name: 'description',
-      content: 'Explore videos organized by category'
+      content: () => $t('seo.categories.description')
+    },
+    // Open Graph tags
+    {
+      property: 'og:title',
+      content: () => $t('seo.categories.ogTitle')
+    },
+    {
+      property: 'og:description',
+      content: () => $t('seo.categories.ogDescription')
+    },
+    {
+      property: 'og:type',
+      content: 'website'
+    },
+    {
+      property: 'og:url',
+      content: () => `${$t('seo.siteUrl')}/categories`
+    },
+    {
+      property: 'og:site_name',
+      content: () => $t('seo.siteName')
+    },
+    // Twitter Card tags
+    {
+      name: 'twitter:card',
+      content: 'summary_large_image'
+    },
+    {
+      name: 'twitter:title',
+      content: () => $t('seo.categories.ogTitle')
+    },
+    {
+      name: 'twitter:description',
+      content: () => $t('seo.categories.ogDescription')
     }
   ]
 })

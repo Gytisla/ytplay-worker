@@ -352,11 +352,53 @@ onMounted(() => {
 
 // SEO
 useHead(() => ({
-  title: category.value ? `${category.value.name} - Video Categories` : 'Category',
+  title: category.value ? `${category.value.name} - YouTube Player` : 'Category - YouTube Player',
   meta: [
     {
       name: 'description',
-      content: category.value ? `Explore ${totalVideos.value} videos in the ${category.value.name} category` : 'Browse videos by category'
+      content: category.value ? `Explore ${totalVideos.value} videos in the ${category.value.name} category. ${category.value.description || ''}` : 'Browse videos by category'
+    },
+    // Open Graph
+    {
+      property: 'og:title',
+      content: category.value ? `${category.value.name} - YouTube Player` : 'Category - YouTube Player'
+    },
+    {
+      property: 'og:description',
+      content: category.value ? `Explore ${totalVideos.value} videos in the ${category.value.name} category. ${category.value.description || ''}` : 'Browse videos by category'
+    },
+    {
+      property: 'og:image',
+      content: '/assets/hero-thumb.svg'
+    },
+    {
+      property: 'og:url',
+      content: `https://ytplay-worker.vercel.app/categories/${categoryKey}`
+    },
+    {
+      property: 'og:type',
+      content: 'website'
+    },
+    {
+      property: 'og:site_name',
+      content: 'YouTube Player'
+    },
+    // Twitter Card
+    {
+      name: 'twitter:card',
+      content: 'summary_large_image'
+    },
+    {
+      name: 'twitter:title',
+      content: category.value ? `${category.value.name} - YouTube Player` : 'Category - YouTube Player'
+    },
+    {
+      name: 'twitter:description',
+      content: category.value ? `Explore ${totalVideos.value} videos in the ${category.value.name} category. ${category.value.description || ''}` : 'Browse videos by category'
+    },
+    {
+      name: 'twitter:image',
+      content: '/assets/hero-thumb.svg'
     }
   ]
 }))

@@ -158,6 +158,60 @@ async function loadVideos() {
     loading.value = false
   }
 }
+
+// Meta tags
+useHead({
+  title: 'Top Videos - YouTube Player',
+  meta: [
+    {
+      name: 'description',
+      content: 'Discover the most popular YouTube videos by view count and trending content'
+    },
+    // Open Graph
+    {
+      property: 'og:title',
+      content: 'Top Videos - YouTube Player'
+    },
+    {
+      property: 'og:description',
+      content: 'Discover the most popular YouTube videos by view count and trending content'
+    },
+    {
+      property: 'og:image',
+      content: '/assets/hero-thumb.svg'
+    },
+    {
+      property: 'og:url',
+      content: 'https://ytplay-worker.vercel.app/top-videos'
+    },
+    {
+      property: 'og:type',
+      content: 'website'
+    },
+    {
+      property: 'og:site_name',
+      content: 'YouTube Player'
+    },
+    // Twitter Card
+    {
+      name: 'twitter:card',
+      content: 'summary_large_image'
+    },
+    {
+      name: 'twitter:title',
+      content: 'Top Videos - YouTube Player'
+    },
+    {
+      name: 'twitter:description',
+      content: 'Discover the most popular YouTube videos by view count and trending content'
+    },
+    {
+      name: 'twitter:image',
+      content: '/assets/hero-thumb.svg'
+    }
+  ]
+})
+
 </script>
 
 <style scoped>

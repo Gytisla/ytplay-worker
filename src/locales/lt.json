@@ -68,5 +68,38 @@
     "topVideos": "Top video",
     "searchPlaceholder": "Ieškoti vaizdo įrašų, kanalų...",
     "toggleTheme": "Perjungti temą"
+  },
+  "seo": {
+    "home": {
+      "title": "YouTube grotuvas - Atraskite nuostabius vaizdo įrašus",
+      "description": "Atraskite ir tyrinėkite nuostabius YouTube vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėkite tendencijų turinį, geriausius kanalus ir naujus vaizdo įrašus vienoje vietoje.",
+      "ogTitle": "YouTube grotuvas - Atraskite nuostabius vaizdo įrašus",
+      "ogDescription": "Atraskite ir tyrinėkite nuostabius YouTube vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėkite tendencijų turinį, geriausius kanalus ir naujus vaizdo įrašus vienoje vietoje."
+    },
+    "categories": {
+      "title": "Kategorijos - YouTube grotuvas",
+      "description": "Tyrinėkite vaizdo įrašus pagal kategoriją",
+      "ogTitle": "Vaizdo įrašų kategorijos - YouTube grotuvas",
+      "ogDescription": "Tyrinėkite vaizdo įrašus pagal kategoriją. Atraskite turinį iš žaidimų, muzikos, technologijų ir daugiau."
+    },
+    "topChannels": {
+      "title": "Geriausi kanalai - YouTube grotuvas",
+      "description": "Atraskite populiariausius YouTube kanalus pagal prenumeratorių skaičių ir bendrą peržiūrų skaičių",
+      "ogTitle": "Geriausi kanalai - YouTube grotuvas",
+      "ogDescription": "Atraskite populiariausius YouTube kanalus pagal prenumeratorių skaičių ir bendrą peržiūrų skaičių"
+    },
+    "topVideos": {
+      "title": "Geriausi vaizdo įrašai - YouTube grotuvas",
+      "description": "Atraskite populiariausius YouTube vaizdo įrašus pagal peržiūrų skaičių ir tendencijų turinį",
+      "ogTitle": "Geriausi vaizdo įrašai - YouTube grotuvas",
+      "ogDescription": "Atraskite populiariausius YouTube vaizdo įrašus pagal peržiūrų skaičių ir tendencijų turinį"
+    },
+    "category": {
+      "title": "{name} YouTube grotuvas",
+      "description": "Tyrinėkite {count} vaizdo įrašus {name} kategorijoje",
+      "ogTitle": "{name} YouTube grotuvas",
+      "ogDescription": "Tyrinėkite {count} vaizdo įrašus {name} kategorijoje. {description}"
+    },
+    "siteName": "YouTube grotuvas"
   }
 }

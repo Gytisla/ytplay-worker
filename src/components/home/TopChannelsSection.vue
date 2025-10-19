@@ -6,35 +6,46 @@
     </div>
 
     <div class="mt-6 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-      <template v-if="loading">
-        <div v-for="i in 8" :key="`ch-skel-${i}`" class="rounded-xl bg-white dark:bg-gray-800 shadow-sm p-3 animate-pulse flex items-center gap-3">
-          <div class="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-          <div class="flex-1">
-            <div class="h-4 bg-gray-200 dark:bg-gray-700 w-1/2 rounded mb-2"></div>
-            <div class="h-3 bg-gray-200 dark:bg-gray-700 w-1/4 rounded"></div>
+      <ClientOnly>
+        <template v-if="loading">
+          <div v-for="i in 8" :key="`ch-skel-${i}`" class="rounded-xl bg-white dark:bg-gray-800 shadow-sm p-3 animate-pulse flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+            <div class="flex-1">
+              <div class="h-4 bg-gray-200 dark:bg-gray-700 w-1/2 rounded mb-2"></div>
+              <div class="h-3 bg-gray-200 dark:bg-gray-700 w-1/4 rounded"></div>
+            </div>
           </div>
-        </div>
-      </template>
+        </template>
 
-      <template v-else>
-        <NuxtLink v-for="ch in channels" :key="ch.id" :to="`/channel/${ch.slug || ch.id}`" class="rounded-xl bg-white dark:bg-gray-800 shadow-sm p-4 flex items-center gap-4 transition hover:shadow-lg hover:-translate-y-1 cursor-pointer group relative">
-          <img :src="ch.avatar" alt="" class="w-12 h-12 rounded-full object-cover flex-shrink-0" />
-          <div class="flex-1 min-w-0">
-            <div class="mb-2">
-              <div class="text-sm font-semibold text-gray-900 dark:text-gray-50 truncate" :title="ch.name">{{ ch.name }}</div>
+        <template v-else>
+          <NuxtLink v-for="ch in channels" :key="ch.id" :to="`/channel/${ch.slug || ch.id}`" class="rounded-xl bg-white dark:bg-gray-800 shadow-sm p-4 flex items-center gap-4 transition hover:shadow-lg hover:-translate-y-1 cursor-pointer group relative">
+            <img :src="ch.avatar" alt="" class="w-12 h-12 rounded-full object-cover flex-shrink-0" />
+            <div class="flex-1 min-w-0">
+              <div class="mb-2">
+                <div class="text-sm font-semibold text-gray-900 dark:text-gray-50 truncate" :title="ch.name">{{ ch.name }}</div>
+              </div>
+              <div class="flex items-center justify-between text-xs text-muted dark:text-gray-400">
+                <span>{{ ch.recent }} videos</span>
+                <span>{{ ch.subs }}</span>
+              </div>
             </div>
-            <div class="flex items-center justify-between text-xs text-muted dark:text-gray-400">
-              <span>{{ ch.recent }} videos</span>
-              <span>{{ ch.subs }}</span>
+            <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+              <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </NuxtLink>
+        </template>
+        <template #fallback>
+          <div v-for="i in 8" :key="`ch-fallback-${i}`" class="rounded-xl bg-white dark:bg-gray-800 shadow-sm p-3 animate-pulse flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+            <div class="flex-1">
+              <div class="h-4 bg-gray-200 dark:bg-gray-700 w-1/2 rounded mb-2"></div>
+              <div class="h-3 bg-gray-200 dark:bg-gray-700 w-1/4 rounded"></div>
             </div>
           </div>
-          <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </NuxtLink>
-      </template>
+        </template>
+      </ClientOnly>
     </div>
   </section>
 </template>

@@ -6,16 +6,21 @@
     </div>
 
     <div class="mt-6 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-      <template v-if="loading">
-        <VideoCardSkeleton v-for="i in 8" :key="`skeleton-${i}`" />
-      </template>
-      <template v-else>
-        <VideoCard
-          v-for="item in items"
-          :key="item.id"
-          :video="item"
-        />
-      </template>
+      <ClientOnly>
+        <template v-if="loading">
+          <VideoCardSkeleton v-for="i in 8" :key="`skeleton-${i}`" />
+        </template>
+        <template v-else>
+          <VideoCard
+            v-for="item in items"
+            :key="item.id"
+            :video="item"
+          />
+        </template>
+        <template #fallback>
+          <VideoCardSkeleton v-for="i in 8" :key="`fallback-${i}`" />
+        </template>
+      </ClientOnly>
     </div>
   </section>
 </template>

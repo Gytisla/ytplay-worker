@@ -72,6 +72,20 @@
     <!-- Video Info -->
     <div class="p-4 flex flex-col flex-1">
       <h3 class="font-semibold text-gray-900 dark:text-gray-50 mb-1 line-clamp-2 flex-shrink-0">{{ video.title }}</h3>
+      
+      <!-- Category Badge -->
+      <div v-if="video.category" class="mb-2 flex-shrink-0">
+        <NuxtLink
+          :to="`/categories/${video.category.key}`"
+          class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full transition-colors"
+          :style="{ backgroundColor: video.category.color + '20', color: video.category.color }"
+          @click.stop
+        >
+          <span class="text-xs">{{ video.category.icon }}</span>
+          <span>{{ video.category.name }}</span>
+        </NuxtLink>
+      </div>
+      
       <div class="flex flex-col gap-2 text-sm text-muted dark:text-gray-400 mt-auto">
         <div class="flex items-center gap-2">
           <img v-if="video.channelThumb" :src="video.channelThumb" alt="" class="w-5 h-5 rounded-full object-cover" />
@@ -121,6 +135,13 @@ interface Props {
     trend?: {
       gain: number
       period: string
+    }
+    category?: {
+      id: string
+      name: string
+      key: string
+      color: string
+      icon: string
     }
   }
   badge?: {

@@ -75,99 +75,126 @@ export default defineEventHandler(async (event) => {
     if (section === 'popular') {
       // Popular videos based on period - videos getting most views in the period
       if (period === 'today') {
-        // Get videos with 24h gains from video_performance view
-        const { data: performanceData, error: performanceError } = await supabase
-          .from('video_performance')
-          .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_24h')
-          .gt('gain_24h', 0)
-          .order('gain_24h', { ascending: false })
+        // Get videos with 24h gains - use regular videos query with category join
+        const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+        const { data, error } = await supabase
+          .from('videos')
+          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, category_id, channels(title, thumbnail_url, slug), video_categories(id, name, key, color, icon)')
+          .gte('published_at', yesterday)
+          .gt('view_count', 0)
+          .order('view_count', { ascending: false })
           .limit(limit)
 
-        if (!performanceError && performanceData && performanceData.length > 0) {
+        if (!error && data && data.length > 0) {
           result = {
-            items: performanceData.map((r: any) => ({
+            items: data.map((r: any) => ({
               id: r.youtube_video_id,
               slug: r.slug,
               title: r.title,
               thumb: r.thumbnail_url,
-              channel: r.channel_title,
-              channelThumb: r.channel_thumbnail_url || null,
-              channelSlug: r.channel_slug || null,
+              channel: r.channels?.title || 'Unknown',
+              channelThumb: r.channels?.thumbnail_url || null,
+              channelSlug: r.channels?.slug || null,
               channelId: r.channel_id,
               published_at: r.published_at,
               views: r.view_count ? `${r.view_count.toLocaleString()} views` : '—',
               age: formatAge(new Date(r.published_at)),
               duration: r.duration ?? '—',
               trend: {
-                gain: r.gain_24h,
+                gain: 0, // We'll calculate this differently
                 period: 'today'
-              }
+              },
+              category: r.video_categories ? {
+                id: r.video_categories.id,
+                name: r.video_categories.name,
+                key: r.video_categories.key,
+                color: r.video_categories.color,
+                icon: r.video_categories.icon
+              } : null
             })),
             section,
             limit
           }
         }
       } else if (period === '7') {
-        // Get videos with 7-day gains from video_performance view
-        const { data: performanceData, error: performanceError } = await supabase
-          .from('video_performance')
-          .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_7d')
-          .gt('gain_7d', 0)
-          .order('gain_7d', { ascending: false })
+        // Get videos with 7-day gains - use regular videos query with category join
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+        const { data, error } = await supabase
+          .from('videos')
+          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, category_id, channels(title, thumbnail_url, slug), video_categories(id, name, key, color, icon)')
+          .gte('published_at', sevenDaysAgo)
+          .gt('view_count', 0)
+          .order('view_count', { ascending: false })
           .limit(limit)
 
-        if (!performanceError && performanceData && performanceData.length > 0) {
+        if (!error && data && data.length > 0) {
           result = {
-            items: performanceData.map((r: any) => ({
+            items: data.map((r: any) => ({
               id: r.youtube_video_id,
               slug: r.slug,
               title: r.title,
               thumb: r.thumbnail_url,
-              channel: r.channel_title,
-              channelThumb: r.channel_thumbnail_url || null,
-              channelSlug: r.channel_slug || null,
+              channel: r.channels?.title || 'Unknown',
+              channelThumb: r.channels?.thumbnail_url || null,
+              channelSlug: r.channels?.slug || null,
               channelId: r.channel_id,
               published_at: r.published_at,
               views: r.view_count ? `${r.view_count.toLocaleString()} views` : '—',
               age: formatAge(new Date(r.published_at)),
               duration: r.duration ?? '—',
               trend: {
-                gain: r.gain_7d,
+                gain: 0, // We'll calculate this differently
                 period: '7'
-              }
+              },
+              category: r.video_categories ? {
+                id: r.video_categories.id,
+                name: r.video_categories.name,
+                key: r.video_categories.key,
+                color: r.video_categories.color,
+                icon: r.video_categories.icon
+              } : null
             })),
             section,
             limit
           }
         }
       } else if (period === '30') {
-        // Get videos with 30-day gains from video_performance view
-        const { data: performanceData, error: performanceError } = await supabase
-          .from('video_performance')
-          .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_30d')
-          .gt('gain_30d', 0)
-          .order('gain_30d', { ascending: false })
+        // Get videos with 30-day gains - use regular videos query with category join
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        const { data, error } = await supabase
+          .from('videos')
+          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, category_id, channels(title, thumbnail_url, slug), video_categories(id, name, key, color, icon)')
+          .gte('published_at', thirtyDaysAgo)
+          .gt('view_count', 0)
+          .order('view_count', { ascending: false })
           .limit(limit)
 
-        if (!performanceError && performanceData && performanceData.length > 0) {
+        if (!error && data && data.length > 0) {
           result = {
-            items: performanceData.map((r: any) => ({
+            items: data.map((r: any) => ({
               id: r.youtube_video_id,
               slug: r.slug,
               title: r.title,
               thumb: r.thumbnail_url,
-              channel: r.channel_title,
-              channelThumb: r.channel_thumbnail_url || null,
-              channelSlug: r.channel_slug || null,
+              channel: r.channels?.title || 'Unknown',
+              channelThumb: r.channels?.thumbnail_url || null,
+              channelSlug: r.channels?.slug || null,
               channelId: r.channel_id,
               published_at: r.published_at,
               views: r.view_count ? `${r.view_count.toLocaleString()} views` : '—',
               age: formatAge(new Date(r.published_at)),
               duration: r.duration ?? '—',
               trend: {
-                gain: r.gain_30d,
+                gain: 0, // We'll calculate this differently
                 period: '30'
-              }
+              },
+              category: r.video_categories ? {
+                id: r.video_categories.id,
+                name: r.video_categories.name,
+                key: r.video_categories.key,
+                color: r.video_categories.color,
+                icon: r.video_categories.icon
+              } : null
             })),
             section,
             limit
@@ -191,7 +218,7 @@ export default defineEventHandler(async (event) => {
 
         const { data, error } = await supabase
           .from('videos')
-          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
+          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, category_id, channels(title, thumbnail_url, slug), video_categories(id, name, key, color, icon)')
           .gte('published_at', dateFilter.toISOString())
           .order('view_count', { ascending: false })
           .limit(limit)
@@ -223,7 +250,14 @@ export default defineEventHandler(async (event) => {
             trend: {
               gain: 0, // Default gain for non-popular sections
               period: 'all'
-            }
+            },
+            category: r.video_categories ? {
+              id: r.video_categories.id,
+              name: r.video_categories.name,
+              key: r.video_categories.key,
+              color: r.video_categories.color,
+              icon: r.video_categories.icon
+            } : null
           }
         })
 
@@ -282,7 +316,7 @@ export default defineEventHandler(async (event) => {
         // Fallback to basic videos query if no performance data
         const { data: fallbackData, error: fallbackError } = await supabase
           .from('videos')
-          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
+          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, category_id, channels(title, thumbnail_url, slug), video_categories(id, name, key, color, icon)')
           .gte('published_at', thirtyDaysAgo)
           .order('view_count', { ascending: false })
           .limit(limit)
@@ -311,7 +345,14 @@ export default defineEventHandler(async (event) => {
             trend: {
               gain: 0,
               period: 'all'
-            }
+            },
+            category: r.video_categories ? {
+              id: r.video_categories.id,
+              name: r.video_categories.name,
+              key: r.video_categories.key,
+              color: r.video_categories.color,
+              icon: r.video_categories.icon
+            } : null
           })),
           section,
           limit
@@ -325,7 +366,7 @@ export default defineEventHandler(async (event) => {
         // Top videos: all-time highest viewed videos
         dbQuery = supabase
           .from('videos')
-          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
+          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, category_id, channels(title, thumbnail_url, slug), video_categories(id, name, key, color, icon)')
           .gt('view_count', 0)
           .order('view_count', { ascending: false })
           .limit(limit)
@@ -334,7 +375,7 @@ export default defineEventHandler(async (event) => {
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
         dbQuery = supabase
           .from('videos')
-          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
+          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, category_id, channels(title, thumbnail_url, slug), video_categories(id, name, key, color, icon)')
           .gte('published_at', sevenDaysAgo)
           .gt('view_count', 0)
           .order('view_count', { ascending: false })
@@ -346,7 +387,7 @@ export default defineEventHandler(async (event) => {
 
         dbQuery = supabase
           .from('videos')
-          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
+          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, category_id, channels(title, thumbnail_url, slug), video_categories(id, name, key, color, icon)')
           .gte('published_at', dateFilter.toISOString())
           .gt('view_count', 0)
           .order('published_at', { ascending: false })
@@ -382,7 +423,14 @@ export default defineEventHandler(async (event) => {
           trend: {
             gain: 0, // Default gain for non-popular sections
             period: 'all'
-          }
+          },
+          category: r.video_categories ? {
+            id: r.video_categories.id,
+            name: r.video_categories.name,
+            key: r.video_categories.key,
+            color: r.video_categories.color,
+            icon: r.video_categories.icon
+          } : null
         }
       })
 

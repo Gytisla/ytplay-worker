@@ -75,6 +75,7 @@ async function loadTrendingVideos() {
       views: item.views,
       age: item.age,
       duration: item.duration,
+      category: item.category,
     }))
   } catch (err: any) {
     error.value = String(err?.message ?? err)

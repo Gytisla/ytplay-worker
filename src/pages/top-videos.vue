@@ -104,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 
 const { t } = useI18n()
 
@@ -114,8 +114,10 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const sortBy = ref<'views' | 'trending'>('views')
 
-// Load videos data
-await loadVideos()
+// Load videos data on client mount so navigation is instant
+onMounted(async () => {
+  await loadVideos()
+})
 
 // Watch for sort changes and reload
 watch(sortBy, async () => {

@@ -228,6 +228,7 @@
 
 <script setup lang="ts">
 import { ref, computed, nextTick, onBeforeUnmount, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -259,7 +260,11 @@ ChartJS.register(
 )
 
 const route = useRoute()
-const videoId = route.params.id as string
+const router = useRouter()
+const videoId = route.params['id'] as string
+
+// make TS happy in this file for useHead (Nuxt auto-import may already provide it)
+declare const useHead: any
 
 // Video data
 const video = ref<any>(null)
@@ -308,21 +313,23 @@ const canShowTodayStats = computed(() => {
   return uploadDate >= sevenDaysAgo
 })
 
-// Load video data
-await loadVideo()
+// Fetch video and stats on the client after navigation so route change is instant
+onMounted(async () => {
+  // Load video data for the current route id (client-side)
+  await loadVideo()
 
-// Set initial stats period based on video age
-if (video.value?.publishedAt) {
-  const uploadDate = new Date(video.value.publishedAt)
-  const sevenDaysAgo = new Date()
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-  statsPeriod.value = uploadDate >= sevenDaysAgo ? '1' : '30'
-}
+  // Set initial stats period based on video age (if available)
+  if (video.value?.publishedAt) {
+    const uploadDate = new Date(video.value.publishedAt)
+    const sevenDaysAgo = new Date()
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+    statsPeriod.value = uploadDate >= sevenDaysAgo ? '1' : '30'
+  }
 
-await loadVideoStats()
+  // Start loading stats (don't block navigation)
+  loadVideoStats()
 
-// Ensure charts are updated after everything is mounted
-onMounted(() => {
+  // If stats are already available right away, update charts
   if (videoStats.value) {
     updateCharts()
   }
@@ -369,9 +376,10 @@ onBeforeUnmount(() => {
 async function loadVideo() {
   try {
     loading.value = true
-    console.log('Loading video:', videoId)
+  const id = route.params['id'] as string
+    console.log('Loading video:', id)
 
-    const videoData = await $fetch(`/api/public/video/${videoId}`)
+    const videoData = await $fetch(`/api/public/video/${id}`)
     video.value = videoData
 
   } catch (err: any) {
@@ -384,7 +392,8 @@ async function loadVideo() {
 async function loadVideoStats() {
   try {
     console.log('Loading video stats for period:', statsPeriod.value)
-    const statsData = await $fetch(`/api/public/video/${videoId}/stats`, {
+  const id = route.params['id'] as string
+    const statsData = await $fetch(`/api/public/video/${id}/stats`, {
       query: { days: statsPeriod.value }
     })
     console.log('Received video stats data:', statsData)
@@ -400,6 +409,17 @@ async function loadVideoStats() {
     videoStats.value = { videoId, days: parseInt(statsPeriod.value), stats: [], summary: null }
   }
 }
+
+// Reload data if the route id changes (client-side nav between videos)
+watch(() => route.params['id'], (newId, oldId) => {
+  if (newId === oldId) return
+  video.value = null
+  videoStats.value = null
+  loading.value = true
+  // kick off new loads (don't await)
+  loadVideo()
+  loadVideoStats()
+})
 
 function formatDescription(description: string): string {
   if (!description) return ''
@@ -418,7 +438,7 @@ function openChannelInYouTube() {
 function navigateToChannel() {
   if (video.value?.channel?.id) {
     const slug = video.value.channel.slug
-    navigateTo(`/channel/${slug || video.value.channel.id}`)
+    router.push(`/channel/${slug || video.value.channel.id}`)
   }
 }
 

@@ -249,6 +249,7 @@
 
 <script setup lang="ts">
 import { ref, nextTick, onBeforeUnmount, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -280,7 +281,11 @@ ChartJS.register(
 )
 
 const route = useRoute()
-const channelId = route.params.id as string
+const router = useRouter()
+const channelId = route.params['id'] as string
+
+// ensure useHead is recognized (Nuxt auto-imported in most files)
+declare const useHead: any
 
 // Channel data
 const channel = ref<any>(null)
@@ -313,18 +318,18 @@ let viewChart: any = null
 let subscriberChangeChart: any = null
 let viewGainChart: any = null
 
-// Load channel data
-await loadChannel()
-await loadChannelStats()
-
-// Ensure charts are updated after everything is mounted
-onMounted(() => {
-  if (channelStats.value) {
-    updateCharts()
-  }
+// Fetch channel data client-side after navigation so route change is instant
+onMounted(async () => {
+  await loadChannel()
+  loadChannelStats()
 
   // Add scroll listener for infinite scrolling
   window.addEventListener('scroll', handleScroll)
+
+  // If stats are already present, render charts
+  if (channelStats.value) {
+    updateCharts()
+  }
 })
 
 // Watch for channelStats changes and update charts
@@ -332,6 +337,20 @@ watch(channelStats, (newStats) => {
   if (newStats) {
     nextTick(() => updateCharts())
   }
+})
+
+// Reload data when the route id changes (client-side nav between channels)
+watch(() => route.params['id'], (newId, oldId) => {
+  if (newId === oldId) return
+  channel.value = null
+  channelStats.value = null
+  videos.value = []
+  loading.value = true
+  videosOffset.value = 0
+  hasMoreVideos.value = true
+  // kick off loads (don't await)
+  loadChannel()
+  loadChannelStats()
 })
 
 // Cleanup charts and scroll listener on unmount
@@ -360,10 +379,11 @@ function handleScroll() {
 async function loadChannel() {
   try {
     loading.value = true
-    console.log('Loading channel:', channelId)
+    const id = route.params['id'] as string
+    console.log('Loading channel:', id)
 
     // Load channel info (works with both UUID and slug)
-    const channelData = await $fetch(`/api/public/channel/${channelId}`)
+    const channelData = await $fetch(`/api/public/channel/${id}`)
     channel.value = channelData
 
     // Load initial videos
@@ -388,7 +408,8 @@ async function loadVideos(initial = false) {
   try {
     loadingMore.value = true
 
-    const response = await $fetch(`/api/public/channel/${channelId}/videos`, {
+    const id = route.params['id'] as string
+    const response = await $fetch(`/api/public/channel/${id}/videos`, {
       query: {
         limit: videosLimit,
         offset: videosOffset.value,
@@ -415,7 +436,8 @@ async function loadVideos(initial = false) {
 async function loadChannelStats() {
   try {
     console.log('Loading channel stats for period:', statsPeriod.value)
-    const statsData = await $fetch(`/api/public/channel/${channelId}/stats`, {
+    const id = route.params['id'] as string
+    const statsData = await $fetch(`/api/public/channel/${id}/stats`, {
       query: { days: statsPeriod.value }
     })
     console.log('Received stats data:', statsData)
@@ -446,7 +468,7 @@ function openInYouTube() {
 }
 
 function navigateToVideo(videoId: string) {
-  navigateTo(`/video/${videoId}`)
+  router.push(`/video/${videoId}`)
 }
 
 function updateCharts() {

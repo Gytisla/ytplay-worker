@@ -99,7 +99,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const { t } = useI18n()
 
@@ -149,7 +149,9 @@ const fetchCategories = async () => {
   }
 }
 
-await fetchCategories()
+onMounted(async () => {
+  await fetchCategories()
+})
 
 // SEO and Open Graph meta tags
 useHead({

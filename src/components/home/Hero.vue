@@ -111,17 +111,14 @@ const weekHasContent = ref(true)
 const monthHasContent = ref(true)
 
 function onTodayContent(hasContent: boolean) {
-  console.log(`Hero: today section hasContent = ${hasContent}`)
   todayHasContent.value = hasContent
 }
 
 function onWeekContent(hasContent: boolean) {
-  console.log(`Hero: week section hasContent = ${hasContent}`)
   weekHasContent.value = hasContent
 }
 
 function onMonthContent(hasContent: boolean) {
-  console.log(`Hero: month section hasContent = ${hasContent}`)
   monthHasContent.value = hasContent
 }
 </script>

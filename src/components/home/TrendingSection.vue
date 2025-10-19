@@ -52,7 +52,6 @@ const { isLoaded } = useLazyLoadOnIntersection(sectionRef, loadTrendingVideos, {
 
 async function loadTrendingVideos() {
   try {
-    console.log('Loading trending videos...')
     localLoading.value = true
 
     const data = await $fetch('/api/public/discovery', {

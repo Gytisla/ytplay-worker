@@ -363,8 +363,6 @@ watch(video, (newVideo) => {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
     const isNewVideo = uploadDate >= sevenDaysAgo
 
-    console.log('Video upload date:', uploadDate, 'Seven days ago:', sevenDaysAgo, 'isNewVideo:', isNewVideo)
-
     // For new videos, switch to "Today" view
     if (isNewVideo && statsPeriod.value !== '1') {
       statsPeriod.value = '1'
@@ -390,7 +388,6 @@ async function loadVideo() {
   try {
     loading.value = true
   const id = route.params['id'] as string
-    console.log('Loading video:', id)
 
     const videoData = await $fetch(`/api/public/video/${id}`)
     video.value = videoData
@@ -404,12 +401,10 @@ async function loadVideo() {
 
 async function loadVideoStats() {
   try {
-    console.log('Loading video stats for period:', statsPeriod.value)
   const id = route.params['id'] as string
     const statsData = await $fetch(`/api/public/video/${id}/stats`, {
       query: { days: statsPeriod.value }
     })
-    console.log('Received video stats data:', statsData)
     videoStats.value = statsData
 
     // Update charts after data loads
@@ -462,15 +457,12 @@ function navigateToChannel() {
 }
 
 function updateCharts() {
-  console.log('updateCharts called with videoStats:', videoStats.value)
   if (!videoStats.value) {
-    console.log('No videoStats, returning')
     return
   }
 
   const stats = videoStats.value.stats || []
   const isTodayView = videoStats.value.isTodayView
-  console.log('Stats array length:', stats.length, 'isTodayView:', isTodayView)
 
   const labels = stats.length > 0
     ? stats.map((s: any) => {
@@ -484,8 +476,6 @@ function updateCharts() {
       })
     : ['No data available']
 
-  console.log('Chart labels:', labels)
-
   // Destroy existing charts
   if (viewChart) viewChart.destroy()
   if (likeChart) likeChart.destroy()
@@ -494,7 +484,6 @@ function updateCharts() {
 
   // View growth chart
   if (viewChartRef.value) {
-    console.log('Creating view chart with canvas:', viewChartRef.value)
     viewChart = new ChartJS(viewChartRef.value, {
       type: 'line',
       data: {

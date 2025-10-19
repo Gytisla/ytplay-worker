@@ -51,7 +51,6 @@ const { isLoaded } = useLazyLoadOnIntersection(sectionRef, loadRecentVideos, { d
 
 async function loadRecentVideos() {
   try {
-    console.log('Loading recent videos...')
     localLoading.value = true
 
     const data = await $fetch('/api/public/discovery', {

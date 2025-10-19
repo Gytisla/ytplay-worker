@@ -110,7 +110,6 @@ watch(sortBy, async () => {
 async function loadChannels() {
   try {
     loading.value = true
-    console.log(`Loading top channels sorted by ${sortBy.value}...`)
 
     const data = await $fetch('/api/public/discovery', {
       query: { section: 'channels', limit: 50, sort: sortBy.value }

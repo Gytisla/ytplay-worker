@@ -67,7 +67,6 @@ const { isLoaded } = useLazyLoadOnIntersection(sectionRef, loadTopChannels, { de
 
 async function loadTopChannels() {
   try {
-    console.log('Loading top channels...')
     localLoading.value = true
 
     const data = await $fetch('/api/public/discovery', {

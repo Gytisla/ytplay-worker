@@ -387,7 +387,6 @@ async function loadChannel() {
   try {
     loading.value = true
     const id = route.params['id'] as string
-    console.log('Loading channel:', id)
 
     // Load channel info (works with both UUID and slug)
     const channelData = await $fetch(`/api/public/channel/${id}`)
@@ -442,12 +441,10 @@ async function loadVideos(initial = false) {
 
 async function loadChannelStats() {
   try {
-    console.log('Loading channel stats for period:', statsPeriod.value)
     const id = route.params['id'] as string
     const statsData = await $fetch(`/api/public/channel/${id}/stats`, {
       query: { days: statsPeriod.value }
     })
-    console.log('Received stats data:', statsData)
     channelStats.value = statsData
 
     // Update charts after data loads
@@ -475,19 +472,15 @@ function openInYouTube() {
 }
 
 function updateCharts() {
-  console.log('updateCharts called with channelStats:', channelStats.value)
   if (!channelStats.value) {
-    console.log('No channelStats, returning')
     return
   }
 
   const stats = channelStats.value.stats || []
-  console.log('Stats array length:', stats.length)
   const labels = stats.length > 0
     ? stats.map((s: any) => new Date(s.date).toLocaleDateString())
     : ['No data available']
 
-  console.log('Chart labels:', labels)
 
   // Destroy existing charts
   if (subscriberChart) subscriberChart.destroy()
@@ -497,7 +490,6 @@ function updateCharts() {
 
   // Subscriber growth chart
   if (subscriberChartRef.value) {
-    console.log('Creating subscriber chart with canvas:', subscriberChartRef.value)
     subscriberChart = new ChartJS(subscriberChartRef.value, {
       type: 'line',
       data: {

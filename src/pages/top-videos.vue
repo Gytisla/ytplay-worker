@@ -93,7 +93,6 @@ watch(sortBy, async () => {
 async function loadVideos() {
   try {
     loading.value = true
-    console.log(`Loading top videos sorted by ${sortBy.value}...`)
 
     const section = sortBy.value === 'views' ? 'top' : 'trending'
     const data = await $fetch('/api/public/discovery', {

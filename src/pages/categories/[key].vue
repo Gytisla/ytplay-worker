@@ -200,8 +200,6 @@ const observer = ref<IntersectionObserver | null>(null)
 const formatDuration = (duration: string | null) => {
   if (!duration) return '0:00'
 
-  console.log('Raw duration from API:', duration)
-
   // Handle PostgreSQL INTERVAL format (e.g., "00:04:13")
   if (duration.match(/^\d{2}:\d{2}:\d{2}$/)) {
     const parts = duration.split(':').map(Number)
@@ -217,7 +215,6 @@ const formatDuration = (duration: string | null) => {
   // Handle ISO 8601 duration (PT4M13S)
   const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/)
   if (!match) {
-    console.log('Duration format not recognized:', duration)
     return '0:00'
   }
 
@@ -250,7 +247,6 @@ const formatDate = (dateString: string) => {
 }
 
 const fetchCategory = async (resetPage = true) => {
-  console.log('fetchCategory called with key:', categoryKey)
   try {
     if (resetPage) {
       loading.value = true
@@ -268,7 +264,6 @@ const fetchCategory = async (resetPage = true) => {
     })
 
     const data = await $fetch<CategoryDetailResponse>(`/api/categories/${categoryKey}?${params}`)
-    console.log('API response:', data)
 
     if (!data) {
       throw new Error('Category not found')

@@ -58,12 +58,10 @@ async function loadPopularVideos() {
     
     // Emit whether we have content
     const hasContent = videos.value.length > 0
-    console.log(`PopularVideosSection ${props.period}: hasContent = ${hasContent}, videos count = ${videos.value.length}`)
     emit('hasContent', hasContent)
   } catch (err: any) {
     console.error('Error loading popular videos:', err)
     videos.value = []
-    console.log(`PopularVideosSection ${props.period}: error, emitting hasContent = false`)
     emit('hasContent', false)
   } finally {
     loading.value = false

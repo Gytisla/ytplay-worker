@@ -72,10 +72,8 @@ export const useCookieConsent = () => {
   }
 
   const openSettings = () => {
-    console.log('openSettings called, current state:', cookieConsentState.showBanner, cookieConsentState.showDetailedSettings)
     cookieConsentState.showBanner = true
     cookieConsentState.showDetailedSettings = true
-    console.log('After setting:', cookieConsentState.showBanner, cookieConsentState.showDetailedSettings)
   }
 
   const closeBanner = () => {

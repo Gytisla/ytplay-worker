@@ -15,7 +15,7 @@
           </p>
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-3">
+        <div class="flex flex-row gap-3">
           <button
             @click="acceptAll"
             class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors"
@@ -127,18 +127,8 @@ const {
 const analyticsEnabled = ref(true)
 const functionalEnabled = ref(true)
 
-// Debug watchers
-watch(showBanner, (newVal) => {
-  console.log('CookieConsent showBanner changed:', newVal)
-})
-
-watch(showDetailedSettings, (newVal) => {
-  console.log('CookieConsent showDetailedSettings changed:', newVal)
-})
-
 // Initialize local state with saved settings
 onMounted(() => {
-  console.log('CookieConsent mounted')
   const settings = loadSettings()
   if (settings) {
     analyticsEnabled.value = settings.analytics

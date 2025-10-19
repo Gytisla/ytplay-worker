@@ -17,16 +17,22 @@
       </template>
 
       <template v-else>
-        <NuxtLink v-for="ch in channels" :key="ch.id" :to="`/channel/${ch.slug || ch.id}`" class="rounded-xl bg-white dark:bg-gray-800 shadow-sm p-3 flex items-center gap-3 transition hover:shadow-lg hover:-translate-y-1 cursor-pointer">
-          <img :src="ch.avatar" alt="" class="w-12 h-12 rounded-full object-cover" />
-          <div class="flex-1">
-            <div class="flex items-center justify-between gap-3">
-              <div class="text-sm font-semibold text-gray-900 dark:text-gray-50">{{ ch.name }}</div>
-              <div class="text-xs text-muted dark:text-gray-400">{{ ch.subs }}</div>
+        <NuxtLink v-for="ch in channels" :key="ch.id" :to="`/channel/${ch.slug || ch.id}`" class="rounded-xl bg-white dark:bg-gray-800 shadow-sm p-4 flex items-center gap-4 transition hover:shadow-lg hover:-translate-y-1 cursor-pointer group relative">
+          <img :src="ch.avatar" alt="" class="w-12 h-12 rounded-full object-cover flex-shrink-0" />
+          <div class="flex-1 min-w-0">
+            <div class="mb-2">
+              <div class="text-sm font-semibold text-gray-900 dark:text-gray-50 truncate" :title="ch.name">{{ ch.name }}</div>
             </div>
-            <div class="text-xs text-muted dark:text-gray-400">{{ ch.recent }} videos</div>
+            <div class="flex items-center justify-between text-xs text-muted dark:text-gray-400">
+              <span>{{ ch.recent }} videos</span>
+              <span>{{ ch.subs }}</span>
+            </div>
           </div>
-          <div class="px-3 py-1 text-sm rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-primary-600">{{ t('home.sections.topChannels.view') }}</div>
+          <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </div>
         </NuxtLink>
       </template>
     </div>

@@ -32,12 +32,14 @@
       <div class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
         {{ video.duration }}
       </div>
-      <!-- Optional badge -->
-      <div v-if="badge" class="absolute top-2 left-2">
+      <!-- Optional badges -->
+      <div v-if="autoBadges.length > 0" class="absolute top-2 left-2 flex gap-1">
         <span
+          v-for="(badge, index) in autoBadges"
+          :key="index"
           :class="[
-            'text-white text-xs px-2 py-1 rounded font-medium',
-            badge.type === 'new' ? 'bg-black/60' :
+            'text-white text-xs px-2 py-1 rounded font-medium block',
+            badge.type === 'new' ? 'bg-green-600' :
             badge.type === 'trending' ? 'bg-red-600' :
             badge.type === 'ranking' ? 'bg-primary-600' :
             'bg-gray-600'
@@ -77,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 interface Props {
   video: {
@@ -100,10 +102,13 @@ interface Props {
   badge?: {
     type: 'new' | 'trending' | 'ranking' | 'custom'
     text: string
-  }
+  } | Array<{
+    type: 'new' | 'trending' | 'ranking' | 'custom'
+    text: string
+  }>
 }
 
-const { video, badge } = defineProps<Props>()
+const { video, badge: externalBadge } = defineProps<Props>()
 
 // Track image loading state
 const imageLoaded = ref(false)
@@ -114,6 +119,46 @@ setTimeout(() => {
     imageLoaded.value = true
   }
 }, 3000)
+
+// Auto-determine badges based on video criteria (returns array to allow multiple badges)
+const autoBadges = computed(() => {
+  const badges = []
+  const badgeTypes = new Set()
+
+  // Check for trending badge first (highest priority): 3k+ 24h gain OR 10k+ 7d gain
+  if (video.trend && ((video.trend.gain >= 3000 && video.trend.period === 'today') || (video.trend.gain >= 10000 && video.trend.period === '7') || (video.trend.gain >= 20000 && video.trend.period === '30'))) {
+    badges.push({
+      type: 'trending' as const,
+      text: 'TRENDING'
+    })
+    badgeTypes.add('trending')
+  }
+
+  // Check for new badge: videos less than 7 days old
+  if (video.age) {
+    const ageText = video.age.toLowerCase()
+    if (ageText === 'today' || ageText === '1d' || ageText === '2d' || ageText === '3d' || ageText === '4d' || ageText === '5d' || ageText === '6d' || ageText === '7d') {
+      badges.push({
+        type: 'new' as const,
+        text: 'NEW'
+      })
+      badgeTypes.add('new')
+    }
+  }
+
+  // Add external badges if provided (avoid duplicates)
+  if (externalBadge) {
+    const externalBadges = Array.isArray(externalBadge) ? externalBadge : [externalBadge]
+    for (const badge of externalBadges) {
+      if (!badgeTypes.has(badge.type)) {
+        badges.push(badge)
+        badgeTypes.add(badge.type)
+      }
+    }
+  }
+
+  return badges
+})
 
 // Format large numbers
 function formatNumber(num: number): string {

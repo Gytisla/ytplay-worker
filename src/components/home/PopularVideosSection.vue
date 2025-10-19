@@ -12,7 +12,6 @@
         v-for="video in videos"
         :key="video.id"
         :video="video"
-        :badge="{ type: 'trending', text: 'Trending' }"
       />
     </div>
   </div>

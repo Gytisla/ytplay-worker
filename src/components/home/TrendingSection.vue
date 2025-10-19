@@ -15,7 +15,6 @@
           v-for="item in items"
           :key="item.id"
           :video="item"
-          :badge="{ type: 'trending', text: 'TRENDING' }"
         />
       </template>
     </div>

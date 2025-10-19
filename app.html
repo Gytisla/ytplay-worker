@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Inline styles to hide content until theme is applied (prevents FOUC) -->
+    <style>
+      /* Hide content until theme is applied */
+      html { visibility: hidden; opacity: 0; }
+      html.theme-applied { visibility: visible; opacity: 1; transition: opacity 0.18s ease-in-out; }
+    </style>
+
+    <!-- Inline script that runs before the app to apply theme class and reveal content -->
+    <script>
+      (function () {
+        try {
+          var key = 'ytplay_theme'
+          var theme = null
+          try { theme = localStorage.getItem(key) } catch (e) { theme = null }
+
+          var prefersDark = false
+          try { prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches } catch (e) { prefersDark = false }
+
+          var el = document.documentElement
+          if (theme === 'dark' || (theme === 'system' && prefersDark)) {
+            el.classList.add('dark')
+          } else if (theme === 'light') {
+            el.classList.remove('dark')
+          } else {
+            // no explicit choice: use system
+            if (prefersDark) el.classList.add('dark')
+            else el.classList.remove('dark')
+          }
+
+          // mark theme applied on <html> so inline CSS reveals the page immediately
+          el.classList.add('theme-applied')
+        } catch (e) {
+          // always reveal if something goes wrong
+          try { document.documentElement.classList.add('theme-applied') } catch (e) {}
+        }
+      })();
+    </script>
+
+    <!-- nuxt will inject head tags here -->
+    {{{ renderMeta() }}}
+    {{{ renderResourceHints() }}}
+    {{{ renderStyles() }}}
+  </head>
+  <body>
+    <div id="__nuxt">{{{ renderApp() }}}</div>
+
+    <!-- nuxt will inject scripts here -->
+    {{{ renderScripts() }}}
+  </body>
+</html>

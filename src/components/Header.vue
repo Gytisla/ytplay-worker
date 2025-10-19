@@ -17,19 +17,34 @@
       <div class="flex items-center gap-3">
         <NuxtLink
           to="/categories"
-          class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition"
+          :class="[
+            'px-3 py-2 text-sm font-medium rounded-md transition',
+            isActiveRoute('/categories')
+              ? 'text-primary-600 dark:text-primary-400 font-semibold'
+              : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
+          ]"
         >
           {{ $t('header.categories') }}
         </NuxtLink>
         <NuxtLink
           to="/top-channels"
-          class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition"
+          :class="[
+            'px-3 py-2 text-sm font-medium rounded-md transition',
+            isActiveRoute('/top-channels')
+              ? 'text-primary-600 dark:text-primary-400 font-semibold'
+              : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
+          ]"
         >
           {{ $t('header.topChannels') }}
         </NuxtLink>
         <NuxtLink
           to="/top-videos"
-          class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition"
+          :class="[
+            'px-3 py-2 text-sm font-medium rounded-md transition',
+            isActiveRoute('/top-videos')
+              ? 'text-primary-600 dark:text-primary-400 font-semibold'
+              : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
+          ]"
         >
           {{ $t('header.topVideos') }}
         </NuxtLink>
@@ -54,12 +69,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 // import LanguageSwitcher from '~/components/LanguageSwitcher.vue'
 
+const route = useRoute()
 const THEME_KEY = 'ytplay_theme'
 const theme = ref('system')
 const isDark = ref(false)
+
+// Computed property to check if a route is active
+const isActiveRoute = (path) => {
+  if (path === '/' && route.path === '/') return true
+  if (path !== '/' && route.path.startsWith(path)) return true
+  return false
+}
 
 function applyTheme(val) {
   if (typeof document === 'undefined') return
@@ -98,6 +121,13 @@ onMounted(() => {
     theme.value = stored || 'system'
   } else theme.value = 'system'
   applyTheme(theme.value)
+  
+  // Fallback: ensure content is visible even if theme application fails
+  // setTimeout(() => {
+  //   if (typeof document !== 'undefined') {
+  //     document.body.classList.add('theme-applied')
+  //   }
+  // }, 100)
 })
 </script>
 

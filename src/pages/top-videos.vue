@@ -40,7 +40,7 @@
           <NuxtLink
             v-for="(video, index) in videos"
             :key="video.id"
-            :to="`/video/${video.id}`"
+            :to="`/video/${video.slug || video.id}`"
             class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group cursor-pointer relative"
           >
             <!-- Ranking Badge -->

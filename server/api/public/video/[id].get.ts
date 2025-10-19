@@ -22,11 +22,13 @@ export default defineEventHandler(async (event) => {
     )
 
     // Get video details with channel info
-    const { data: video, error: videoError } = await supabase
+    // First try to find by slug, then by YouTube video ID
+    let query = supabase
       .from('videos')
       .select(`
         id,
         youtube_video_id,
+        slug,
         title,
         description,
         thumbnail_url,
@@ -43,8 +45,23 @@ export default defineEventHandler(async (event) => {
           subscriber_count
         )
       `)
-      .eq('youtube_video_id', videoId)
-      .single()
+
+    // Check if the provided ID is a UUID (database ID) or YouTube video ID
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(videoId)
+    const isYouTubeId = /^[a-zA-Z0-9_-]{11}$/.test(videoId) // YouTube video IDs are 11 characters
+
+    if (isUUID) {
+      // If it's a UUID, search by database ID
+      query = query.eq('id', videoId)
+    } else if (isYouTubeId) {
+      // If it's a YouTube video ID format, search by youtube_video_id
+      query = query.eq('youtube_video_id', videoId)
+    } else {
+      // Otherwise, treat it as a slug
+      query = query.eq('slug', videoId)
+    }
+
+    const { data: video, error: videoError } = await query.single()
 
     if (videoError) {
       console.error('Video fetch error:', videoError)
@@ -57,6 +74,7 @@ export default defineEventHandler(async (event) => {
     // Format the response
     const formattedVideo = {
       id: video.youtube_video_id,
+      slug: video.slug,
       title: video.title,
       description: video.description,
       thumbnail: video.thumbnail_url,
@@ -65,12 +83,12 @@ export default defineEventHandler(async (event) => {
       uploaded: formatUploadDate(video.published_at),
       publishedAt: video.published_at, // Raw date for date calculations
       channel: {
-        id: video.channels.id,
-        slug: video.channels.slug,
-        youtubeId: video.channels.youtube_channel_id,
-        name: video.channels.title,
-        avatar: video.channels.thumbnail_url,
-        subscribers: formatSubscriberCount(video.channels.subscriber_count)
+        id: (video.channels as any).id,
+        slug: (video.channels as any).slug,
+        youtubeId: (video.channels as any).youtube_channel_id,
+        name: (video.channels as any).title,
+        avatar: (video.channels as any).thumbnail_url,
+        subscribers: formatSubscriberCount((video.channels as any).subscriber_count)
       }
     }
 

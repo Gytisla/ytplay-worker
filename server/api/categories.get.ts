@@ -40,7 +40,7 @@ export default defineEventHandler(async (event: any) => {
         // Get latest 8 videos for this category
         const { data: latestVideos, error: videosError } = await supabase
           .from('videos')
-          .select('id, youtube_video_id, title, thumbnail_url, published_at')
+          .select('id, youtube_video_id, slug, title, thumbnail_url, published_at')
           .eq('category_id', category.id)
           .order('published_at', { ascending: false })
           .limit(8)

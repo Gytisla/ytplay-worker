@@ -91,7 +91,7 @@
           <NuxtLink
             v-for="video in videos"
             :key="video.id"
-            :to="`/video/${video.youtube_video_id}`"
+            :to="`/video/${video.slug || video.youtube_video_id}`"
             class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group cursor-pointer"
           >
             <!-- Thumbnail -->
@@ -159,6 +159,7 @@ interface Category {
 interface Video {
   id: string
   youtube_video_id: string
+  slug: string
   title: string
   description: string | null
   published_at: string

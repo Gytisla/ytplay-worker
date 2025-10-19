@@ -23,12 +23,27 @@ export default defineEventHandler(async (event) => {
       }
     )
 
-    // First, get the internal video UUID from the YouTube video ID
-    const { data: video, error: videoError } = await supabase
+    // First, get the internal video UUID from the YouTube video ID or slug
+    let videoQuery = supabase
       .from('videos')
       .select('id')
-      .eq('youtube_video_id', videoId)
-      .single()
+
+    // Check if the provided ID is a UUID (database ID) or YouTube video ID
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(videoId)
+    const isYouTubeId = /^[a-zA-Z0-9_-]{11}$/.test(videoId) // YouTube video IDs are 11 characters
+
+    if (isUUID) {
+      // If it's a UUID, search by database ID
+      videoQuery = videoQuery.eq('id', videoId)
+    } else if (isYouTubeId) {
+      // If it's a YouTube video ID format, search by youtube_video_id
+      videoQuery = videoQuery.eq('youtube_video_id', videoId)
+    } else {
+      // Otherwise, treat it as a slug
+      videoQuery = videoQuery.eq('slug', videoId)
+    }
+
+    const { data: video, error: videoError } = await videoQuery.single()
 
     if (videoError || !video) {
       console.error('Video lookup error:', videoError)

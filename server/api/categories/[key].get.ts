@@ -60,6 +60,7 @@ export default defineEventHandler(async (event: any) => {
       .select(`
         id,
         youtube_video_id,
+        slug,
         title,
         description,
         published_at,

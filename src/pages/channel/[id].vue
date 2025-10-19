@@ -209,7 +209,7 @@
         </div>
 
         <div v-else-if="videos.length > 0" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <article v-for="video in videos" :key="video.id" class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group cursor-pointer" @click="navigateToVideo(video.id)">
+          <article v-for="video in videos" :key="video.id" class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group cursor-pointer" @click="navigateToVideo(video.slug || video.id)">
             <div class="aspect-video bg-gray-100 dark:bg-gray-700 relative overflow-hidden">
               <img :src="video.thumbnail" :alt="video.title" class="w-full h-full object-cover group-hover:scale-105 transition" />
               <div class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">

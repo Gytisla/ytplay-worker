@@ -64,7 +64,7 @@ export default defineEventHandler(async (event) => {
     // Handle video sections (new, trending, featured, popular)
   let dbQuery = supabase
     .from('videos')
-    .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
+    .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
     .order('published_at', { ascending: false })
     .limit(limit)
 
@@ -74,7 +74,7 @@ export default defineEventHandler(async (event) => {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
     dbQuery = supabase
       .from('videos')
-      .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
+      .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
       .gte('published_at', thirtyDaysAgo)
       .order('view_count', { ascending: false })
       .limit(limit)
@@ -83,7 +83,7 @@ export default defineEventHandler(async (event) => {
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
     dbQuery = supabase
       .from('videos')
-      .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
+      .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
       .gte('published_at', sevenDaysAgo)
       .order('view_count', { ascending: false })
       .limit(limit)
@@ -103,7 +103,7 @@ export default defineEventHandler(async (event) => {
 
     dbQuery = supabase
       .from('videos')
-      .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
+      .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
       .gte('published_at', dateFilter.toISOString())
       .order('view_count', { ascending: false })
       .limit(limit)
@@ -124,6 +124,7 @@ export default defineEventHandler(async (event) => {
     const age = published ? formatAge(published) : '—'
     return {
       id: r.youtube_video_id,
+      slug: r.slug,
       title: r.title,
       thumb: r.thumbnail_url,
       channel: r.channels?.title || 'Unknown',

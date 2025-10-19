@@ -75,6 +75,7 @@ export default defineEventHandler(async (event) => {
       .select(`
         id,
         youtube_video_id,
+        slug,
         title,
         description,
         thumbnail_url,
@@ -98,6 +99,7 @@ export default defineEventHandler(async (event) => {
     const formattedVideos = (videos || []).map(video => {
       return {
         id: video.youtube_video_id,
+        slug: video.slug,
         title: video.title,
         thumbnail: video.thumbnail_url,
         duration: formatDuration(video.duration),

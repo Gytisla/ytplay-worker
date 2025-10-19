@@ -22,7 +22,7 @@
         </div>
       </template>
       <template v-else>
-        <article v-for="item in items" :key="item.id" class="group bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden transition transform hover:-translate-y-1 hover:shadow-lg focus-within:shadow-lg cursor-pointer" @click="navigateToVideo(item.id)">
+        <article v-for="item in items" :key="item.id" class="group bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden transition transform hover:-translate-y-1 hover:shadow-lg focus-within:shadow-lg cursor-pointer" @click="navigateToVideo(item.slug || item.id)">
           <div class="block focus:outline-none">
             <div class="relative">
               <img :src="item.thumb" alt="" class="w-full h-44 object-cover" />
@@ -79,6 +79,7 @@ async function loadRecentVideos() {
 
     items.value = (data.items || []).map((item: any) => ({
       id: item.id,
+      slug: item.slug,
       thumb: item.thumb,
       title: item.title,
       channel: item.channel,

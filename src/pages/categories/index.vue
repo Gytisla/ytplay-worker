@@ -61,7 +61,7 @@
             <NuxtLink
               v-for="video in category.latest_videos"
               :key="video.id"
-              :to="`/video/${video.youtube_video_id}`"
+              :to="`/video/${video.slug || video.youtube_video_id}`"
               class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group cursor-pointer"
             >
               <!-- Thumbnail -->
@@ -116,6 +116,7 @@ interface CategoryWithVideos {
   latest_videos?: Array<{
     id: string
     youtube_video_id: string
+    slug: string
     title: string
     thumbnail_url: string | null
     published_at: string

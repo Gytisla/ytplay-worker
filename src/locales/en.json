@@ -204,7 +204,9 @@
     "title": "Categories",
     "breadcrumb": "Categories",
     "description": "Explore videos organized by category",
+    "overview": "Browse Categories",
     "videos": "videos",
+    "videosShort": "videos",
     "viewAll": "View All",
     "noVideosInCategory": "No videos in this category yet.",
     "noCategoriesFound": "No categories found."

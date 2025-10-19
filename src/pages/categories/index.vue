@@ -13,6 +13,42 @@
         </p>
       </div>
 
+      <!-- Categories Overview -->
+      <div v-if="!loading && categories.length > 0" class="mb-20">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-50 mb-6">{{ t('categoriesPage.overview') }}</h2>
+        <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7">
+          <NuxtLink
+            v-for="category in categories"
+            :key="`overview-${category.id}`"
+            :to="`/categories/${category.key}`"
+            class="group bg-white dark:bg-gray-800 rounded-xl p-4 hover:shadow-lg transition-all duration-200 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+          >
+            <div class="flex flex-col items-center text-center h-full justify-between py-2">
+              <!-- Top section: Icon and Name -->
+              <div class="flex flex-col items-center space-y-3 flex-1">
+                <!-- Category Icon -->
+                <div
+                  class="w-12 h-12 rounded-lg flex items-center justify-center text-xl transition-transform group-hover:scale-110"
+                  :style="{ backgroundColor: category.color + '20', color: category.color }"
+                >
+                  {{ category.icon }}
+                </div>
+
+                <!-- Category Name -->
+                <h3 class="font-medium text-gray-900 dark:text-gray-50 text-sm leading-tight line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  {{ category.name }}
+                </h3>
+              </div>
+
+              <!-- Bottom section: Video Count (always at bottom) -->
+              <div class="text-xs text-muted dark:text-gray-400 mt-auto">
+                {{ category.video_count || 0 }} {{ t('categoriesPage.videosShort') }}
+              </div>
+            </div>
+          </NuxtLink>
+        </div>
+      </div>
+
       <!-- Categories with Videos -->
       <div v-if="loading" class="space-y-12">
         <div v-for="i in 6" :key="`cat-skel-${i}`" class="space-y-6">

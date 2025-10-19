@@ -207,7 +207,9 @@
     "title": "Kategorijos",
     "breadcrumb": "Kategorijos",
     "description": "Tyrinėkite vaizdo įrašus pagal kategoriją",
+    "overview": "Naršyti kategorijas",
     "videos": "vaizdo įrašai",
+    "videosShort": "vaizd.",
     "viewAll": "Žiūrėti visus",
     "noVideosInCategory": "Šioje kategorijoje dar nėra vaizdo įrašų.",
     "noCategoriesFound": "Kategorijų nerasta."

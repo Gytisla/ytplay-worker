@@ -209,32 +209,37 @@
       "ogDescription": "Discover and explore amazing YouTube videos organized by categories. Watch trending content, top channels, and new videos all in one place."
     },
     "categories": {
-  "title": "Categories - YTPlay.lt",
+      "title": "Categories - YTPlay.lt",
       "description": "Explore videos organized by category",
-  "ogTitle": "Video Categories - YTPlay.lt",
+      "ogTitle": "Video Categories - YTPlay.lt",
       "ogDescription": "Explore videos organized by category. Discover content from gaming, music, technology, and more."
     },
     "topChannels": {
-  "title": "Top Channels - YTPlay.lt",
+      "title": "Top Channels - YTPlay.lt",
       "description": "Discover the most popular YouTube channels by subscriber count and total views",
-  "ogTitle": "Top Channels - YTPlay.lt",
+      "ogTitle": "Top Channels - YTPlay.lt",
       "ogDescription": "Discover the most popular YouTube channels by subscriber count and total views"
     },
     "topVideos": {
-  "title": "Top Videos - YTPlay.lt",
+      "title": "Top Videos - YTPlay.lt",
       "description": "Discover the most popular YouTube videos by view count and trending content",
-  "ogTitle": "Top Videos - YTPlay.lt",
+      "ogTitle": "Top Videos - YTPlay.lt",
       "ogDescription": "Discover the most popular YouTube videos by view count and trending content"
     },
     "category": {
-  "title": "{{name}} - YTPlay.lt",
+      "title": "{{name}} - YTPlay.lt",
       "description": "Explore {{count}} videos in the {{name}} category",
-  "ogTitle": "{{name}} - YTPlay.lt",
+      "ogTitle": "{{name}} - YTPlay.lt",
       "ogDescription": "Explore {{count}} videos in the {{name}} category. {{description}}"
     },
+    "privacy": {
+      "title": "Privacy Policy - YTPlay.lt",
+      "description": "Learn how YTPlay.lt collects, uses, and protects your data. Privacy policy about Google Analytics and future features.",
+      "ogTitle": "Privacy Policy - YTPlay.lt",
+      "ogDescription": "Learn how YTPlay.lt collects, uses, and protects your data. Privacy policy about Google Analytics and future features."
+    },
     "siteName": "YTPlay.lt"
-  }
-  ,
+  },
   "footer": {
     "brandLine1": "YTPlay.lt",
     "brandLine2": "Discover videos & channels",

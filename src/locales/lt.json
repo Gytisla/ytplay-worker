@@ -235,9 +235,14 @@
       "ogTitle": "{name} YouTube grotuvas",
       "ogDescription": "Tyrinėkite {count} vaizdo įrašus {name} kategorijoje. {description}"
     },
-    "siteName": "YouTube grotuvas"
-  }
-  ,
+    "privacy": {
+      "title": "Privatumo politika - YTPlay.lt",
+      "description": "Sužinokite, kaip YTPlay.lt renka, naudoja ir saugo jūsų duomenis. Privatumo politika apie Google Analytics ir būsimas funkcijas.",
+      "ogTitle": "Privatumo politika - YTPlay.lt",
+      "ogDescription": "Sužinokite, kaip YTPlay.lt renka, naudoja ir saugo jūsų duomenis. Privatumo politika apie Google Analytics ir būsimas funkcijas."
+    },
+    "siteName": "YTPlay.lt"
+  },
   "footer": {
     "brandLine1": "YTPlay.lt",
     "brandLine2": "Atraskite vaizdo įrašus ir kanalus",

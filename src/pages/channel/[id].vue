@@ -69,8 +69,8 @@
               </div>
             </div>
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div class="text-sm text-muted dark:text-gray-400">Avg Watch Time</div>
-              <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.avgMinutesWatched) }}m</div>
+              <div class="text-sm text-muted dark:text-gray-400">Avg Subscriber Gain</div>
+              <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.avgSubscriberGain) }}</div>
               <div class="text-sm text-muted dark:text-gray-400">per day</div>
             </div>
           </div>
@@ -600,6 +600,9 @@ function updateCharts() {
 }
 
 function formatNumber(num: number): string {
+  if (num === null || num === undefined) {
+    return '0'
+  }
   if (num >= 1000000) {
     return `${(num / 1000000).toFixed(1)}M`
   } else if (num >= 1000) {

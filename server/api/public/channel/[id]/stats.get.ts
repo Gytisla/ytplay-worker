@@ -98,6 +98,6 @@ function calculateSummary(stats: any[]) {
     totalSubscriberGained: stats.reduce((sum, s) => sum + s.subscriberGained, 0),
     totalSubscriberLost: stats.reduce((sum, s) => sum + s.subscriberLost, 0),
     totalViewGained: stats.reduce((sum, s) => sum + s.viewGained, 0),
-    avgMinutesWatched: stats.length > 0 ? Math.round(stats.reduce((sum, s) => sum + s.minutesWatched, 0) / stats.length) : 0
+    avgSubscriberGain: stats.length > 0 ? Math.round(stats.reduce((sum, s) => sum + s.subscriberGained, 0) / stats.length) : 0
   }
 }

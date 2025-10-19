@@ -198,6 +198,6 @@ function calculateSummary(stats: any[], isTodayView: boolean = false) {
     commentChange,
     totalViewGained: stats.reduce((sum, s) => sum + s.viewGained, 0),
     totalMinutesWatched: stats.reduce((sum, s) => sum + s.minutesWatched, 0),
-    avgMinutesWatched: stats.length > 0 ? Math.round(stats.reduce((sum, s) => sum + s.minutesWatched, 0) / stats.length) : 0
+    avgViewGain: stats.length > 0 ? Math.round(stats.reduce((sum, s) => sum + s.viewGained, 0) / stats.length) : 0
   }
 }

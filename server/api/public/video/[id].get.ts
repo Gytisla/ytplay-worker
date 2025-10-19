@@ -36,6 +36,7 @@ export default defineEventHandler(async (event) => {
         channel_id,
         channels!inner (
           id,
+          slug,
           youtube_channel_id,
           title,
           thumbnail_url,
@@ -65,6 +66,7 @@ export default defineEventHandler(async (event) => {
       publishedAt: video.published_at, // Raw date for date calculations
       channel: {
         id: video.channels.id,
+        slug: video.channels.slug,
         youtubeId: video.channels.youtube_channel_id,
         name: video.channels.title,
         avatar: video.channels.thumbnail_url,

@@ -28,6 +28,49 @@ export default defineEventHandler(async (event) => {
     const startDate = new Date()
     startDate.setDate(endDate.getDate() - days)
 
+    // First, resolve the channel ID from either UUID or slug
+    let channel: any = null
+    let channelError: any = null
+
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(channelId)
+
+    if (isUUID) {
+      // Try by ID first if it looks like a UUID
+      const result = await supabase
+        .from('channels')
+        .select('id')
+        .eq('id', channelId)
+        .single()
+      channel = result.data
+      channelError = result.error
+    }
+
+    // If not found by ID (or not a UUID), try by slug
+    if ((!channel && !channelError) || (channelError && channelError.code === 'PGRST116')) {
+      const { data: channelBySlug, error: slugError } = await supabase
+        .from('channels')
+        .select('id')
+        .eq('slug', channelId)
+        .single()
+
+      if (!slugError && channelBySlug) {
+        channel = channelBySlug
+        channelError = null
+      } else if (!channel) {
+        channelError = slugError
+      }
+    }
+
+    if (channelError || !channel) {
+      console.error('Channel lookup error:', channelError)
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'Channel not found'
+      })
+    }
+
+    const resolvedChannelId = channel.id
+
     // Get channel stats for the date range
     const { data: stats, error: statsError } = await supabase
       .from('channel_stats')
@@ -41,7 +84,7 @@ export default defineEventHandler(async (event) => {
         view_gained,
         estimated_minutes_watched
       `)
-      .eq('channel_id', channelId)
+      .eq('channel_id', resolvedChannelId)
       .gte('date', startDate.toISOString().split('T')[0])
       .lte('date', endDate.toISOString().split('T')[0])
       .order('date', { ascending: true })

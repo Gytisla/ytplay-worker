@@ -417,7 +417,8 @@ function openChannelInYouTube() {
 
 function navigateToChannel() {
   if (video.value?.channel?.id) {
-    navigateTo(`/channel/${video.value.channel.id}`)
+    const slug = video.value.channel.slug
+    navigateTo(`/channel/${slug || video.value.channel.id}`)
   }
 }
 

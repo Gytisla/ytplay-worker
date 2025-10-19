@@ -23,7 +23,7 @@
       </template>
 
       <template v-else>
-        <NuxtLink v-for="ch in channels" :key="ch.id" :to="`/channel/${ch.id}`" class="rounded-xl bg-white dark:bg-gray-800 shadow-sm p-3 flex items-center gap-3 transition hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+        <NuxtLink v-for="ch in channels" :key="ch.id" :to="`/channel/${ch.slug || ch.id}`" class="rounded-xl bg-white dark:bg-gray-800 shadow-sm p-3 flex items-center gap-3 transition hover:shadow-lg hover:-translate-y-1 cursor-pointer">
           <img :src="ch.avatar" alt="" class="w-12 h-12 rounded-full object-cover" />
           <div class="flex-1">
             <div class="flex items-center justify-between gap-3">
@@ -69,6 +69,7 @@ async function loadTopChannels() {
 
     channels.value = (data.channels || []).map((ch: any) => ({
       id: ch.id,
+      slug: ch.slug,
       avatar: ch.avatar || avatar,
       name: ch.name,
       subs: ch.subs,

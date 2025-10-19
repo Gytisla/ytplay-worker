@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
     // Fetch popular channels ordered by specified criteria
     const { data, error } = await supabase
       .from('channels')
-      .select('id, youtube_channel_id, title, thumbnail_url, subscriber_count, video_count, view_count')
+      .select('id, slug, youtube_channel_id, title, thumbnail_url, subscriber_count, video_count, view_count')
       .order(sortColumn, { ascending, nullsFirst: false })
       .limit(limit)
 
@@ -50,6 +50,7 @@ export default defineEventHandler(async (event) => {
     // Format channel data
     const channels = (data || []).map((ch: any) => ({
       id: ch.id, // Use database ID for navigation
+      slug: ch.slug, // Add slug for SEO-friendly URLs
       youtubeId: ch.youtube_channel_id, // Keep YouTube ID for reference
       name: ch.title,
       avatar: ch.thumbnail_url,
@@ -63,7 +64,7 @@ export default defineEventHandler(async (event) => {
     // Handle video sections (new, trending, featured, popular)
   let dbQuery = supabase
     .from('videos')
-    .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url)')
+    .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
     .order('published_at', { ascending: false })
     .limit(limit)
 
@@ -73,7 +74,7 @@ export default defineEventHandler(async (event) => {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
     dbQuery = supabase
       .from('videos')
-      .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url)')
+      .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
       .gte('published_at', thirtyDaysAgo)
       .order('view_count', { ascending: false })
       .limit(limit)
@@ -82,7 +83,7 @@ export default defineEventHandler(async (event) => {
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
     dbQuery = supabase
       .from('videos')
-      .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url)')
+      .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
       .gte('published_at', sevenDaysAgo)
       .order('view_count', { ascending: false })
       .limit(limit)
@@ -102,7 +103,7 @@ export default defineEventHandler(async (event) => {
 
     dbQuery = supabase
       .from('videos')
-      .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url)')
+      .select('youtube_video_id, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
       .gte('published_at', dateFilter.toISOString())
       .order('view_count', { ascending: false })
       .limit(limit)
@@ -127,6 +128,8 @@ export default defineEventHandler(async (event) => {
       thumb: r.thumbnail_url,
       channel: r.channels?.title || 'Unknown',
       channelThumb: r.channels?.thumbnail_url || null,
+      channelSlug: r.channels?.slug || null,
+      channelId: r.channel_id,
       published_at: r.published_at,
       views: r.view_count ? `${r.view_count.toLocaleString()} views` : '—',
       age,

@@ -39,7 +39,7 @@
         </div>
 
         <div v-else-if="channels.length > 0" class="space-y-3">
-          <NuxtLink v-for="(ch, index) in channels" :key="ch.id" :to="`/channel/${ch.id}`" class="block bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm hover:shadow-md transition group">
+          <NuxtLink v-for="(ch, index) in channels" :key="ch.id" :to="`/channel/${ch.slug || ch.id}`" class="block bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm hover:shadow-md transition group">
             <div class="flex items-center gap-4">
               <!-- Ranking -->
               <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
@@ -114,6 +114,7 @@ async function loadChannels() {
 
     channels.value = (data.channels || []).map((ch: any) => ({
       id: ch.id,
+      slug: ch.slug,
       avatar: ch.avatar || '/assets/hero-thumb.svg',
       name: ch.name,
       subs: ch.subs,

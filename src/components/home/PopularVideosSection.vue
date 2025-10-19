@@ -39,7 +39,12 @@
           <div class="flex items-center gap-2 text-sm text-muted dark:text-gray-400 mb-2">
             <img v-if="video.channelThumb" :src="video.channelThumb" alt="" class="w-5 h-5 rounded-full object-cover" />
             <div v-else class="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-            <span>{{ video.channel }}</span>
+            <NuxtLink 
+              :to="`/channel/${video.channelSlug || video.channelId}`" 
+              class="hover:text-primary-600 dark:hover:text-primary-400 transition"
+            >
+              {{ video.channel }}
+            </NuxtLink>
           </div>
           <div class="flex items-center justify-between text-sm text-muted dark:text-gray-400">
             <span>{{ video.views }}</span>

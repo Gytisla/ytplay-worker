@@ -21,21 +21,58 @@ export default defineEventHandler(async (event) => {
       }
     )
 
-    // Get channel details
-    const { data: channel, error: channelError } = await supabase
-      .from('channels')
-      .select(`
-        id,
-        youtube_channel_id,
-        title,
-        description,
-        thumbnail_url,
-        subscriber_count,
-        video_count,
-        published_at
-      `)
-      .eq('id', channelId)
-      .single()
+        // Get channel details - support both UUID and slug
+    let channel: any = null
+    let channelError: any = null
+
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(channelId)
+
+    if (isUUID) {
+      // Try by ID first if it looks like a UUID
+      const result = await supabase
+        .from('channels')
+        .select(`
+          id,
+          slug,
+          youtube_channel_id,
+          title,
+          description,
+          thumbnail_url,
+          subscriber_count,
+          video_count,
+          published_at
+        `)
+        .eq('id', channelId)
+        .single()
+      channel = result.data
+      channelError = result.error
+    }
+
+    // If not found by ID (or not a UUID), try by slug
+    if ((!channel && !channelError) || (channelError && channelError.code === 'PGRST116')) {
+      const { data: channelBySlug, error: slugError } = await supabase
+        .from('channels')
+        .select(`
+          id,
+          slug,
+          youtube_channel_id,
+          title,
+          description,
+          thumbnail_url,
+          subscriber_count,
+          video_count,
+          published_at
+        `)
+        .eq('slug', channelId)
+        .single()
+
+      if (!slugError && channelBySlug) {
+        channel = channelBySlug
+        channelError = null
+      } else if (!channel) {
+        channelError = slugError
+      }
+    }
 
     if (channelError) {
       console.error('Channel fetch error:', channelError)
@@ -48,6 +85,7 @@ export default defineEventHandler(async (event) => {
     // Format the response
     const formattedChannel = {
       id: channel.id,
+      slug: channel.slug,
       youtubeId: channel.youtube_channel_id,
       name: channel.title,
       description: channel.description,

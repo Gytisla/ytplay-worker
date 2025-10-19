@@ -362,7 +362,7 @@ async function loadChannel() {
     loading.value = true
     console.log('Loading channel:', channelId)
 
-    // Load channel info
+    // Load channel info (works with both UUID and slug)
     const channelData = await $fetch(`/api/public/channel/${channelId}`)
     channel.value = channelData
 

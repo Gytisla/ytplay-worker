@@ -33,22 +33,20 @@
         {{ video.duration }}
       </div>
       <!-- Ranking Badge -->
-      <div v-if="ranking" class="absolute top-3 left-3 z-10 flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold"
-           :class="ranking.position === 1 ? 'bg-yellow-500 text-white' :
-                  ranking.position === 2 ? 'bg-gray-400 text-white' :
-                  ranking.position === 3 ? 'bg-orange-600 text-white' :
+      <div v-if="ranking" class="absolute top-3 left-3 z-10 flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold shadow-lg"
+           :class="ranking.position === 1 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 dark:from-yellow-500 dark:to-yellow-700 text-white' :
+                  ranking.position === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-500 dark:from-gray-400 dark:to-gray-600 text-white' :
+                  ranking.position === 3 ? 'bg-gradient-to-br from-orange-400 to-orange-600 dark:from-orange-500 dark:to-orange-700 text-white' :
                   'bg-gray-800/80 text-white'">
         {{ ranking.position }}
       </div>
       <!-- Medal for Top 3 -->
       <div v-if="ranking && ranking.showMedal && ranking.position <= 3" class="absolute top-3 right-3 z-10">
-        <div class="w-8 h-8 rounded-full flex items-center justify-center"
-             :class="ranking.position === 1 ? 'bg-yellow-100 dark:bg-yellow-900' :
-                    ranking.position === 2 ? 'bg-gray-100 dark:bg-gray-800' :
-                    'bg-orange-100 dark:bg-orange-900'">
-          <svg class="w-4 h-4" :class="ranking.position === 1 ? 'text-yellow-600' :
-                                       ranking.position === 2 ? 'text-gray-600 dark:text-gray-400' :
-                                       'text-orange-600'" fill="currentColor" viewBox="0 0 24 24">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center shadow-lg"
+             :class="ranking.position === 1 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 dark:from-yellow-500 dark:to-yellow-700' :
+                    ranking.position === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-500 dark:from-gray-400 dark:to-gray-600' :
+                    'bg-gradient-to-br from-orange-400 to-orange-600 dark:from-orange-500 dark:to-orange-700'">
+          <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
           </svg>
         </div>

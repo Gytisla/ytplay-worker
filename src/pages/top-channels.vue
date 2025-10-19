@@ -42,10 +42,10 @@
           <NuxtLink v-for="(ch, index) in channels" :key="ch.id" :to="`/channel/${ch.slug || ch.id}`" class="block bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm hover:shadow-md transition group">
             <div class="flex items-center gap-4">
               <!-- Ranking -->
-              <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
-                   :class="index === 0 ? 'bg-yellow-500 text-white' :
-                          index === 1 ? 'bg-gray-400 text-white' :
-                          index === 2 ? 'bg-orange-600 text-white' :
+              <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-lg"
+                   :class="index === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 dark:from-yellow-500 dark:to-yellow-700' :
+                          index === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-500 dark:from-gray-400 dark:to-gray-600' :
+                          index === 2 ? 'bg-gradient-to-br from-orange-400 to-orange-600 dark:from-orange-500 dark:to-orange-700' :
                           'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'">
                 {{ index + 1 }}
               </div>
@@ -63,13 +63,11 @@
 
               <!-- Medal Icons for Top 3 -->
               <div v-if="index < 3" class="flex-shrink-0">
-                <div class="w-8 h-8 rounded-full flex items-center justify-center"
-                     :class="index === 0 ? 'bg-yellow-100 dark:bg-yellow-900' :
-                            index === 1 ? 'bg-gray-100 dark:bg-gray-700' :
-                            'bg-orange-100 dark:bg-orange-900'">
-                  <svg class="w-4 h-4" :class="index === 0 ? 'text-yellow-600' :
-                                               index === 1 ? 'text-gray-600 dark:text-gray-400' :
-                                               'text-orange-600'" fill="currentColor" viewBox="0 0 24 24">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center shadow-lg"
+                     :class="index === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 dark:from-yellow-500 dark:to-yellow-700' :
+                            index === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-500 dark:from-gray-400 dark:to-gray-600' :
+                            'bg-gradient-to-br from-orange-400 to-orange-600 dark:from-orange-500 dark:to-orange-700'">
+                  <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                   </svg>
                 </div>

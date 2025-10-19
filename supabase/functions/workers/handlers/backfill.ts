@@ -263,7 +263,7 @@ export async function handleBackfillChannel(
       payload_param: {
         channelId: channelId,
       },
-      priority_param: 5,
+      priority_param: 9,
       dedup_key_param: `refresh_channel_stats_${channelId}`,
     })
 
@@ -280,7 +280,7 @@ export async function handleBackfillChannel(
       payload_param: {
         channel_id: channelId,
       },
-      priority_param: 6,
+      priority_param: 8,
       dedup_key_param: `refresh_video_stats_channel_${channelId}`,
     })
 

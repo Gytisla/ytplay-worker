@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
 /**
- * Script to add a BACKFILL_CHANNEL job for a given channel handle
- * Usage: node scripts/add-backfill-job.js "@ChannelHandle"
+ * Script to add a BACKFILL_CHANNEL job for a given channel handle or channel ID
+ * Usage: node scripts/add-backfill-job.js "@ChannelHandle" or node scripts/add-backfill-job.js "UCChannelID"
  *
  * This script:
- * 1. Resolves the channel handle to a channel ID using YouTube API
- * 2. Inserts a BACKFILL_CHANNEL job into the database
+ * 1. If handle starts with @, resolves the channel handle to a channel ID using YouTube API
+ * 2. If direct channel ID provided, uses it directly
+ * 3. Inserts a BACKFILL_CHANNEL job into the database
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -151,33 +152,37 @@ async function main() {
   const args = process.argv.slice(2)
 
   if (args.length !== 1) {
-    console.error('Usage: node scripts/add-backfill-job.js "@ChannelHandle"')
-    console.error('Example: node scripts/add-backfill-job.js "@PravalTuras"')
+    console.error('Usage: node scripts/add-backfill-job.js "@ChannelHandle" or node scripts/add-backfill-job.js "UCChannelID"')
+    console.error('Examples:')
+    console.error('  node scripts/add-backfill-job.js "@PravalTuras"')
+    console.error('  node scripts/add-backfill-job.js "UCChannelID123"')
     process.exit(1)
   }
 
-  const handle = args[0]
-
-  // Validate handle format
-  if (!handle.startsWith('@')) {
-    console.error('Channel handle must start with @')
-    console.error('Example: @PravalTuras')
-    process.exit(1)
-  }
+  const input = args[0]
+  let channelId = null
+  let displayName = input
 
   console.log('🎬 YouTube Channel Backfill Job Creator')
   console.log('=====================================')
 
-  // Resolve handle to channel ID
-  const channelId = await resolveChannelHandle(handle)
-
-  if (!channelId) {
-    console.error(`Could not resolve channel handle: ${handle}`)
-    process.exit(1)
+  if (input.startsWith('@')) {
+    // Handle format - need to resolve to channel ID
+    console.log(`Resolving channel handle: ${input}`)
+    channelId = await resolveChannelHandle(input)
+    if (!channelId) {
+      console.error(`Could not resolve channel handle: ${input}`)
+      process.exit(1)
+    }
+  } else {
+    // Direct channel ID format
+    console.log(`Using direct channel ID: ${input}`)
+    channelId = input
+    displayName = input
   }
 
   // Add the job
-  await addBackfillJob(channelId, handle)
+  await addBackfillJob(channelId, displayName)
 
   console.log('\n🎉 Done! The channel backfill job has been added to the queue.')
   console.log('You can monitor job progress in the Supabase dashboard.')

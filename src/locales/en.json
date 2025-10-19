@@ -29,14 +29,66 @@
     "duration": "Duration",
     "published": "Published",
     "description": "Description",
-    "relatedVideos": "Related Videos"
+    "relatedVideos": "Related Videos",
+    "performanceAnalytics": "Performance Analytics",
+    "periods": {
+      "1": "Today",
+      "7": "Last 7 days",
+      "30": "Last 30 days",
+      "90": "Last 90 days",
+      "365": "Last year"
+    },
+    "stats": {
+      "views": "Views",
+      "likes": "Likes",
+      "comments": "Comments",
+      "totalViewGains": "Total View Gains"
+    },
+    "charts": {
+      "hourlyViewGrowth": "Hourly View Growth",
+      "viewGrowth": "View Growth",
+      "hourlyLikeGrowth": "Hourly Like Growth",
+      "likeGrowth": "Like Growth",
+      "hourlyViewGains": "Hourly View Gains",
+      "dailyViewGains": "Daily View Gains",
+      "hourlyCommentGrowth": "Hourly Comment Growth",
+      "commentGrowth": "Comment Growth"
+    },
+    "noData": "No data",
+    "noDataAvailable": "No data available for this period",
+    "today": "today",
+    "thisPeriod": "this period"
   },
   "channel": {
     "subscribe": "Subscribe",
     "subscribed": "Subscribed",
     "unsubscribe": "Unsubscribe",
     "latestVideos": "Latest Videos",
-    "about": "About"
+    "about": "About",
+    "performanceAnalytics": "Performance Analytics",
+    "periods": {
+      "7": "Last 7 days",
+      "30": "Last 30 days",
+      "90": "Last 90 days",
+      "365": "Last year"
+    },
+    "stats": {
+      "subscribers": "Subscribers",
+      "totalViews": "Total Views",
+      "videos": "Videos",
+      "avgSubscriberGain": "Avg Subscriber Gain",
+      "perDay": "per day"
+    },
+    "charts": {
+      "subscriberGrowth": "Subscriber Growth",
+      "viewGrowth": "View Growth",
+      "dailySubscriberChanges": "Daily Subscriber Changes",
+      "dailyViewGains": "Daily View Gains",
+      "gained": "Gained",
+      "lost": "Lost",
+      "dailyViews": "Daily Views"
+    },
+    "noData": "No data available for this period"
   },
   "search": {
     "placeholder": "Search for channels or videos...",

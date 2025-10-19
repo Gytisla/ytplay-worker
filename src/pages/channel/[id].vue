@@ -36,42 +36,42 @@
       <section class="mb-8">
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
-            <h2 class="text-2xl font-semibold">Performance Analytics</h2>
+            <h2 class="text-2xl font-semibold">{{ t('channel.performanceAnalytics') }}</h2>
             <select v-model="statsPeriod" @change="loadChannelStats" class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm" :disabled="!channelStats">
-              <option value="7">Last 7 days</option>
-              <option value="30">Last 30 days</option>
-              <option value="90">Last 90 days</option>
-              <option value="365">Last year</option>
+              <option value="7">{{ t('channel.periods.7') }}</option>
+              <option value="30">{{ t('channel.periods.30') }}</option>
+              <option value="90">{{ t('channel.periods.90') }}</option>
+              <option value="365">{{ t('channel.periods.365') }}</option>
             </select>
           </div>
 
           <!-- Summary Cards -->
           <div v-if="channelStats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div class="text-sm text-muted dark:text-gray-400">Subscribers</div>
+              <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.subscribers') }}</div>
               <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.currentSubscribers) }}</div>
               <div class="text-sm" :class="channelStats.summary.subscriberChange >= 0 ? 'text-green-600' : 'text-red-600'">
                 {{ channelStats.summary.subscriberChange >= 0 ? '+' : '' }}{{ formatNumber(channelStats.summary.subscriberChange) }}
               </div>
             </div>
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div class="text-sm text-muted dark:text-gray-400">Total Views</div>
+              <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.totalViews') }}</div>
               <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.currentViews) }}</div>
               <div class="text-sm" :class="channelStats.summary.viewChange >= 0 ? 'text-green-600' : 'text-red-600'">
                 {{ channelStats.summary.viewChange >= 0 ? '+' : '' }}{{ formatNumber(channelStats.summary.viewChange) }}
               </div>
             </div>
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div class="text-sm text-muted dark:text-gray-400">Videos</div>
+              <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.videos') }}</div>
               <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.currentVideos) }}</div>
               <div class="text-sm" :class="channelStats.summary.videoChange >= 0 ? 'text-green-600' : 'text-red-600'">
                 {{ channelStats.summary.videoChange >= 0 ? '+' : '' }}{{ formatNumber(channelStats.summary.videoChange) }}
               </div>
             </div>
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div class="text-sm text-muted dark:text-gray-400">Avg Subscriber Gain</div>
+              <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.avgSubscriberGain') }}</div>
               <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.avgSubscriberGain) }}</div>
-              <div class="text-sm text-muted dark:text-gray-400">per day</div>
+              <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.perDay') }}</div>
             </div>
           </div>
 
@@ -88,7 +88,7 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Subscriber Growth Chart -->
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <h3 class="text-lg font-semibold mb-4">Subscriber Growth</h3>
+              <h3 class="text-lg font-semibold mb-4">{{ t('channel.charts.subscriberGrowth') }}</h3>
               <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
                 <div class="animate-pulse">
                   <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
@@ -98,7 +98,7 @@
               <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-64 flex items-center justify-center">
                 <div class="text-center text-muted dark:text-gray-400">
                   <div class="text-4xl mb-2">📊</div>
-                  <div class="text-sm">No data available for this period</div>
+                  <div class="text-sm">{{ t('channel.noData') }}</div>
                 </div>
               </div>
               <div v-else class="relative h-64">
@@ -108,7 +108,7 @@
 
             <!-- View Growth Chart -->
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <h3 class="text-lg font-semibold mb-4">View Growth</h3>
+              <h3 class="text-lg font-semibold mb-4">{{ t('channel.charts.viewGrowth') }}</h3>
               <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
                 <div class="animate-pulse">
                   <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
@@ -128,7 +128,7 @@
 
             <!-- Subscriber Gains/Losses -->
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <h3 class="text-lg font-semibold mb-4">Daily Subscriber Changes</h3>
+              <h3 class="text-lg font-semibold mb-4">{{ t('channel.charts.dailySubscriberChanges') }}</h3>
               <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
                 <div class="animate-pulse">
                   <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-40 mb-4"></div>
@@ -148,7 +148,7 @@
 
             <!-- View Gains -->
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <h3 class="text-lg font-semibold mb-4">Daily View Gains</h3>
+              <h3 class="text-lg font-semibold mb-4">{{ t('channel.charts.dailyViewGains') }}</h3>
               <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
                 <div class="animate-pulse">
                   <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
@@ -289,6 +289,10 @@ const channelId = route.params['id'] as string
 
 // ensure useHead is recognized (Nuxt auto-imported in most files)
 declare const useHead: any
+// Provide a minimal declaration so the TS checker knows about the auto-imported `useI18n` in SFCs
+declare function useI18n(): { t: (key: string, ...args: any[]) => string }
+
+const { t } = useI18n()
 
 // Channel data
 const channel = ref<any>(null)
@@ -565,11 +569,11 @@ function updateCharts() {
       data: {
         labels,
         datasets: [{
-          label: 'Gained',
+          label: t('channel.charts.gained'),
           data: stats.length > 0 ? stats.map((s: any) => Math.max(0, s.subscriberGained)) : [0],
           backgroundColor: 'rgba(16, 185, 129, 0.7)'
         }, {
-          label: 'Lost',
+          label: t('channel.charts.lost'),
           data: stats.length > 0 ? stats.map((s: any) => Math.max(0, -s.subscriberLost)) : [0],
           backgroundColor: 'rgba(239, 68, 68, 0.7)'
         }]
@@ -600,7 +604,7 @@ function updateCharts() {
       data: {
         labels,
         datasets: [{
-          label: 'Daily Views',
+          label: t('channel.charts.dailyViews'),
           data: stats.length > 0 ? stats.map((s: any) => s.viewGained) : [0],
           backgroundColor: 'rgba(59, 130, 246, 0.7)'
         }]

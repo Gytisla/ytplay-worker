@@ -31,14 +31,66 @@
     "duration": "Trukmė",
     "published": "Paskelbta",
     "description": "Aprašymas",
-    "relatedVideos": "Susiję vaizdo įrašai"
+    "relatedVideos": "Susiję vaizdo įrašai",
+    "performanceAnalytics": "Našumo analizė",
+    "periods": {
+      "1": "Šiandien",
+      "7": "Paskutinės 7 dienos",
+      "30": "Paskutinės 30 dienų",
+      "90": "Paskutinės 90 dienų",
+      "365": "Paskutiniai metai"
+    },
+    "stats": {
+      "views": "Peržiūros",
+      "likes": "Patinka",
+      "comments": "Komentarai",
+      "totalViewGains": "Iš viso peržiūrų prieaugis"
+    },
+    "charts": {
+      "hourlyViewGrowth": "Valandinis peržiūrų augimas",
+      "viewGrowth": "Peržiūrų augimas",
+      "hourlyLikeGrowth": "Valandinis patinka augimas",
+      "likeGrowth": "Patinka augimas",
+      "hourlyViewGains": "Valandinis peržiūrų prieaugis",
+      "dailyViewGains": "Kasdienis peržiūrų prieaugis",
+      "hourlyCommentGrowth": "Valandinis komentarų augimas",
+      "commentGrowth": "Komentarų augimas"
+    },
+    "noData": "Nėra duomenų",
+    "noDataAvailable": "Šiam laikotarpiui duomenų nėra",
+    "today": "šiandien",
+    "thisPeriod": "šis laikotarpis"
   },
   "channel": {
     "subscribe": "Prenumeruoti",
     "subscribed": "Prenumeruojama",
     "unsubscribe": "Atsisakyti prenumeratos",
     "latestVideos": "Naujausi vaizdo įrašai",
-    "about": "Apie"
+    "about": "Apie",
+    "performanceAnalytics": "Našumo analizė",
+    "periods": {
+      "7": "Paskutinės 7 dienos",
+      "30": "Paskutinės 30 dienų",
+      "90": "Paskutinės 90 dienų",
+      "365": "Paskutiniai metai"
+    },
+    "stats": {
+      "subscribers": "Prenumeratoriai",
+      "totalViews": "Iš viso peržiūrų",
+      "videos": "Vaizdo įrašai",
+      "avgSubscriberGain": "Vid. prenumeratorių prieaugis",
+      "perDay": "per dieną"
+    },
+    "charts": {
+      "subscriberGrowth": "Prenumeratorių augimas",
+      "viewGrowth": "Peržiūrų augimas",
+      "dailySubscriberChanges": "Kasdieniai prenumeratorių pokyčiai",
+      "dailyViewGains": "Kasdieniai peržiūrų prieaugiai",
+      "gained": "Pridėta",
+      "lost": "Prarasta",
+      "dailyViews": "Kasdienės peržiūros"
+    },
+    "noData": "Šiam laikotarpiui duomenų nėra"
   },
   "search": {
     "placeholder": "Ieškoti kanalų arba vaizdo įrašų...",

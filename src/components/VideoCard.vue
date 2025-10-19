@@ -93,7 +93,7 @@
           </svg>
           <span class="text-sm font-bold text-green-700 dark:text-green-300">+{{ formatNumber(video.trend.gain) }}</span>
         </div>
-        <span>{{ video.age }}</span>
+        <span>{{ formattedAge }}</span>
       </div>
     </div>
   </NuxtLink>
@@ -101,6 +101,11 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
+// Provide a minimal declaration so the TS checker knows about the auto-imported `useI18n` in SFCs
+declare function useI18n(): { t: (key: string, ...args: any[]) => string }
+
+const { t } = useI18n()
 
 interface Props {
   video: {
@@ -159,12 +164,16 @@ const autoBadges = computed(() => {
     badgeTypes.add('trending')
   }
 
-  {{ video.age }}
+  {{ formattedAge }}
 
   // Check for new badge: videos less than 7 days old
   if (video.age) {
     const ageText = video.age.toLowerCase()
-    if (ageText === 'today' || ageText === '1d' || ageText === '2d' || ageText === '3d' || ageText === '4d' || ageText === '5d' || ageText === '6d' || ageText === '7d') {
+    // Consider videos new if they're less than 7 days old (now, Xh, 1d, 2d, ..., 6d, 7d)
+    if (ageText === 'now' || 
+        /^\d+h$/.test(ageText) || // Matches "1h", "2h", etc.
+        ageText === '1d' || ageText === '2d' || ageText === '3d' || 
+        ageText === '4d' || ageText === '5d' || ageText === '6d' || ageText === '7d') {
       badges.push({
         type: 'new' as const,
         text: 'NEW'
@@ -197,6 +206,49 @@ function formatNumber(num: number): string {
     return num.toString()
   }
 }
+
+// Format age using i18n translations
+const formattedAge = computed(() => {
+  if (!video.age) return ''
+  
+  const ageText = video.age.toLowerCase()
+  const { t } = useI18n()
+  
+  if (ageText === 'now') {
+    return t('time.now')
+  }
+  
+  // Match patterns like "1h", "2h", etc.
+  const hourMatch = ageText.match(/^(\d+)h$/)
+  if (hourMatch && hourMatch[1]) {
+    const hours = parseInt(hourMatch[1])
+    return `${hours}${t('time.hour')}`
+  }
+  
+  // Match patterns like "1d", "2d", etc.
+  const dayMatch = ageText.match(/^(\d+)d$/)
+  if (dayMatch && dayMatch[1]) {
+    const days = parseInt(dayMatch[1])
+    return `${days}${t('time.day')}`
+  }
+  
+  // Match patterns like "1mo", "2mo", etc.
+  const monthMatch = ageText.match(/^(\d+)mo$/)
+  if (monthMatch && monthMatch[1]) {
+    const months = parseInt(monthMatch[1])
+    return `${months}${t('time.month')}`
+  }
+  
+  // Match patterns like "1y", "2y", etc.
+  const yearMatch = ageText.match(/^(\d+)y$/)
+  if (yearMatch && yearMatch[1]) {
+    const years = parseInt(yearMatch[1])
+    return `${years}${t('time.year')}`
+  }
+  
+  // Fallback to original age if no pattern matches
+  return video.age
+})
 </script>
 
 <style scoped>

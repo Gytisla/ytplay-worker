@@ -233,10 +233,15 @@ function formatUploadDate(dateString: string): string {
 function formatAge(d: Date | string): string {
   const date = typeof d === 'string' ? new Date(d) : d
   const diff = Date.now() - date.getTime()
+  const hours = Math.floor(diff / (1000 * 60 * 60))
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-  if (days === 0) return 'today'
+  
+  if (hours < 1) return 'now'
+  if (hours < 24) return `${hours}h`
   if (days === 1) return '1d'
   if (days < 30) return `${days}d`
   const months = Math.floor(days / 30)
-  return `${months}mo`
+  if (months < 12) return `${months}mo`
+  const years = Math.floor(months / 12)
+  return `${years}y`
 }

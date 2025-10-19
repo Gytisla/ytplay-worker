@@ -88,7 +88,18 @@
       "lost": "Lost",
       "dailyViews": "Daily Views"
     },
-    "noData": "No data available for this period"
+    "noData": "No data available for this period",
+    "badges": {
+      "new": "NEW",
+      "trending": "TRENDING"
+    }
+  },
+  "time": {
+    "now": "now",
+    "hour": "h",
+    "day": "d",
+    "month": "mo",
+    "year": "y"
   },
   "search": {
     "placeholder": "Search for channels or videos...",

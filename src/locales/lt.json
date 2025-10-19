@@ -19,6 +19,13 @@
     "allTime": "Visuomet",
     "top": "Geriausi"
   },
+  "time": {
+    "now": "dabar",
+    "hour": "val.",
+    "day": "d.",
+    "month": "mėn.",
+    "year": "m."
+  },
   "navigation": {
     "discover": "Atrasti",
     "browse": "Naršyti",
@@ -90,7 +97,11 @@
       "lost": "Prarasta",
       "dailyViews": "Kasdienės peržiūros"
     },
-    "noData": "Šiam laikotarpiui duomenų nėra"
+    "noData": "Šiam laikotarpiui duomenų nėra",
+    "badges": {
+      "new": "NAUJAS",
+      "trending": "POPULIARUS"
+    }
   },
   "search": {
     "placeholder": "Ieškoti kanalų arba vaizdo įrašų...",

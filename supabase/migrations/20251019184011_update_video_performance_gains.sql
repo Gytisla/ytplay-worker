@@ -38,25 +38,52 @@ SELECT DISTINCT ON (v.id)
     vs.like_count as latest_likes,
     vs.comment_count as latest_comments,
     vs.date as last_stats_update,
-    -- View gains (calculated from video_stats)
-    GREATEST(0, v.view_count - COALESCE((
-        SELECT view_count FROM video_stats
-        WHERE video_id = v.id
-        AND date >= CURRENT_DATE - INTERVAL '1 day'
-        ORDER BY date ASC, hour ASC LIMIT 1
-    ), 0)) as gain_24h,
-    GREATEST(0, v.view_count - COALESCE((
-        SELECT view_count FROM video_stats
-        WHERE video_id = v.id
-        AND date >= CURRENT_DATE - INTERVAL '7 days'
-        ORDER BY date ASC, hour ASC LIMIT 1
-    ), 0)) as gain_7d,
-    GREATEST(0, v.view_count - COALESCE((
-        SELECT view_count FROM video_stats
-        WHERE video_id = v.id
-        AND date >= CURRENT_DATE - INTERVAL '30 days'
-        ORDER BY date ASC, hour ASC LIMIT 1
-    ), 0)) as gain_30d
+    -- View gains (calculated from video_stats, skipping first record to avoid backfill inflation)
+    CASE
+        WHEN (
+            SELECT COUNT(*) FROM video_stats
+            WHERE video_id = v.id
+            AND date >= CURRENT_DATE - INTERVAL '1 day'
+        ) > 1 THEN
+            GREATEST(0, v.view_count - COALESCE((
+                SELECT view_count FROM video_stats
+                WHERE video_id = v.id
+                AND date >= CURRENT_DATE - INTERVAL '1 day'
+                ORDER BY date ASC, hour ASC
+                LIMIT 1 OFFSET 1
+            ), 0))
+        ELSE 0
+    END as gain_24h,
+    CASE
+        WHEN (
+            SELECT COUNT(*) FROM video_stats
+            WHERE video_id = v.id
+            AND date >= CURRENT_DATE - INTERVAL '7 days'
+        ) > 1 THEN
+            GREATEST(0, v.view_count - COALESCE((
+                SELECT view_count FROM video_stats
+                WHERE video_id = v.id
+                AND date >= CURRENT_DATE - INTERVAL '7 days'
+                ORDER BY date ASC, hour ASC
+                LIMIT 1 OFFSET 1
+            ), 0))
+        ELSE 0
+    END as gain_7d,
+    CASE
+        WHEN (
+            SELECT COUNT(*) FROM video_stats
+            WHERE video_id = v.id
+            AND date >= CURRENT_DATE - INTERVAL '30 days'
+        ) > 1 THEN
+            GREATEST(0, v.view_count - COALESCE((
+                SELECT view_count FROM video_stats
+                WHERE video_id = v.id
+                AND date >= CURRENT_DATE - INTERVAL '30 days'
+                ORDER BY date ASC, hour ASC
+                LIMIT 1 OFFSET 1
+            ), 0))
+        ELSE 0
+    END as gain_30d
 FROM videos v
 JOIN channels c ON v.channel_id = c.id
 LEFT JOIN video_stats vs ON v.id = vs.video_id

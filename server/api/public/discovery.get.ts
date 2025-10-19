@@ -247,6 +247,7 @@ export default defineEventHandler(async (event) => {
           gain_30d
         `)
         .gte('published_at', thirtyDaysAgo)
+        .gt('view_count', 0)
         .order('view_count', { ascending: false })
         .limit(limit)
 
@@ -321,6 +322,7 @@ export default defineEventHandler(async (event) => {
         dbQuery = supabase
           .from('videos')
           .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
+          .gt('view_count', 0)
           .order('view_count', { ascending: false })
           .limit(limit)
       } else if (section === 'featured') {
@@ -330,6 +332,7 @@ export default defineEventHandler(async (event) => {
           .from('videos')
           .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
           .gte('published_at', sevenDaysAgo)
+          .gt('view_count', 0)
           .order('view_count', { ascending: false })
           .limit(limit)
       } else {
@@ -341,6 +344,7 @@ export default defineEventHandler(async (event) => {
           .from('videos')
           .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
           .gte('published_at', dateFilter.toISOString())
+          .gt('view_count', 0)
           .order('published_at', { ascending: false })
           .limit(limit)
       }

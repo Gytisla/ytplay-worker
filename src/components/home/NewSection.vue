@@ -68,6 +68,8 @@ async function loadRecentVideos() {
       thumb: item.thumb,
       title: item.title,
       channel: item.channel,
+      channelSlug: item.channelSlug,
+      channelId: item.channelId,
       channelThumb: item.channelThumb,
       views: item.views,
       age: item.age,

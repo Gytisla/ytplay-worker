@@ -6,6 +6,31 @@ export default defineNuxtConfig({
   // Compatibility date for Nitro
   compatibilityDate: '2025-10-19',
 
+  // App configuration
+  app: {
+    head: {
+      title: 'YTPlay.lt',
+      meta: [
+        { charset: 'utf-8' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { name: 'description', content: 'Discover Lithuanian YouTube videos and channels' }
+      ],
+      link: [
+        // Favicon
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
+        { rel: 'icon', type: 'image/png', sizes: '48x48', href: '/favicon-48x48.png' },
+        { rel: 'icon', type: 'image/png', sizes: '64x64', href: '/favicon-64x64.png' },
+        { rel: 'icon', type: 'image/png', sizes: '128x128', href: '/favicon-128x128.png' },
+        { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/favicon-192x192.png' },
+        { rel: 'icon', type: 'image/png', sizes: '512x512', href: '/favicon-512x512.png' },
+        // Apple Touch Icon
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' }
+      ]
+    }
+  },
+
   vite: {
     optimizeDeps: {
 			include: ["@auth/core"],

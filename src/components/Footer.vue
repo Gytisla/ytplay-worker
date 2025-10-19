@@ -3,7 +3,11 @@
     <div class="max-w-6xl mx-auto p-8 md:p-12 grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
       <div class="space-y-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-md bg-primary-600 flex items-center justify-center text-white font-bold">YT</div>
+          <img 
+            src="/assets/logo.png" 
+            alt="YTPlay.lt" 
+            class="h-12 w-auto"
+          />
           <div>
             <div class="text-lg font-semibold">{{ $t('footer.brandLine1') }}</div>
             <div class="text-sm text-muted dark:text-gray-400">{{ $t('footer.brandLine2') }}</div>

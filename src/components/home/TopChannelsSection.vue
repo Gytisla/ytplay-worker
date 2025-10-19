@@ -1,17 +1,11 @@
 <template>
-  <section ref="sectionRef" id="top-channels" class="mb-8">
-    <div class="flex items-center justify-between mb-4">
-      <div>
-        <h2 class="text-2xl font-semibold">Top Channels</h2>
-        <p class="text-sm text-muted dark:text-gray-400">Channels users are subscribing to right now.</p>
-      </div>
-      <div class="hidden sm:flex items-center gap-2">
-        <NuxtLink to="/top-channels" class="text-sm px-3 py-1 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">All</NuxtLink>
-        <button class="text-sm px-3 py-1 rounded-md bg-primary-600 text-white hover:bg-primary-500 transition">Top</button>
-      </div>
+  <section ref="sectionRef" id="top-channels">
+    <div class="mb-6">
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Top Channels</h2>
+      <p class="text-sm text-muted dark:text-gray-400">Channels users are subscribing to right now.</p>
     </div>
 
-    <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div class="mt-6 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       <template v-if="loading">
         <div v-for="i in 8" :key="`ch-skel-${i}`" class="rounded-xl bg-white dark:bg-gray-800 shadow-sm p-3 animate-pulse flex items-center gap-3">
           <div class="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>

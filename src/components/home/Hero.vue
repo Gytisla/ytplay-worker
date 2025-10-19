@@ -48,23 +48,36 @@
     </div>
   </section>
 
+  <div class="flex items-center justify-center py-8">
+    <hr class="w-full max-w-4xl border-0 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent">
+  </div>
+
   <!-- Popular Videos Sections -->
-  <section class="py-8">
+  <section class="py-12">
     <!-- Today -->
     <div v-if="todayHasContent" class="mb-12">
-      <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">Most Popular Today</h2>
+      <div class="mb-6">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Most Popular Today</h2>
+        <p class="text-sm text-muted dark:text-gray-400">Videos gaining the most views today.</p>
+      </div>
       <PopularVideosSection :period="'today'" @has-content="onTodayContent" />
     </div>
 
     <!-- Last 7 Days -->
     <div v-if="weekHasContent" class="mb-12">
-      <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">Trending This Week</h2>
+      <div class="mb-6">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Trending This Week</h2>
+        <p class="text-sm text-muted dark:text-gray-400">Most popular videos from the past 7 days.</p>
+      </div>
       <PopularVideosSection :period="'7'" @has-content="onWeekContent" />
     </div>
 
     <!-- Last 30 Days -->
-    <div v-if="monthHasContent" class="mb-12">
-      <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">Top This Month</h2>
+    <div v-if="monthHasContent">
+      <div class="mb-6">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Top This Month</h2>
+        <p class="text-sm text-muted dark:text-gray-400">Highest performing videos of the month.</p>
+      </div>
       <PopularVideosSection :period="'30'" @has-content="onMonthContent" />
     </div>
   </section>

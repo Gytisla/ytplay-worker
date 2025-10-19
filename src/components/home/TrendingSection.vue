@@ -1,17 +1,11 @@
 <template>
-  <section ref="sectionRef" id="trending" class="mb-8">
-    <div class="flex items-center justify-between mb-4">
-      <div>
-        <h2 class="text-2xl font-semibold">Trending</h2>
-        <p class="text-sm text-muted dark:text-gray-400">Popular videos gaining traction across the network.</p>
-      </div>
-      <div class="hidden sm:flex items-center gap-2">
-        <button class="text-sm px-3 py-1 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300">Today</button>
-        <button class="text-sm px-3 py-1 rounded-md bg-primary-600 text-white hover:bg-primary-500 transition">This week</button>
-      </div>
+  <section ref="sectionRef" id="trending">
+    <div class="mb-6">
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Trending</h2>
+      <p class="text-sm text-muted dark:text-gray-400">Popular videos gaining traction across the network.</p>
     </div>
 
-    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div class="mt-6 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       <template v-if="loading">
         <VideoCardSkeleton v-for="i in 8" :key="`t-skel-${i}`" />
       </template>

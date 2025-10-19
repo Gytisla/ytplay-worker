@@ -1,11 +1,33 @@
 <template>
   <div>
     <Hero />
-    <div class="mt-8">
+    
+    <!-- Modern HR Separator -->
+    <div class="flex items-center justify-center py-8">
+      <hr class="w-full max-w-4xl border-0 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent">
+    </div>
+    
+    <div>
       <NewSection :loading="false" />
     </div>
-    <TrendingSection :loading="false" />
-    <TopChannelsSection :loading="false" />
+    
+    <!-- Modern HR Separator -->
+    <div class="flex items-center justify-center py-8">
+      <hr class="w-full max-w-4xl border-0 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent">
+    </div>
+    
+    <div>
+      <TrendingSection :loading="false" />
+    </div>
+    
+    <!-- Modern HR Separator -->
+    <div class="flex items-center justify-center py-8">
+      <hr class="w-full max-w-4xl border-0 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent">
+    </div>
+    
+    <div class="mb-12">
+      <TopChannelsSection :loading="false" />
+    </div>
   </div>
 
 </template>

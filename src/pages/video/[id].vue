@@ -628,7 +628,7 @@ function formatNumber(num: number): string {
 
 // Meta tags
 useHead({
-  title: () => video.value ? `${video.value.title} - YouTube Player` : 'Video - YouTube Player'
+  title: () => video.value ? `${video.value.title} - YTPlay.lt` : 'Video - YTPlay.lt'
 })
 </script>
 

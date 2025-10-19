@@ -353,7 +353,7 @@ onMounted(() => {
 
 // SEO
 useHead(() => ({
-  title: category.value ? `${category.value.name} - YouTube Player` : 'Category - YouTube Player',
+  title: category.value ? `${category.value.name} - YTPlay.lt` : 'Category - YTPlay.lt',
   meta: [
     {
       name: 'description',
@@ -362,7 +362,7 @@ useHead(() => ({
     // Open Graph
     {
       property: 'og:title',
-      content: category.value ? `${category.value.name} - YouTube Player` : 'Category - YouTube Player'
+  content: category.value ? `${category.value.name} - YTPlay.lt` : 'Category - YTPlay.lt'
     },
     {
       property: 'og:description',
@@ -382,7 +382,7 @@ useHead(() => ({
     },
     {
       property: 'og:site_name',
-      content: 'YouTube Player'
+  content: 'YTPlay.lt'
     },
     // Twitter Card
     {
@@ -391,7 +391,7 @@ useHead(() => ({
     },
     {
       name: 'twitter:title',
-      content: category.value ? `${category.value.name} - YouTube Player` : 'Category - YouTube Player'
+      content: category.value ? `${category.value.name} - YTPlay.lt` : 'Category - YTPlay.lt'
     },
     {
       name: 'twitter:description',

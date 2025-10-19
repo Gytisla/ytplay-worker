@@ -4,7 +4,7 @@
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
       <NuxtLink to="/" class="flex items-center gap-3">
         <span class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white font-semibold">YT</span>
-        <span class="hidden sm:inline text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $t('header.brand') }}</span>
+        <span class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $t('header.brand') }}</span>
       </NuxtLink>
 
       <!-- <div class="flex-1 px-4">

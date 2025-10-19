@@ -147,7 +147,7 @@ async function loadChannels() {
 
 // Meta tags
 useHead({
-  title: `${t('topChannelsPage.title')} - YouTube Player`,
+  title: `${t('topChannelsPage.title')} - YTPlay.lt`,
   meta: [
     {
       name: 'description',
@@ -176,7 +176,7 @@ useHead({
     },
     {
       property: 'og:site_name',
-      content: 'YouTube Player'
+  content: 'YTPlay.lt'
     },
     // Twitter Card
     {

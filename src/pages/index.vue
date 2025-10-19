@@ -40,7 +40,7 @@ import TopChannelsSection from '~/components/home/TopChannelsSection.vue'
 
 // SEO and Open Graph meta tags
 useHead({
-  title: 'YouTube Player - Discover Amazing Videos',
+  title: 'YTPlay.lt - Discover Amazing Videos',
   meta: [
     {
       name: 'description',
@@ -49,7 +49,7 @@ useHead({
     // Open Graph
     {
       property: 'og:title',
-      content: 'YouTube Player - Discover Amazing Videos'
+  content: 'YTPlay.lt - Discover Amazing Videos'
     },
     {
       property: 'og:description',
@@ -69,7 +69,7 @@ useHead({
     },
     {
       property: 'og:site_name',
-      content: 'YouTube Player'
+  content: 'YTPlay.lt'
     },
     // Twitter Card
     {
@@ -78,7 +78,7 @@ useHead({
     },
     {
       name: 'twitter:title',
-      content: 'YouTube Player - Discover Amazing Videos'
+  content: 'YTPlay.lt - Discover Amazing Videos'
     },
     {
       name: 'twitter:description',

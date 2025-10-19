@@ -5,42 +5,44 @@
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-md bg-primary-600 flex items-center justify-center text-white font-bold">YT</div>
           <div>
-            <div class="text-lg font-semibold">ytplay</div>
-            <div class="text-sm text-muted dark:text-gray-400">Discover videos & channels</div>
+            <div class="text-lg font-semibold">{{ $t('footer.brandLine1') }}</div>
+            <div class="text-sm text-muted dark:text-gray-400">{{ $t('footer.brandLine2') }}</div>
           </div>
         </div>
-        <p class="text-sm text-muted dark:text-gray-400 max-w-sm">A small discovery front-end for exploring new and trending videos across the web. Fast, privacy-friendly, and beautiful.</p>
+        <p class="text-sm text-muted dark:text-gray-400 max-w-sm">{{ $t('footer.tagline') }}</p>
       </div>
 
       <div class="flex gap-8 md:gap-12">
         <div>
-          <h4 class="text-sm font-semibold mb-3">Explore</h4>
+          <h4 class="text-sm font-semibold mb-3">{{ $t('footer.explore') }}</h4>
           <ul class="space-y-2 text-sm text-muted dark:text-gray-400">
-            <li><a class="hover:underline" href="#new">New</a></li>
-            <li><a class="hover:underline" href="#trending">Trending</a></li>
-            <li><a class="hover:underline" href="#top">Top Charts</a></li>
-            <li><a class="hover:underline" href="#channels">Top Channels</a></li>
+            <li><NuxtLink class="hover:underline" to="/">{{ $t('footer.exploreLinks.new') }}</NuxtLink></li>
+            <li><NuxtLink class="hover:underline" to="/">{{ $t('footer.exploreLinks.trending') }}</NuxtLink></li>
+            <li><NuxtLink class="hover:underline" to="/top-videos">{{ $t('footer.exploreLinks.top') }}</NuxtLink></li>
+            <li><NuxtLink class="hover:underline" to="/top-channels">{{ $t('footer.exploreLinks.channels') }}</NuxtLink></li>
           </ul>
         </div>
 
         <div>
-          <h4 class="text-sm font-semibold mb-3">Resources</h4>
+          <h4 class="text-sm font-semibold mb-3">{{ $t('footer.resources') }}</h4>
           <ul class="space-y-2 text-sm text-muted dark:text-gray-400">
-            <li><a class="hover:underline" href="/about">About</a></li>
-            <li><a class="hover:underline" href="/privacy">Privacy</a></li>
-            <li><a class="hover:underline" href="/terms">Terms</a></li>
+            <li><a class="hover:underline" href="/about">{{ $t('footer.resourcesLinks.about') }}</a></li>
+            <li><a class="hover:underline" href="/privacy">{{ $t('footer.resourcesLinks.privacy') }}</a></li>
+            <li><a class="hover:underline" href="/terms">{{ $t('footer.resourcesLinks.terms') }}</a></li>
           </ul>
         </div>
       </div>
 
       <div class="md:col-span-1">
-        <h4 class="text-sm font-semibold mb-3">Stay in the loop</h4>
-        <p class="text-sm text-muted dark:text-gray-400 mb-3">Subscribe to a short monthly update about top videos and channels.</p>
-        <form class="flex gap-2" @submit.prevent>
-          <input aria-label="Email" type="email" placeholder="you@example.com" class="flex-1 px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400" />
-          <button class="px-4 py-2 rounded-md bg-primary-600 text-white text-sm font-semibold hover:bg-primary-500 transition">Subscribe</button>
-        </form>
-        <div class="mt-4 text-xs text-muted dark:text-gray-500">© ytplay — discovery for public viewers</div>
+        <h4 class="text-sm font-semibold mb-3">{{ $t('footer.stayInLoop') }}</h4>
+        <p class="text-sm text-muted dark:text-gray-400 mb-3">{{ $t('footer.subscribeText') }}</p>
+        <div class="flex gap-2">
+          <div class="flex-1 px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-muted dark:text-gray-400 flex items-center">
+            {{ $t('footer.comingSoon') }}
+          </div>
+          <button disabled class="px-4 py-2 rounded-md bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 text-sm font-semibold cursor-not-allowed">{{ $t('footer.subscribe') }}</button>
+        </div>
+        <div class="mt-4 text-xs text-muted dark:text-gray-500">{{ $t('footer.copyright') }}</div>
       </div>
     </div>
   </footer>

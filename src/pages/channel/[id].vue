@@ -639,7 +639,7 @@ function formatNumber(num: number): string {
 
 // Meta tags
 useHead({
-  title: () => channel.value ? `${channel.value.name} - YouTube Player` : 'Channel - YouTube Player'
+  title: () => channel.value ? `${channel.value.name} - YTPlay.lt` : 'Channel - YTPlay.lt'
 })
 </script>
 

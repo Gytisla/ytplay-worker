@@ -91,7 +91,7 @@
     }
   },
   "header": {
-    "brand": "ytplay",
+    "brand": "YTPlay.lt",
     "categories": "Kategorijos",
     "topChannels": "Top kanalai",
     "topVideos": "Top vaizdo įrašai",
@@ -160,5 +160,31 @@
       "ogDescription": "Tyrinėkite {count} vaizdo įrašus {name} kategorijoje. {description}"
     },
     "siteName": "YouTube grotuvas"
+  }
+  ,
+  "footer": {
+    "brandLine1": "YTPlay.lt",
+    "brandLine2": "Atraskite vaizdo įrašus ir kanalus",
+    "tagline": "Atradimų vieta, skirta nuolatiniams ir populiariems vaizdo įrašams. Greita, gerbianti privatumą ir estetiška.",
+    "explore": "Atrasti",
+    "resources": "Informacija",
+    "stayInLoop": "Sekite naujienas",
+    "subscribeText": "Prenumeruokite trumpą mėnesinį pranešimą apie geriausius vaizdo įrašus ir kanalus.",
+    "emailLocal": "info",
+    "emailDomain": "ytplay.lt",
+    "subscribe": "Prenumeruoti",
+    "comingSoon": "Jau greitai...",
+    "copyright": "© YTPlay.lt — atradimai visiems žiūrovams",
+    "exploreLinks": {
+      "new": "Nauji",
+      "trending": "Tendencijos",
+      "top": "Top vaizdo įrašai",
+      "channels": "Geriausi kanalai"
+    },
+    "resourcesLinks": {
+      "about": "Apie",
+      "privacy": "Privatumas",
+      "terms": "Sąlygos"
+    }
   }
 }

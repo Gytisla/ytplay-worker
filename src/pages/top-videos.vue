@@ -129,7 +129,7 @@ async function loadVideos() {
     loading.value = true
     console.log(`Loading top videos sorted by ${sortBy.value}...`)
 
-    const section = sortBy.value === 'views' ? 'new' : 'trending'
+    const section = sortBy.value === 'views' ? 'top' : 'trending'
     const data = await $fetch('/api/public/discovery', {
       query: { section, limit: 50 }
     }) as { items: any[] }

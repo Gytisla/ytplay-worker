@@ -238,6 +238,13 @@ export default defineEventHandler(async (event) => {
           .gte('published_at', thirtyDaysAgo)
           .order('view_count', { ascending: false })
           .limit(limit)
+      } else if (section === 'top') {
+        // Top videos: all-time highest viewed videos
+        dbQuery = supabase
+          .from('videos')
+          .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, channels(title, thumbnail_url, slug)')
+          .order('view_count', { ascending: false })
+          .limit(limit)
       } else if (section === 'featured') {
         // Example: featured could be based on some criteria - for now using recent high-view videos
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()

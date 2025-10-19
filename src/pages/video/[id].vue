@@ -122,9 +122,9 @@
               <div v-else class="text-sm text-muted dark:text-gray-400">No data</div>
             </div>
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div class="text-sm text-muted dark:text-gray-400">Avg Watch Time</div>
-              <div class="text-2xl font-bold">{{ videoStats.summary ? formatNumber(videoStats.summary.avgMinutesWatched) + 'm' : '0m' }}</div>
-              <div class="text-sm text-muted dark:text-gray-400">{{ videoStats.isTodayView ? 'per hour' : 'per day' }}</div>
+              <div class="text-sm text-muted dark:text-gray-400">Total View Gains</div>
+              <div class="text-2xl font-bold">{{ videoStats.summary ? formatNumber(videoStats.summary.totalViewGained) : '0' }}</div>
+              <div class="text-sm text-muted dark:text-gray-400">{{ videoStats.isTodayView ? 'today' : 'this period' }}</div>
             </div>
           </div>
 

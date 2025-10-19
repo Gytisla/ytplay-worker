@@ -25,8 +25,8 @@
               </div>
               <p class="text-muted dark:text-gray-400 mb-4">{{ channel.description || 'No description available' }}</p>
               <div class="flex flex-wrap justify-center md:justify-start gap-4 text-sm mb-4">
-                <span class="text-muted dark:text-gray-400">{{ channel.subs }} subscribers</span>
-                <span class="text-muted dark:text-gray-400">{{ channel.videos }} videos</span>
+                <span class="text-muted dark:text-gray-400">{{ channel.subs }} subscribers</span>•
+                <span class="text-muted dark:text-gray-400">{{ channel.videos }} videos</span>•
                 <span class="text-muted dark:text-gray-400">Joined {{ channel.joined }}</span>
               </div>
             </div>
@@ -102,7 +102,7 @@
                 </div>
               </div>
               <div v-else class="relative h-64">
-                <canvas ref="subscriberChartRef" class="w-full h-full"></canvas>
+                <canvas ref="subscriberChartRef" class="block w-full h-full" style="height:100%"></canvas>
               </div>
             </div>
 
@@ -122,7 +122,7 @@
                 </div>
               </div>
               <div v-else class="relative h-64">
-                <canvas ref="viewChartRef" class="w-full h-full"></canvas>
+                <canvas ref="viewChartRef" class="block w-full h-full" style="height:100%"></canvas>
               </div>
             </div>
 
@@ -135,14 +135,14 @@
                   <div class="h-32 bg-gray-200 dark:bg-gray-600 rounded w-full"></div>
                 </div>
               </div>
-              <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-64 flex items-center justify-center">
+              <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-96 sm:h-64 flex items-center justify-center">
                 <div class="text-center text-muted dark:text-gray-400">
                   <div class="text-4xl mb-2">📊</div>
                   <div class="text-sm">No data available for this period</div>
                 </div>
               </div>
               <div v-else class="relative h-64">
-                <canvas ref="subscriberChangeChartRef" class="w-full h-full"></canvas>
+                <canvas ref="subscriberChangeChartRef" class="block w-full h-full" style="height:100%"></canvas>
               </div>
             </div>
 
@@ -162,7 +162,7 @@
                 </div>
               </div>
               <div v-else class="relative h-64">
-                <canvas ref="viewGainChartRef" class="w-full h-full"></canvas>
+                <canvas ref="viewGainChartRef" class="block w-full h-full" style="height:100%"></canvas>
               </div>
             </div>
           </div>
@@ -510,6 +510,7 @@ function updateCharts() {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { display: false }
         },
@@ -542,6 +543,7 @@ function updateCharts() {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { display: false }
         },
@@ -575,6 +577,7 @@ function updateCharts() {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'top' as const }
         },
@@ -605,6 +608,7 @@ function updateCharts() {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { display: false }
         },

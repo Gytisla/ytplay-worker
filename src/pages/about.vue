@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-white dark:bg-gray-900">
     <!-- Hero Section -->
-    <section class="relative bg-gradient-to-br from-primary-50 to-primary-100 dark:from-gray-800 dark:to-gray-900 py-20">
+    <section class="relative py-20">
       <div class="max-w-6xl mx-auto px-4 text-center">
         <div class="flex items-center justify-center gap-4 mb-8">
           <div class="w-16 h-16 rounded-full bg-primary-600 flex items-center justify-center text-white font-bold text-2xl">YT</div>

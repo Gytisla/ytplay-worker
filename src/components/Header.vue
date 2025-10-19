@@ -78,7 +78,7 @@
                 : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
             ]"
           >
-            Pasiūlyti kanalą
+            {{ $t('header.submitChannel') }}
           </NuxtLink>
           <!-- <LanguageSwitcher /> -->
           <button
@@ -156,7 +156,7 @@
           ]"
           :aria-current="isActiveRoute('/submit-channel') ? 'page' : null"
         >
-          Pasiūlyti kanalą
+          {{ $t('header.submitChannel') }}
         </NuxtLink>
         <div class="pt-2 border-t border-gray-100 dark:border-gray-800 mt-2">
           <button

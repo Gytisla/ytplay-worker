@@ -170,6 +170,7 @@
     "categories": "Kategorijos",
     "topChannels": "Top kanalai",
     "topVideos": "Top vaizdo įrašai",
+    "submitChannel": "Pasiūlyti kanalą",
     "searchPlaceholder": "Ieškoti vaizdo įrašų, kanalų...",
     "toggleTheme": "Perjungti temą",
     "openMenu": "Atidaryti meniu"
@@ -260,7 +261,8 @@
       "new": "Nauji",
       "trending": "Tendencijos",
       "top": "Top vaizdo įrašai",
-      "channels": "Geriausi kanalai"
+      "channels": "Geriausi kanalai",
+      "submitChannel": "Pasiūlyti kanalą"
     },
     "resourcesLinks": {
       "about": "Apie",
@@ -335,5 +337,12 @@
         }
       }
     }
+  },
+  "submitChannelPage": {
+    "title": "Pasiūlyti kanalą",
+    "metaTitle": "Pasiūlyti kanalą | YTPlay.lt",
+    "metaDescription": "Pasiūlykite YouTube kanalą mūsų platformai. Mes peržiūrėsime ir patvirtinsime pasiūlymus rankiniu būdu.",
+    "ogTitle": "Pasiūlyti kanalą | YTPlay.lt",
+    "ogDescription": "Turite mėgstamą YouTube kanalą? Pasiūlykite jį mūsų platformai!"
   }
 }

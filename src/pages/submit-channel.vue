@@ -4,7 +4,7 @@
     <section class="relative py-20">
       <div class="max-w-5xl mx-auto px-4 text-center">
         <h1 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-8">
-          Pasiūlyti kanalą
+          {{ t('submitChannelPage.title') }}
         </h1>
         <p class="text-lg text-  } catch (error: any) {
     console.error('Submission error:', error)
@@ -235,7 +235,11 @@
 // make TS happy in this file for useHead (Nuxt auto-import may already provide it)
 declare const useHead: any
 
+// Provide a minimal declaration so the TS checker knows about the auto-imported `useI18n` in SFCs
+declare function useI18n(): { t: (key: string, ...args: any[]) => string }
+
 import { ref, computed } from 'vue'
+const { t } = useI18n()
 
 // Form state
 const submissionType = ref('')
@@ -396,19 +400,19 @@ async function handleSubmit() {
 
 // Meta tags
 useHead({
-  title: 'Pasiūlyti kanalą | YTPlay.lt',
+  title: () => `${t('submitChannelPage.title')} | YTPlay.lt`,
   meta: [
     {
       name: 'description',
-      content: 'Pasiūlykite YouTube kanalą mūsų platformai. Mes peržiūrėsime ir patvirtinsime pasiūlymus rankiniu būdu.'
+      content: () => t('submitChannelPage.metaDescription')
     },
     {
       property: 'og:title',
-      content: 'Pasiūlyti kanalą | YTPlay.lt'
+      content: () => t('submitChannelPage.metaTitle')
     },
     {
       property: 'og:description',
-      content: 'Turite mėgstamą YouTube kanalą? Pasiūlykite jį mūsų platformai!'
+      content: () => t('submitChannelPage.ogDescription')
     }
   ]
 })

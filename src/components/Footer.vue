@@ -20,6 +20,7 @@
             <li><NuxtLink class="hover:underline" to="/">{{ $t('footer.exploreLinks.trending') }}</NuxtLink></li>
             <li><NuxtLink class="hover:underline" to="/top-videos">{{ $t('footer.exploreLinks.top') }}</NuxtLink></li>
             <li><NuxtLink class="hover:underline" to="/top-channels">{{ $t('footer.exploreLinks.channels') }}</NuxtLink></li>
+            <li><NuxtLink class="hover:underline" to="/submit-channel">{{ $t('footer.exploreLinks.submitChannel') }}</NuxtLink></li>
           </ul>
         </div>
 

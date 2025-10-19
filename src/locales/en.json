@@ -168,6 +168,7 @@
     "categories": "Categories",
     "topChannels": "Top Channels",
     "topVideos": "Top Videos",
+    "submitChannel": "Submit Channel",
     "searchPlaceholder": "Search videos, channels...",
     "toggleTheme": "Toggle theme"
   },
@@ -227,10 +228,10 @@
       "ogDescription": "Discover the most popular YouTube videos by view count and trending content"
     },
     "category": {
-      "title": "{{name}} - YTPlay.lt",
-      "description": "Explore {{count}} videos in the {{name}} category",
-      "ogTitle": "{{name}} - YTPlay.lt",
-      "ogDescription": "Explore {{count}} videos in the {{name}} category. {{description}}"
+      "title": "{name} - YTPlay.lt",
+      "description": "Explore {count} videos in the {name} category",
+      "ogTitle": "{name} - YTPlay.lt",
+      "ogDescription": "Explore {count} videos in the {name} category. {description}"
     },
     "privacy": {
       "title": "Privacy Policy - YTPlay.lt",
@@ -257,7 +258,8 @@
       "new": "New",
       "trending": "Trending",
       "top": "Top Charts",
-      "channels": "Top Channels"
+      "channels": "Top Channels",
+      "submitChannel": "Submit Channel"
     },
     "resourcesLinks": {
       "about": "About",
@@ -332,5 +334,12 @@
         }
       }
     }
+  },
+  "submitChannelPage": {
+    "title": "Submit Channel",
+    "metaTitle": "Submit Channel | YTPlay.lt",
+    "metaDescription": "Submit a YouTube channel to our platform. We will review and approve submissions manually.",
+    "ogTitle": "Submit Channel | YTPlay.lt",
+    "ogDescription": "Have a favorite YouTube channel? Submit it to our platform!"
   }
 }

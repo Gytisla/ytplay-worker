@@ -196,12 +196,12 @@
     "noChannelsFound": "Kanalų nerasta."
   },
   "topVideosPage": {
-    "title": "Geriausi vaizdo įrašai",
-    "breadcrumb": "Geriausi vaizdo įrašai",
-    "sortByViews": "Pagal peržiūras",
-    "sortByTrending": "Tendencijos",
+    "title": "Žiūrimiausi",
+    "breadcrumb": "Žiūrimiausi vaizdo įrašai",
+    "sortByViews": "Visų laikų",
+    "sortByTrending": "Šiuo metu",
     "descriptionViews": "Populiariausi vaizdo įrašai pagal peržiūrų skaičių",
-    "descriptionTrending": "Populiariausi vaizdo įrašai, kurie dabar populiarėja",
+    "descriptionTrending": "Žiūrimiausi vaizdo įrašai, kurie dabar populiarėja",
     "noVideosFound": "Vaizdo įrašų nerasta."
   },
   "categoriesPage": {

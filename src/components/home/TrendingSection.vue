@@ -24,6 +24,19 @@
         </template>
       </ClientOnly>
     </div>
+
+    <!-- CTA Button -->
+    <div v-if="!localLoading && items.length > 0" class="mt-6 text-center">
+      <NuxtLink
+        to="/top-videos"
+        class="inline-flex items-center gap-2 px-6 py-2 border border-primary-600 text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 text-sm font-medium rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group"
+      >
+        <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+        </svg>
+        Žiūrėti geriausius vaizdo įrašus
+      </NuxtLink>
+    </div>
   </section>
 </template>
 

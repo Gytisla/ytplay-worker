@@ -198,24 +198,34 @@ export async function handleBackfillChannel(
           }
         }))
 
-        // Store videos in database
-
+        // Store videos in database in batches to avoid timeout
         if (videoData.length > 0) {
-          const upsertVideosResult = await supabase
-            .rpc('upsert_videos', {
-              video_data: videoData
-            }) as unknown
+          const batchSize = 100 // Upsert videos in batches of 100 to avoid statement timeout
+          let totalStored = 0
 
-          const typedUpsertVideos = upsertVideosResult as { error?: { message?: string } | null }
-          const videosError = typedUpsertVideos.error ?? null
+          for (let i = 0; i < videoData.length; i += batchSize) {
+            const batch = videoData.slice(i, i + batchSize)
+            logger.info('upserting video batch', { channelId, batchIndex: Math.floor(i / batchSize) + 1, batchSize: batch.length })
 
-          if (videosError) {
-            logger.error('Failed to upsert videos', { channelId, error: videosError })
-            return { success: false, error: `Failed to store video data: ${videosError.message}` }
+            const upsertVideosResult = await supabase
+              .rpc('upsert_videos', {
+                video_data: batch
+              }) as unknown
+
+            const typedUpsertVideos = upsertVideosResult as { error?: { message?: string } | null }
+            const videosError = typedUpsertVideos.error ?? null
+
+            if (videosError) {
+              logger.error('Failed to upsert video batch', { channelId, batchIndex: Math.floor(i / batchSize) + 1, error: videosError })
+              return { success: false, error: `Failed to store video batch: ${videosError.message}` }
+            }
+
+            totalStored += batch.length
+            logger.info('stored video batch', { channelId, batchIndex: Math.floor(i / batchSize) + 1, stored: batch.length, totalStored })
           }
 
           totalItemsProcessed += videoData.length
-          logger.info('stored videos', { channelId, stored: videoData.length })
+          logger.info('completed video storage', { channelId, totalStored: videoData.length })
         }
       }
     }

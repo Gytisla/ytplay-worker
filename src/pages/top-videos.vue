@@ -10,11 +10,11 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
           <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">{{ t('topVideosPage.title') }}</h1>
           <div class="flex items-center gap-2">
-            <button @click="sortBy = 'views'" :class="['px-4 py-2 rounded-lg text-sm font-medium transition', sortBy === 'views' ? 'bg-red-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
-              {{ t('topVideosPage.sortByViews') }}
-            </button>
             <button @click="sortBy = 'trending'" :class="['px-4 py-2 rounded-lg text-sm font-medium transition', sortBy === 'trending' ? 'bg-red-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
               {{ t('topVideosPage.sortByTrending') }}
+            </button>
+            <button @click="sortBy = 'views'" :class="['px-4 py-2 rounded-lg text-sm font-medium transition', sortBy === 'views' ? 'bg-red-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
+              {{ t('topVideosPage.sortByViews') }}
             </button>
           </div>
         </div>
@@ -78,7 +78,7 @@ const { t } = useI18n()
 const videos = ref<any[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
-const sortBy = ref<'views' | 'trending'>('views')
+const sortBy = ref<'trending' | 'views'>('trending')
 
 // Load videos data on client mount so navigation is instant
 onMounted(async () => {

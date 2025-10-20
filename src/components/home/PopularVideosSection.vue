@@ -31,15 +31,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import VideoCardSkeleton from '~/components/VideoCardSkeleton.vue'
 import { useLazyLoadOnIntersection } from '../../composables/useLazyLoadOnIntersection'
 
-interface Props {
+const props = defineProps<{
   period: 'today' | '7' | '30'
-}
-
-const props = defineProps<Props>()
+  immediate?: boolean
+}>()
 
 const videos = ref<any[]>([])
 const loading = ref(true)
@@ -66,8 +65,15 @@ function getCtaText() {
   }
 }
 
-// Lazy load on intersection
-useLazyLoadOnIntersection(sectionRef, loadPopularVideos)
+// Lazy load on intersection (unless immediate loading is requested)
+if (!props.immediate) {
+  useLazyLoadOnIntersection(sectionRef, loadPopularVideos)
+} else {
+  // Load immediately on mount
+  onMounted(() => {
+    loadPopularVideos()
+  })
+}
 
 async function loadPopularVideos() {
   try {

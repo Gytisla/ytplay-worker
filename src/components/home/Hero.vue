@@ -65,7 +65,7 @@
         </h2>
         <p class="text-sm text-muted dark:text-gray-400">{{ t('home.sections.popularToday.description') }}</p>
       </div>
-      <PopularVideosSection :period="'today'" @has-content="onTodayContent" />
+      <PopularVideosSection :period="'today'" :immediate="true" @has-content="onTodayContent" />
     </div>
 
     <!-- Last 7 Days -->

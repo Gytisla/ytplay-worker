@@ -139,11 +139,11 @@
   "home": {
     "sections": {
       "new": {
-        "title": "Nauji",
+        "title": "Naujausi",
         "description": "Naujai indeksuoti vaizdo įrašai atradimui — atnaujinama beveik realiu laiku."
       },
       "trending": {
-        "title": "Tendencijos",
+        "title": "Žiūrimiausi",
         "description": "Populiarūs vaizdo įrašai, gaunantys dėmesį tinkle."
       },
       "topChannels": {
@@ -156,11 +156,11 @@
         "description": "Vaizdo įrašai, gaunantys daugiausiai peržiūrų šiandien."
       },
       "trendingWeek": {
-        "title": "Tendencijos šią savaitę",
+        "title": "Populiariausi šią savaitę",
         "description": "Populiariausi vaizdo įrašai iš pastarųjų 7 dienų."
       },
       "topMonth": {
-        "title": "Geriausi šį mėnesį",
+        "title": "Populiariausi šį mėnesį",
         "description": "Geriausiai pasirodantys vaizdo įrašai šį mėnesį."
       }
     },

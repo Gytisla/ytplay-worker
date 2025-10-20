@@ -65,6 +65,17 @@
             {{ $t('header.topChannels') }}
           </NuxtLink>
           <NuxtLink
+            to="/trending"
+            :class="[
+              'px-3 py-2 text-sm font-medium rounded-md transition',
+              isActiveRoute('/trending')
+                ? 'text-primary-600 dark:text-primary-400 font-semibold'
+                : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
+            ]"
+          >
+            {{ $t('header.topVideos') }}
+          </NuxtLink>
+          <NuxtLink
             to="/top-videos"
             :class="[
               'px-3 py-2 text-sm font-medium rounded-md transition',
@@ -73,7 +84,7 @@
                 : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
             ]"
           >
-            {{ $t('header.topVideos') }}
+            Žiūrimiausi
           </NuxtLink>
           <div class="ml-4 pl-4 border-l border-gray-300 dark:border-gray-600">
             <NuxtLink
@@ -152,6 +163,19 @@
           :aria-current="isActiveRoute('/top-videos') ? 'page' : null"
         >
           {{ $t('header.topVideos') }}
+        </NuxtLink>
+        <NuxtLink
+          to="/trending"
+          @click="mobileOpen = false"
+          :class="[
+            'px-3 py-2 rounded-md text-sm font-medium transition',
+            isActiveRoute('/trending')
+              ? 'text-primary-600 dark:text-primary-400 font-semibold'
+              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+          ]"
+          :aria-current="isActiveRoute('/trending') ? 'page' : null"
+        >
+          Populiariausi
         </NuxtLink>
         <div class="px-3 py-2 border-t border-gray-100 dark:border-gray-800">
           <NuxtLink

@@ -4,6 +4,7 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const section = (query.section as string) || 'new'
   const limit = Math.min(50, Math.max(1, parseInt(query.limit as string || '8', 10)))
+  const offset = Math.max(0, parseInt(query.offset as string || '0', 10))
   const sort = (query.sort as string) || 'subscribers'
   const period = query.period as string
 
@@ -48,7 +49,7 @@ export default defineEventHandler(async (event) => {
       .from('channels')
       .select('id, slug, youtube_channel_id, title, thumbnail_url, subscriber_count, video_count, view_count')
       .order(sortColumn, { ascending, nullsFirst: false })
-      .limit(limit)
+      .range(offset, offset + limit - 1)
 
     if (error) {
       throw createError({
@@ -81,7 +82,7 @@ export default defineEventHandler(async (event) => {
           .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_24h')
           .gt('gain_24h', 0)
           .order('gain_24h', { ascending: false })
-          .limit(limit)
+          .range(offset, offset + limit - 1)
 
         if (!performanceError && performanceData && performanceData.length > 0) {
           // Get category data for popular videos
@@ -138,7 +139,7 @@ export default defineEventHandler(async (event) => {
           .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_7d')
           .gt('gain_7d', 0)
           .order('gain_7d', { ascending: false })
-          .limit(limit)
+          .range(offset, offset + limit - 1)
 
         if (!performanceError && performanceData && performanceData.length > 0) {
           // Get category data for popular videos
@@ -195,7 +196,7 @@ export default defineEventHandler(async (event) => {
           .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_30d')
           .gt('gain_30d', 0)
           .order('gain_30d', { ascending: false })
-          .limit(limit)
+          .range(offset, offset + limit - 1)
 
         if (!performanceError && performanceData && performanceData.length > 0) {
           // Get category data for popular videos
@@ -266,7 +267,7 @@ export default defineEventHandler(async (event) => {
           .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, category_id, channels(title, thumbnail_url, slug), video_categories(id, name, key, color, icon)')
           .gte('published_at', dateFilter.toISOString())
           .order('view_count', { ascending: false })
-          .limit(limit)
+          .range(offset, offset + limit - 1)
 
         if (error) {
           throw createError({
@@ -332,7 +333,7 @@ export default defineEventHandler(async (event) => {
         .gte('published_at', thirtyDaysAgo)
         .gt('view_count', 0)
         .order('view_count', { ascending: false })
-        .limit(limit)
+        .range(offset, offset + limit - 1)
 
       if (!error && data && data.length > 0) {
         // Get category data for trending videos
@@ -388,7 +389,7 @@ export default defineEventHandler(async (event) => {
           .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, category_id, channels(title, thumbnail_url, slug), video_categories(id, name, key, color, icon)')
           .gte('published_at', thirtyDaysAgo)
           .order('view_count', { ascending: false })
-          .limit(limit)
+          .range(offset, offset + limit - 1)
 
         if (fallbackError) {
           throw createError({
@@ -438,7 +439,7 @@ export default defineEventHandler(async (event) => {
           .select('youtube_video_id, slug, title, thumbnail_url, channel_id, published_at, view_count, duration, category_id, channels(title, thumbnail_url, slug), video_categories(id, name, key, color, icon)')
           .gt('view_count', 0)
           .order('view_count', { ascending: false })
-          .limit(limit)
+          .range(offset, offset + limit - 1)
       } else if (section === 'featured') {
         // Example: featured could be based on some criteria - for now using recent high-view videos
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
@@ -448,7 +449,7 @@ export default defineEventHandler(async (event) => {
           .gte('published_at', sevenDaysAgo)
           .gt('view_count', 0)
           .order('view_count', { ascending: false })
-          .limit(limit)
+          .range(offset, offset + limit - 1)
       } else {
         // Default section: 'new' videos
         let dateFilter = new Date()
@@ -460,7 +461,7 @@ export default defineEventHandler(async (event) => {
           .gte('published_at', dateFilter.toISOString())
           .gt('view_count', 0)
           .order('published_at', { ascending: false })
-          .limit(limit)
+          .range(offset, offset + limit - 1)
       }
 
       const { data, error } = await dbQuery

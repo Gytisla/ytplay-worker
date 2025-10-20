@@ -117,3 +117,26 @@ END;
 $$;
 
 COMMENT ON FUNCTION public.schedule_refresh_video_stats_weekly() IS 'Enqueue REFRESH_VIDEO_STATS rotation job weekly; returns 1 if enqueued, 0 otherwise.';
+
+
+CREATE OR REPLACE FUNCTION public.enqueue_refresh_medium_videos()
+RETURNS integer
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_job_id UUID;
+  v_date TEXT := to_char(now() at time zone 'UTC', 'YYYY-MM-DD');
+BEGIN
+  -- Enqueue a single REFRESH_MEDIUM_VIDEOS job with a day-scoped dedup key
+  v_job_id := enqueue_job('REFRESH_MEDIUM_VIDEOS', jsonb_build_object(), 9, 'refresh_medium_videos:' || v_date);
+
+  IF v_job_id IS NOT NULL THEN
+    RETURN 1;
+  END IF;
+
+  RETURN 0;
+END;
+$$;
+
+COMMENT ON FUNCTION public.enqueue_refresh_medium_videos() IS 'Enqueue a REFRESH_MEDIUM_VIDEOS job (daily); returns 1 if enqueued, 0 otherwise.';

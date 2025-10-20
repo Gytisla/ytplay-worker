@@ -2,6 +2,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { handleBackfillChannel } from '../workers/handlers/backfill.ts'
 import { handleRefreshChannelStats } from '../workers/handlers/channel-stats.ts'
 import { handleRefreshHotVideos } from '../workers/handlers/hot-videos.ts'
+import { handleRefreshMediumVideos } from '../workers/handlers/refresh-medium-videos.ts'
 import { handleRefreshVideoStats } from '../workers/handlers/video-stats.ts'
 import { handleRSSPollChannel } from '../workers/handlers/rss-poll.ts'
 
@@ -62,6 +63,15 @@ const jobHandlers: Record<string, (payload: any, supabase: any) => Promise<{ suc
   'REFRESH_HOT_VIDEOS': async (payload, supabase) => {
     try {
       const res = await handleRefreshHotVideos(payload, supabase)
+      return { success: res.success, ...(typeof res.itemsProcessed === 'number' ? { itemsProcessed: res.itemsProcessed } : {}), ...(res.error ? { error: res.error } : {}) }
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : String(error) }
+    }
+  },
+
+  'REFRESH_MEDIUM_VIDEOS': async (payload, supabase) => {
+    try {
+      const res = await handleRefreshMediumVideos(payload, supabase)
       return { success: res.success, ...(typeof res.itemsProcessed === 'number' ? { itemsProcessed: res.itemsProcessed } : {}), ...(res.error ? { error: res.error } : {}) }
     } catch (error) {
       return { success: false, error: error instanceof Error ? error.message : String(error) }

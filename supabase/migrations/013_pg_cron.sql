@@ -34,6 +34,15 @@ BEGIN
     );
   END IF;
 
+  -- Refresh medium-aged videos daily at 02:00 (videos 7-30 days old)
+  IF NOT EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'refresh_medium_videos_daily') THEN
+    PERFORM cron.schedule(
+      'refresh_medium_videos_daily',
+      '0 2 * * *',
+      $cron$SELECT enqueue_refresh_medium_videos();$cron$
+    );
+  END IF;
+
   -- Refresh video stats weekly rotation (Sunday 04:00) — implement rotation in the RPC
   IF NOT EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'refresh_video_stats_weekly') THEN
     PERFORM cron.schedule(

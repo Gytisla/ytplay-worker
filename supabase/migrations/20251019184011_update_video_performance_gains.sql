@@ -50,7 +50,7 @@ SELECT DISTINCT ON (v.id)
                 WHERE video_id = v.id
                 AND date >= CURRENT_DATE - INTERVAL '1 day'
                 ORDER BY date ASC, hour ASC
-                LIMIT 1 OFFSET 1
+                LIMIT 1
             ), 0))
         ELSE 0
     END as gain_24h,
@@ -65,7 +65,7 @@ SELECT DISTINCT ON (v.id)
                 WHERE video_id = v.id
                 AND date >= CURRENT_DATE - INTERVAL '7 days'
                 ORDER BY date ASC, hour ASC
-                LIMIT 1 OFFSET 1
+                LIMIT 1
             ), 0))
         ELSE 0
     END as gain_7d,
@@ -80,7 +80,7 @@ SELECT DISTINCT ON (v.id)
                 WHERE video_id = v.id
                 AND date >= CURRENT_DATE - INTERVAL '30 days'
                 ORDER BY date ASC, hour ASC
-                LIMIT 1 OFFSET 1
+                LIMIT 1
             ), 0))
         ELSE 0
     END as gain_30d

@@ -3,7 +3,7 @@ import { ref, onMounted, onUnmounted, type Ref } from 'vue'
 export function useLazyLoadOnIntersection(
   elementRef: Ref<HTMLElement | null>,
   loadFunction: () => Promise<void> | void,
-  options: IntersectionObserverInit & { delay?: number } = {}
+  options: IntersectionObserverInit & { delay?: number; skipInitialCheck?: boolean } = {}
 ) {
   const isLoaded = ref(false)
   const isIntersecting = ref(false)
@@ -29,6 +29,7 @@ export function useLazyLoadOnIntersection(
     observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          console.log(`👁️ IntersectionObserver: ${entry.target.id || 'unknown'} isIntersecting=${entry.isIntersecting}, isLoaded=${isLoaded.value}`)
           if (entry.isIntersecting && !isLoaded.value) {
             isIntersecting.value = true
             load()
@@ -44,11 +45,13 @@ export function useLazyLoadOnIntersection(
 
     observer.observe(elementRef.value)
 
-    // Check if element is already visible on mount and load immediately
-    const rect = elementRef.value.getBoundingClientRect()
-    const isVisible = rect.top < window.innerHeight && rect.bottom > 0
-    if (isVisible && !isLoaded.value) {
-      load()
+    // Check if element is already visible on mount and load immediately (unless skipped)
+    if (!options.skipInitialCheck) {
+      const rect = elementRef.value.getBoundingClientRect()
+      const isVisible = rect.top < window.innerHeight && rect.bottom > 0
+      if (isVisible && !isLoaded.value) {
+        load()
+      }
     }
   })
 

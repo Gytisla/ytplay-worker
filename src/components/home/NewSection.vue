@@ -7,7 +7,7 @@
 
     <div class="mt-6 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       <ClientOnly>
-        <template v-if="loading">
+        <template v-if="localLoading">
           <VideoCardSkeleton v-for="i in 8" :key="`skeleton-${i}`" />
         </template>
         <template v-else>
@@ -40,7 +40,7 @@
 
 
 <script setup lang="ts">
-import { ref, toRef } from 'vue'
+import { ref } from 'vue'
 import VideoCard from '~/components/VideoCard.vue'
 import VideoCardSkeleton from '~/components/VideoCardSkeleton.vue'
 import { useLazyLoadOnIntersection } from '../../composables/useLazyLoadOnIntersection'
@@ -54,7 +54,6 @@ const thumb = '/assets/hero-thumb.svg'
 const props = defineProps({
   loading: { type: Boolean, default: false },
 })
-const loading = toRef(props, 'loading')
 
 // Ref for intersection observer
 const sectionRef = ref<HTMLElement | null>(null)
@@ -65,7 +64,7 @@ const localLoading = ref(true)
 const error = ref<string | null>(null)
 
 // Lazy load on intersection
-const { isLoaded } = useLazyLoadOnIntersection(sectionRef, loadRecentVideos, { delay: 100 })
+const { isLoaded } = useLazyLoadOnIntersection(sectionRef, loadRecentVideos, { delay: 100, skipInitialCheck: true })
 
 async function loadRecentVideos() {
   try {
@@ -105,6 +104,7 @@ async function loadRecentVideos() {
     }))
   } finally {
     localLoading.value = false
+    console.log('✅ NewSection: Finished loading recent videos')
   }
 }
 </script>

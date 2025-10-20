@@ -7,7 +7,7 @@
 
     <div class="mt-6 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       <ClientOnly>
-        <template v-if="loading">
+        <template v-if="localLoading">
           <div v-for="i in 8" :key="`ch-skel-${i}`" class="rounded-xl bg-white dark:bg-gray-800 shadow-sm p-3 animate-pulse flex items-center gap-3">
             <div class="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>
             <div class="flex-1">
@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRef } from 'vue'
+import { ref } from 'vue'
 import { useLazyLoadOnIntersection } from '../../composables/useLazyLoadOnIntersection'
 
 const { t } = useI18n()
@@ -76,7 +76,6 @@ const avatar = '/assets/hero-thumb.svg'
 const props = defineProps({
   loading: { type: Boolean, default: false },
 })
-const loading = toRef(props, 'loading')
 
 // Ref for intersection observer
 const sectionRef = ref<HTMLElement | null>(null)
@@ -87,7 +86,7 @@ const localLoading = ref(true)
 const error = ref<string | null>(null)
 
 // Lazy load on intersection
-const { isLoaded } = useLazyLoadOnIntersection(sectionRef, loadTopChannels, { delay: 300 })
+const { isLoaded } = useLazyLoadOnIntersection(sectionRef, loadTopChannels, { delay: 300, skipInitialCheck: true })
 
 async function loadTopChannels() {
   try {

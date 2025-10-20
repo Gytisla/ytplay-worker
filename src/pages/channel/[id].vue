@@ -3,7 +3,7 @@
     <!-- Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-12">
       <!-- Breadcrumb -->
-      <Breadcrumb :breadcrumbs="[{ label: 'Channels', to: '/top-channels' }, { label: channel?.name || 'Channel' }]" />
+      <Breadcrumb :breadcrumbs="[{ label: 'Top kanalai', to: '/top-channels' }, { label: channel?.name || 'Channel' }]" />
 
       <!-- Channel Info -->
       <section v-if="channel" class="mb-8">

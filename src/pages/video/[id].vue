@@ -40,7 +40,7 @@
               <div class="flex items-center gap-4 text-sm text-muted dark:text-gray-400 mb-4">
                 <span>{{ video.views }} views</span>•
                 <span v-if="video.duration">{{ video.duration }}</span>•
-                <span>{{ video.uploaded }}</span>
+                <span>{{ formattedUploadedTime }}</span>
               </div>
               <button
                 @click="openVideoInYouTube"
@@ -338,6 +338,27 @@ const canShowTodayStats = computed(() => {
   const sevenDaysAgo = new Date()
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
   return uploadDate >= sevenDaysAgo
+})
+
+const formattedUploadedTime = computed(() => {
+  if (!video.value?.publishedAt) return video.value?.uploaded || ''
+  
+  const uploadDate = new Date(video.value.publishedAt)
+  const now = new Date()
+  const diffMs = now.getTime() - uploadDate.getTime()
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+  const diffDays = Math.floor(diffHours / 24)
+  
+  if (diffHours < 1) {
+    return t('time.now')
+  } else if (diffHours < 24) {
+    return `${diffHours}${t('time.hour')}`
+  } else if (diffDays <= 7) {
+    return `${diffDays}${t('time.day')}`
+  } else {
+    // For older videos, use the original uploaded field
+    return video.value.uploaded
+  }
 })
 
 // Fetch video and stats on the client after navigation so route change is instant

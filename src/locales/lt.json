@@ -12,11 +12,13 @@
     "retry": "Bandyti dar kartą",
     "viewCount": "peržiūrų",
     "subscriberCount": "prenumeratorių",
+    "subscribersText": "prenumeratoriai",
+    "videosText": "vaizdo įrašai",
     "videoCount": "vaizdo įrašų",
     "today": "Šiandien",
     "week": "Šią savaitę",
     "month": "Šį mėnesį",
-    "allTime": "Visuomet",
+    "allTime": "Visą laiką",
     "top": "Geriausi"
   },
   "breadcrumb": {
@@ -243,7 +245,26 @@
     "videosShort": "vaizd.",
     "viewAll": "Žiūrėti visus",
     "noVideosInCategory": "Šioje kategorijoje dar nėra vaizdo įrašų.",
-    "noCategoriesFound": "Kategorijų nerasta."
+    "noCategoriesFound": "Kategorijų nerasta.",
+    "categoryNotFound": "Kategorija nerasta",
+    "backToCategories": "← Grįžti prie kategorijų",
+    "videosSection": "Vaizdo įrašai",
+    "sort": {
+      "latest": "Naujausi",
+      "popular": "Populiarūs"
+    },
+    "periods": {
+      "all": "Visą laiką",
+      "30": "Paskutinės 30 dienų",
+      "7": "Paskutinės 7 dienos"
+    },
+    "emptyState": {
+      "title": "Šioje kategorijoje dar nėra vaizdo įrašų",
+      "description": "Vaizdo įrašai pasirodys čia, kai bus jiems priskirtos kategorijos."
+    },
+    "loading": {
+      "moreVideos": "Kraunama daugiau vaizdo įrašų..."
+    }
   },
   "seo": {
     "home": {

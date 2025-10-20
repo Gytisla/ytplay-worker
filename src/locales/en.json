@@ -12,6 +12,8 @@
     "retry": "Retry",
     "viewCount": "views",
     "subscriberCount": "subscribers",
+    "subscribersText": "subscribers",
+    "videosText": "videos",
     "videoCount": "videos",
     "today": "Today",
     "week": "This Week",
@@ -239,7 +241,26 @@
     "videosShort": "videos",
     "viewAll": "View All",
     "noVideosInCategory": "No videos in this category yet.",
-    "noCategoriesFound": "No categories found."
+    "noCategoriesFound": "No categories found.",
+    "categoryNotFound": "Category not found",
+    "backToCategories": "← Back to categories",
+    "videosSection": "Videos",
+    "sort": {
+      "latest": "Latest",
+      "popular": "Popular"
+    },
+    "periods": {
+      "all": "All time",
+      "30": "Last 30 days",
+      "7": "Last 7 days"
+    },
+    "emptyState": {
+      "title": "No videos in this category yet",
+      "description": "Videos will appear here as they are categorized."
+    },
+    "loading": {
+      "moreVideos": "Loading more videos..."
+    }
   },
   "seo": {
     "home": {

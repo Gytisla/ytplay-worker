@@ -358,9 +358,10 @@ const formattedUploadedTime = computed(() => {
     return `${diffHours}${t('time.hour')} ${t('time.ago')}`
   } else if (diffDays < 7) {
     return `${diffDays}${t('time.day')} ${t('time.ago')}`
-  } else if (diffWeeks < 4) {
+  } else if (diffDays < 30) {
+    // Show weeks for anything under 30 days to avoid "0 months ago" when days are 28-29
     return `${diffWeeks}${t('time.week')} ${t('time.ago')}`
-  } else if (diffMonths < 12) {
+  } else if (diffDays < 365) {
     return `${diffMonths}${t('time.month')} ${t('time.ago')}`
   } else {
     return `${diffYears}${t('time.year')} ${t('time.ago')}`

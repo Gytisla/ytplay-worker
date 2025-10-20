@@ -90,6 +90,33 @@ async function resolveTargetChannel() {
 }
 
 // Inline categorization logic (copied from src/lib/categorization.ts)
+
+// Helper function to parse YouTube duration to seconds
+function parseDurationToSeconds(duration) {
+  if (!duration) return 0
+  
+  // Handle HH:MM:SS format (e.g., "00:22:21" or "3:00:00")
+  if (/^\d+:\d+:\d+$/.test(duration)) {
+    const parts = duration.split(':')
+    if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
+      const hours = parseInt(parts[0], 10)
+      const minutes = parseInt(parts[1], 10)
+      const seconds = parseInt(parts[2], 10)
+      return hours * 3600 + minutes * 60 + seconds
+    }
+  }
+  
+  // Handle ISO 8601 format (e.g., "PT3H", "PT4M13S", "PT1H2M3S")
+  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/)
+  if (!match) return 0
+  
+  const hours = parseInt(match[1] || '0', 10)
+  const minutes = parseInt(match[2] || '0', 10)
+  const seconds = parseInt(match[3] || '0', 10)
+  
+  return hours * 3600 + minutes * 60 + seconds
+}
+
 async function categorizeVideo(video, supabaseClient) {
   // Get active rules ordered by priority (lowest number first)
   const { data: rules, error } = await supabaseClient
@@ -146,6 +173,12 @@ function matchesRule(video, rule) {
         }
         break
 
+      case 'duration_lt':  // New condition: duration less than X seconds
+        const videoSeconds = parseDurationToSeconds(video.duration)
+        const thresholdSeconds = Number(value)
+        if (videoSeconds >= thresholdSeconds) return false
+        break
+
       default:
         console.warn('Unknown condition type:', key)
         return false
@@ -188,7 +221,7 @@ async function categorizeExistingVideos() {
     }
 
     // Process videos in batches using cursor-based pagination to avoid missing rows when updates shift offsets
-    const batchSize = 100
+    const batchSize = 500
     let processed = 0
     let categorized = 0
     let lastId = null
@@ -201,7 +234,7 @@ async function categorizeExistingVideos() {
       // Build base query ordered by id so we can use a cursor
       let fetchQuery = supabase
         .from('videos')
-        .select('id, youtube_video_id, title, description, channel_id')
+        .select('id, youtube_video_id, title, description, channel_id, duration')
         .is('category_id', null)
         .order('id', { ascending: true })
         .limit(batchSize)
@@ -241,6 +274,7 @@ async function categorizeExistingVideos() {
               id: video.id,
               category_id: categoryId
             })
+          } else {
           }
         } catch (error) {
           console.error(`Error categorizing video ${video.youtube_video_id}:`, error)
@@ -268,10 +302,11 @@ async function categorizeExistingVideos() {
           for (let i = 0; i < results.length; i++) {
             const res = results[i]
             if (res.error) {
-              errors.push(res)
+              errors.push(res.error)
+              console.log(`[DEBUG] Update error for video ${updates[i].id}:`, res.error)
             } else if (!res.data || res.data.length === 0) {
               // No rows updated (likely someone else already set category_id)
-              // We'll treat as skipped due to concurrent update
+              successful++
             } else {
               successful++
             }
@@ -296,9 +331,9 @@ async function categorizeExistingVideos() {
       console.log(`Progress: ${processed}/${count} videos processed, ${categorized} categorized`)
     }
 
-    console.log(`\nCategorization complete!${dryRun ? ' (DRY RUN - no changes made)' : ''}`)
+    console.log(`\nCategorization complete!`)
     console.log(`Total videos processed: ${processed}`)
-    console.log(`${dryRun ? 'Videos that would be categorized' : 'Videos categorized'}: ${categorized}`)
+    console.log(`Videos categorized: ${categorized}`)
     console.log(`Videos without categories: ${processed - categorized}`)
 
   } catch (error) {

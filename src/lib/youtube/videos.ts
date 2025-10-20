@@ -144,12 +144,19 @@ export class YouTubeVideosClient {
     // Validate response
     const validatedResponse = VideosListResponseSchema.parse(response)
 
-    // Validate each video resource
-    const validatedVideos = validatedResponse.items.map(item =>
-      VideoResourceSchema.parse(item)
-    )
+    // Validate each video resource individually, skipping invalid ones
+    const validatedVideos: VideoResource[] = []
+    for (const item of validatedResponse.items) {
+      try {
+        const validatedVideo = VideoResourceSchema.parse(item)
+        validatedVideos.push(validatedVideo)
+      } catch (error) {
+        console.warn(`Skipping invalid video ${item.id}:`, error instanceof Error ? error.message : String(error))
+        // Continue with other videos instead of failing the batch
+      }
+    }
 
-    console.debug(`Fetched ${validatedVideos.length} videos in batch`)
+    console.debug(`Fetched ${validatedVideos.length} valid videos in batch (${validatedResponse.items.length - validatedVideos.length} skipped)`)
     return validatedVideos
   }
 

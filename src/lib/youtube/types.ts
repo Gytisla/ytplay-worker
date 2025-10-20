@@ -241,11 +241,11 @@ export type VideoStatus = z.infer<typeof VideoStatusSchema>
  * YouTube Video Content Details Schema
  */
 export const VideoContentDetailsSchema = z.object({
-  duration: z.string(), // ISO 8601 duration (PT4M13S)
-  dimension: z.enum(['2d', '3d']),
-  definition: z.enum(['sd', 'hd']),
-  caption: z.enum(['true', 'false']),
-  licensedContent: z.boolean(),
+  duration: z.string().optional(), // ISO 8601 duration (PT4M13S) - optional for unavailable videos
+  dimension: z.enum(['2d', '3d']).optional(),
+  definition: z.enum(['sd', 'hd']).optional(),
+  caption: z.enum(['true', 'false']).optional(),
+  licensedContent: z.boolean().optional(),
   regionRestriction: z.object({
     allowed: z.array(z.string()).optional(),
     blocked: z.array(z.string()).optional(),
@@ -321,7 +321,7 @@ export const VideoContentDetailsSchema = z.object({
     tvpgRating: z.string().optional(),
     ytRating: z.enum(['ytUnspecified', 'ytAgeRestricted']).optional(),
   }).optional(),
-  projection: z.enum(['rectangular', '360']),
+  projection: z.enum(['rectangular', '360']).optional(),
   hasCustomThumbnail: z.boolean().optional(),
 })
 

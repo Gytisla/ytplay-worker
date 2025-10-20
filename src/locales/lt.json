@@ -19,15 +19,23 @@
     "allTime": "Visuomet",
     "top": "Geriausi"
   },
+  "breadcrumb": {
+    "topChannels": "Top kanalai",
+    "topVideos": "Top vaizdo įrašai",
+    "channel": "Kanalas",
+    "video": "Vaizdo įrašas"
+  },
   "time": {
     "now": "dabar",
     "hour": "val.",
     "day": "d.",
+    "week": "sav.",
     "month": "mėn.",
-    "year": "m."
+    "year": "m.",
+    "ago": "prieš"
   },
   "navigation": {
-    "discover": "Atrasti",
+    "discover": "Atrask",
     "browse": "Naršyti",
     "favorites": "Mėgstamiausi",
     "settings": "Nustatymai",
@@ -66,7 +74,12 @@
     "noData": "Nėra duomenų",
     "noDataAvailable": "Šiam laikotarpiui duomenų nėra",
     "today": "šiandien",
-    "thisPeriod": "šis laikotarpis"
+    "thisPeriod": "šis laikotarpis",
+    "openInYouTube": "Atidaryti YouTube",
+    "viewOnYouTube": "Žiūrėti YouTube",
+    "showMore": "Rodyti daugiau",
+    "showLess": "Rodyti mažiau",
+    "loadingVideo": "Kraunamas vaizdo įrašas..."
   },
   "channel": {
     "subscribe": "Prenumeruoti",
@@ -98,10 +111,27 @@
       "dailyViews": "Kasdienės peržiūros"
     },
     "noData": "Šiam laikotarpiui duomenų nėra",
+    "videos": "Vaizdo įrašai",
+    "sort": {
+      "latest": "Naujausi",
+      "popular": "Populiarūs"
+    },
+    "loading": {
+      "moreVideos": "Kraunama daugiau vaizdo įrašų..."
+    },
+    "messages": {
+      "endOfList": "Pasiekėte vaizdo įrašų sąrašo pabaigą",
+      "noVideos": "Šiam kanalui vaizdo įrašų nerasta."
+    },
     "badges": {
       "new": "NAUJAS",
       "trending": "POPULIARUS"
-    }
+    },
+    "openInYouTube": "Atidaryti YouTube",
+    "noDescription": "Aprašymo nėra",
+    "subscribersText": "prenumeratoriai",
+    "videosText": "vaizdo įrašai",
+    "joined": "Prisijungė"
   },
   "search": {
     "placeholder": "Ieškoti kanalų arba vaizdo įrašų...",
@@ -258,7 +288,7 @@
     "brandLine1": "YTPlay.lt",
     "brandLine2": "Atraskite vaizdo įrašus ir kanalus",
     "tagline": "Atradimų vieta, skirta nuolatiniams ir populiariems vaizdo įrašams. Greita, gerbianti privatumą ir estetiška.",
-    "explore": "Atrasti",
+    "explore": "Atrask",
     "resources": "Informacija",
     "stayInLoop": "Sekite naujienas",
     "subscribeText": "Prenumeruokite trumpą mėnesinį pranešimą apie geriausius vaizdo įrašus ir kanalus.",

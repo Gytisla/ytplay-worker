@@ -3,7 +3,7 @@
     <!-- Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-12">
       <!-- Breadcrumb -->
-      <Breadcrumb :breadcrumbs="[{ label: 'Top kanalai', to: '/top-channels' }, { label: channel?.name || 'Channel' }]" />
+      <Breadcrumb :breadcrumbs="[{ label: t('breadcrumb.topChannels'), to: '/top-channels' }, { label: channel?.name || t('breadcrumb.channel') }]" />
 
       <!-- Channel Info -->
       <section v-if="channel" class="mb-8">
@@ -20,14 +20,14 @@
                   <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                   </svg>
-                  Open in YouTube
+                  {{ t('channel.openInYouTube') }}
                 </button>
               </div>
-              <p class="text-muted dark:text-gray-400 mb-4">{{ channel.description || 'No description available' }}</p>
+              <p class="text-muted dark:text-gray-400 mb-4">{{ channel.description || t('channel.noDescription') }}</p>
               <div class="flex flex-wrap justify-center md:justify-start gap-4 text-sm mb-4">
-                <span class="text-muted dark:text-gray-400">{{ channel.subs }} subscribers</span>•
-                <span class="text-muted dark:text-gray-400">{{ channel.videos }} videos</span>•
-                <span class="text-muted dark:text-gray-400">Joined {{ channel.joined }}</span>
+                <span class="text-muted dark:text-gray-400">{{ channel.subs }} {{ t('channel.subscribersText') }}</span>•
+                <span class="text-muted dark:text-gray-400">{{ channel.videos }} {{ t('channel.videosText') }}</span>•
+                <span class="text-muted dark:text-gray-400">{{ t('channel.joined') }} {{ channel.joined }}</span>
               </div>
             </div>
           </div>
@@ -118,7 +118,7 @@
               <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-64 flex items-center justify-center">
                 <div class="text-center text-muted dark:text-gray-400">
                   <div class="text-4xl mb-2">📈</div>
-                  <div class="text-sm">No data available for this period</div>
+                  <div class="text-sm">{{ t('channel.noData') }}</div>
                 </div>
               </div>
               <div v-else class="relative h-64">
@@ -138,7 +138,7 @@
               <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-96 sm:h-64 flex items-center justify-center">
                 <div class="text-center text-muted dark:text-gray-400">
                   <div class="text-4xl mb-2">📊</div>
-                  <div class="text-sm">No data available for this period</div>
+                  <div class="text-sm">{{ t('channel.noData') }}</div>
                 </div>
               </div>
               <div v-else class="relative h-64">
@@ -158,7 +158,7 @@
               <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-64 flex items-center justify-center">
                 <div class="text-center text-muted dark:text-gray-400">
                   <div class="text-4xl mb-2">👁️</div>
-                  <div class="text-sm">No data available for this period</div>
+                  <div class="text-sm">{{ t('channel.noData') }}</div>
                 </div>
               </div>
               <div v-else class="relative h-64">
@@ -171,7 +171,7 @@
 
       <!-- Videos Grid -->
         <div class="flex items-center justify-between mb-6">
-          <h3 class="text-xl font-semibold">Videos</h3>
+          <h3 class="text-xl font-semibold">{{ t('channel.videos') }}</h3>
           <div class="flex items-center gap-2">
             <button 
               @click="changeSort('new')"
@@ -182,7 +182,7 @@
                   : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
               ]"
             >
-              Latest
+              {{ t('channel.sort.latest') }}
             </button>
             <button 
               @click="changeSort('popular')"
@@ -193,7 +193,7 @@
                   : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
               ]"
             >
-              Popular
+              {{ t('channel.sort.popular') }}
             </button>
           </div>
         </div>
@@ -233,17 +233,17 @@
         <div v-if="loadingMore" class="flex justify-center py-8">
           <div class="flex items-center gap-2 text-muted dark:text-gray-400">
             <div class="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 dark:border-gray-600 border-t-primary-600"></div>
-            <span class="text-sm">Loading more videos...</span>
+            <span class="text-sm">{{ t('channel.loading.moreVideos') }}</span>
           </div>
         </div>
 
         <!-- No more videos indicator -->
         <div v-else-if="videos.length > 0 && !hasMoreVideos" class="text-center py-8">
-          <p class="text-sm text-muted dark:text-gray-400">You've reached the end of the video list</p>
+          <p class="text-sm text-muted dark:text-gray-400">{{ t('channel.messages.endOfList') }}</p>
         </div>
 
         <div v-else class="text-center py-12">
-          <p class="text-muted dark:text-gray-400">No videos found for this channel.</p>
+          <p class="text-muted dark:text-gray-400">{{ t('channel.messages.noVideos') }}</p>
         </div>
       </section>
     </main>

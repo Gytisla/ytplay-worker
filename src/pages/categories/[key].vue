@@ -13,10 +13,10 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Category not found</h3>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">{{ t('category.notFound') }}</h3>
         <p class="text-gray-600 dark:text-gray-400">{{ error }}</p>
         <NuxtLink to="/categories" class="text-blue-600 hover:text-blue-800 mt-4 inline-block">
-          ← Back to categories
+          {{ t('category.backToCategories') }}
         </NuxtLink>
       </div>
 
@@ -24,7 +24,7 @@
       <div v-else-if="category">
         <!-- Breadcrumb -->
         <Breadcrumb :breadcrumbs="[
-          { label: 'Kategorijos', to: '/categories' },
+          { label: t('categoriesPage.breadcrumb'), to: '/categories' },
           { label: category.name }
         ]" />
 
@@ -33,7 +33,7 @@
           <div class="flex items-center mb-4">
             <div
               class="w-16 h-16 rounded-lg flex items-center justify-center text-3xl mr-6"
-              :style="{ backgroundColor: category.color + '20', color: category.color }"
+              :style="{ backgroundColor: (category.color || '#6B7280') + '20', color: category.color || '#6B7280' }"
             >
               {{ category.icon }}
             </div>
@@ -44,13 +44,13 @@
           </div>
 
           <div class="flex items-center space-x-6 text-sm text-gray-500">
-            <span>{{ totalVideos }} videos</span>
+            <span>{{ totalVideos }} {{ t('category.videosCount') }}</span>
           </div>
         </div>
 
         <!-- Sorting Controls -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
-          <h2 class="text-xl font-semibold">Videos</h2>
+          <h2 class="text-xl font-semibold">{{ t('category.videos') }}</h2>
           <div class="flex items-center gap-2">
             <button
               @click="changeSort('new')"
@@ -61,7 +61,7 @@
                   : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
               ]"
             >
-              Latest
+              {{ t('category.sort.latest') }}
             </button>
             <button
               @click="changeSort('popular')"
@@ -72,16 +72,16 @@
                   : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
               ]"
             >
-              Popular
+              {{ t('category.sort.popular') }}
             </button>
             <select
               v-model="timePeriod"
               @change="changeTimePeriod"
               class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm"
             >
-              <option value="all">All time</option>
-              <option value="30">Last 30 days</option>
-              <option value="7">Last 7 days</option>
+              <option value="all">{{ t('category.periods.all') }}</option>
+              <option value="30">{{ t('category.periods.30') }}</option>
+              <option value="7">{{ t('category.periods.7') }}</option>
             </select>
           </div>
         </div>
@@ -115,8 +115,8 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
             </svg>
           </div>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">No videos in this category yet</h3>
-          <p class="text-gray-600">Videos will appear here as they are categorized.</p>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">{{ t('category.empty.title') }}</h3>
+          <p class="text-gray-600">{{ t('category.empty.description') }}</p>
         </div>
 
         <!-- Load More Trigger (invisible element for intersection observer) -->
@@ -127,7 +127,7 @@
         >
           <div v-if="isLoadingMore" class="flex items-center gap-2 text-muted dark:text-gray-400">
             <div class="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 dark:border-gray-600 border-t-primary-600"></div>
-            <span class="text-sm">Loading more videos...</span>
+            <span class="text-sm">{{ t('category.loading.moreVideos') }}</span>
           </div>
         </div>
       </div>
@@ -137,6 +137,13 @@
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted, watch } from 'vue'
+
+// Provide a minimal declaration so the TS checker knows about the auto-imported `useI18n` in SFCs
+declare function useI18n(): { t: (key: string, ...args: any[]) => string }
+declare const useHead: any
+declare const useRoute: any
+
+const { t } = useI18n()
 interface Category {
   id: string
   name: string
@@ -293,20 +300,20 @@ onMounted(() => {
 
 // SEO
 useHead(() => ({
-  title: category.value ? `${category.value.name} - YTPlay.lt` : 'Category - YTPlay.lt',
+  title: category.value ? t('category.title', { name: category.value.name }) : t('categoriesPage.title'),
   meta: [
     {
       name: 'description',
-      content: category.value ? `Explore ${totalVideos.value} videos in the ${category.value.name} category. ${category.value.description || ''}` : 'Browse videos by category'
+      content: category.value ? t('category.description', { count: totalVideos.value, name: category.value.name }) : t('categoriesPage.description')
     },
     // Open Graph
     {
       property: 'og:title',
-  content: category.value ? `${category.value.name} - YTPlay.lt` : 'Category - YTPlay.lt'
+      content: category.value ? t('category.ogTitle', { name: category.value.name }) : t('categoriesPage.title')
     },
     {
       property: 'og:description',
-      content: category.value ? `Explore ${totalVideos.value} videos in the ${category.value.name} category. ${category.value.description || ''}` : 'Browse videos by category'
+      content: category.value ? t('category.ogDescription', { count: totalVideos.value, name: category.value.name, description: category.value.description || '' }) : t('categoriesPage.ogDescription')
     },
     {
       property: 'og:image',
@@ -322,7 +329,7 @@ useHead(() => ({
     },
     {
       property: 'og:site_name',
-  content: 'YTPlay.lt'
+      content: t('siteName')
     },
     // Twitter Card
     {
@@ -331,11 +338,11 @@ useHead(() => ({
     },
     {
       name: 'twitter:title',
-      content: category.value ? `${category.value.name} - YTPlay.lt` : 'Category - YTPlay.lt'
+      content: category.value ? t('category.title', { name: category.value.name }) : t('categoriesPage.title')
     },
     {
       name: 'twitter:description',
-      content: category.value ? `Explore ${totalVideos.value} videos in the ${category.value.name} category. ${category.value.description || ''}` : 'Browse videos by category'
+      content: category.value ? t('category.description', { count: totalVideos.value, name: category.value.name }) : t('categoriesPage.description')
     },
     {
       name: 'twitter:image',

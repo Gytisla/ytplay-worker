@@ -3,7 +3,7 @@
     <!-- Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-12">
       <!-- Breadcrumb -->
-      <Breadcrumb :breadcrumbs="[{ label: 'Top vaizdo įrašai', to: '/trending' }, { label: video?.title || 'Video' }]" />
+      <Breadcrumb :breadcrumbs="[{ label: t('breadcrumb.topVideos'), to: '/trending' }, { label: video?.title || t('breadcrumb.video') }]" />
 
       <!-- Video Player Section -->
       <section v-if="video" class="mb-8">
@@ -38,7 +38,7 @@
               </div>
               
               <div class="flex items-center gap-4 text-sm text-muted dark:text-gray-400 mb-4">
-                <span>{{ video.views }} views</span>•
+                <span>{{ video.views }} {{ t('common.viewCount') }}</span>•
                 <span v-if="video.duration">{{ video.duration }}</span>•
                 <span>{{ formattedUploadedTime }}</span>
               </div>
@@ -49,7 +49,7 @@
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                 </svg>
-                Open in YouTube
+                {{ t('video.openInYouTube') }}
               </button>
               <div class="text-gray-700 dark:text-gray-300 leading-relaxed">
                 <p v-html="displayDescription"></p>
@@ -63,7 +63,7 @@
                   <img :src="video.channel.avatar" :alt="video.channel.name" class="w-10 h-10 rounded-full object-cover" />
                   <div class="flex-1 min-w-0">
                     <h3 class="font-semibold text-gray-900 dark:text-gray-50 truncate hover:text-primary-600 dark:hover:text-primary-400 transition">{{ video.channel.name }}</h3>
-                    <p class="text-sm text-muted dark:text-gray-400">{{ video.channel.subscribers }} subscribers</p>
+                    <p class="text-sm text-muted dark:text-gray-400">{{ video.channel.subscribers }} {{ t('common.subscribersText') }}</p>
                   </div>
                 </div>
                 <button
@@ -73,7 +73,7 @@
                   <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                   </svg>
-                  View on YouTube
+                  {{ t('video.viewOnYouTube') }}
                 </button>
               </div>
             </div>
@@ -83,7 +83,7 @@
                     @click="descriptionExpanded = !descriptionExpanded"
                     class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-md transition-colors duration-200"
                 >
-                <span>{{ descriptionExpanded ? 'Show less' : 'Show more' }}</span>
+                <span>{{ descriptionExpanded ? t('video.showLess') : t('video.showMore') }}</span>
                 <svg 
                     :class="['w-4 h-4 transition-transform duration-200', descriptionExpanded ? 'rotate-180' : '']" 
                     fill="none" 
@@ -242,7 +242,7 @@
       <div v-else class="flex items-center justify-center min-h-96">
         <div class="flex items-center gap-3 text-muted dark:text-gray-400">
           <div class="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 dark:border-gray-600 border-t-primary-600"></div>
-          <span>Loading video...</span>
+          <span>{{ t('video.loadingVideo') }}</span>
         </div>
       </div>
     </main>
@@ -348,16 +348,22 @@ const formattedUploadedTime = computed(() => {
   const diffMs = now.getTime() - uploadDate.getTime()
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
   const diffDays = Math.floor(diffHours / 24)
+  const diffWeeks = Math.floor(diffDays / 7)
+  const diffMonths = Math.floor(diffDays / 30)
+  const diffYears = Math.floor(diffDays / 365)
   
   if (diffHours < 1) {
     return t('time.now')
   } else if (diffHours < 24) {
-    return `${diffHours}${t('time.hour')}`
-  } else if (diffDays <= 7) {
-    return `${diffDays}${t('time.day')}`
+    return `${diffHours}${t('time.hour')} ${t('time.ago')}`
+  } else if (diffDays < 7) {
+    return `${diffDays}${t('time.day')} ${t('time.ago')}`
+  } else if (diffWeeks < 4) {
+    return `${diffWeeks}${t('time.week')} ${t('time.ago')}`
+  } else if (diffMonths < 12) {
+    return `${diffMonths}${t('time.month')} ${t('time.ago')}`
   } else {
-    // For older videos, use the original uploaded field
-    return video.value.uploaded
+    return `${diffYears}${t('time.year')} ${t('time.ago')}`
   }
 })
 
@@ -588,7 +594,7 @@ function updateCharts() {
       data: {
         labels,
         datasets: [{
-          label: isTodayView ? 'Hourly View Gains' : 'Daily View Gains',
+          label: isTodayView ? t('video.charts.hourlyViewGains') : t('video.charts.dailyViewGains'),
           data: stats.length > 0 ? stats.map((s: any) => s.viewGained) : [0],
           backgroundColor: 'rgba(59, 130, 246, 0.8)',
           borderColor: 'rgb(59, 130, 246)',

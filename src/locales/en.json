@@ -18,6 +18,12 @@
     "month": "This Month",
     "allTime": "All Time"
   },
+  "breadcrumb": {
+    "topChannels": "Top Channels",
+    "topVideos": "Top Videos",
+    "channel": "Channel",
+    "video": "Video"
+  },
   "navigation": {
     "discover": "Discover",
     "browse": "Browse",
@@ -57,7 +63,12 @@
     "noData": "No data",
     "noDataAvailable": "No data available for this period",
     "today": "today",
-    "thisPeriod": "this period"
+    "thisPeriod": "this period",
+    "openInYouTube": "Open in YouTube",
+    "viewOnYouTube": "View on YouTube",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "loadingVideo": "Loading video..."
   },
   "channel": {
     "subscribe": "Subscribe",
@@ -89,17 +100,36 @@
       "dailyViews": "Daily Views"
     },
     "noData": "No data available for this period",
+    "videos": "Videos",
+    "sort": {
+      "latest": "Latest",
+      "popular": "Popular"
+    },
+    "loading": {
+      "moreVideos": "Loading more videos..."
+    },
+    "messages": {
+      "endOfList": "You've reached the end of the video list",
+      "noVideos": "No videos found for this channel."
+    },
     "badges": {
       "new": "NEW",
       "trending": "TRENDING"
-    }
+    },
+    "openInYouTube": "Open in YouTube",
+    "noDescription": "No description available",
+    "subscribersText": "subscribers",
+    "videosText": "videos",
+    "joined": "Joined"
   },
   "time": {
     "now": "now",
     "hour": "h",
     "day": "d",
+    "week": "w",
     "month": "mo",
-    "year": "y"
+    "year": "y",
+    "ago": "ago"
   },
   "search": {
     "placeholder": "Search for channels or videos...",

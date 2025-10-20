@@ -56,7 +56,6 @@
 
 <script setup lang="ts">
 // Provide a minimal declaration so the TS checker knows about the auto-imported `useI18n` in SFCs
-declare function useI18n(): { t: (key: string, ...args: any[]) => string }
 const { t } = useI18n()
 
 interface BreadcrumbItem {

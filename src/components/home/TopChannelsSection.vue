@@ -52,12 +52,12 @@
     <div class="mt-6 text-center">
       <NuxtLink
         to="/top-channels"
-        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors group"
+        class="inline-flex items-center gap-2 px-6 py-2 border border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 text-sm font-medium rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group"
       >
-        <span>{{ t('home.cta.viewAllChannels', 'View All Channels') }}</span>
-        <svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
         </svg>
+        <span>{{ t('home.cta.viewAllChannels', 'View All Channels') }}</span>
       </NuxtLink>
     </div>
   </section>

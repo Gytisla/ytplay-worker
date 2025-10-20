@@ -10,11 +10,11 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
           <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">{{ t('topVideosPage.title') }}</h1>
           <div class="flex items-center gap-2">
-            <button @click="sortBy = 'trending'" :class="['px-4 py-2 rounded-lg text-sm font-medium transition', sortBy === 'trending' ? 'bg-red-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
-              {{ t('topVideosPage.sortByTrending') }}
-            </button>
             <button @click="sortBy = 'views'" :class="['px-4 py-2 rounded-lg text-sm font-medium transition', sortBy === 'views' ? 'bg-red-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
               {{ t('topVideosPage.sortByViews') }}
+            </button>
+            <button @click="sortBy = 'trending'" :class="['px-4 py-2 rounded-lg text-sm font-medium transition', sortBy === 'trending' ? 'bg-red-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
+              {{ t('topVideosPage.sortByTrending') }}
             </button>
           </div>
         </div>
@@ -65,19 +65,6 @@
           <p class="text-muted dark:text-gray-400">{{ t('topVideosPage.noVideosFound') }}</p>
         </div>
       </section>
-
-      <!-- CTA Section -->
-      <div v-if="videos.length > 0" class="mt-12 text-center">
-        <NuxtLink
-          to="/trending"
-          class="inline-flex items-center gap-2 px-6 py-2 border border-primary-600 text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 text-sm font-medium rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group"
-        >
-          <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-          </svg>
-          Žiūrėti daugiau vaizdo įrašų
-        </NuxtLink>
-      </div>
     </main>
   </div>
 </template>
@@ -91,7 +78,7 @@ const { t } = useI18n()
 const videos = ref<any[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
-const sortBy = ref<'views' | 'trending'>('trending')
+const sortBy = ref<'views' | 'trending'>('views')
 
 // Load videos data on client mount so navigation is instant
 onMounted(async () => {

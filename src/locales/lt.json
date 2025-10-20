@@ -348,11 +348,12 @@
       }
     }
   },
-  "submitChannelPage": {
-    "title": "Pasiūlyti kanalą",
-    "metaTitle": "Pasiūlyti kanalą | YTPlay.lt",
-    "metaDescription": "Pasiūlykite YouTube kanalą mūsų platformai. Mes peržiūrėsime ir patvirtinsime pasiūlymus rankiniu būdu.",
-    "ogTitle": "Pasiūlyti kanalą | YTPlay.lt",
-    "ogDescription": "Turite mėgstamą YouTube kanalą? Pasiūlykite jį mūsų platformai!"
+  "newVideosPage": {
+    "title": "Nauji vaizdo įrašai",
+    "breadcrumb": "Nauji vaizdo įrašai",
+    "description": "Atraskite naujausius vaizdo įrašus iš lietuviškų kanalų. Sekite, kas ką tik buvo paskelbta ir nepraleiskite įdomiausio turinio.",
+    "noVideosFound": "Vaizdo įrašų nerasta.",
+    "ogTitle": "Nauji vaizdo įrašai - YTPlay.lt",
+    "ogDescription": "Atraskite naujausius vaizdo įrašus iš lietuviškų kanalų. Sekite, kas ką tik buvo paskelbta ir nepraleiskite įdomiausio turinio."
   }
 }

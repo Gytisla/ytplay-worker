@@ -1,15 +1,5 @@
 <template>
-  <div class="min-h-[60vh] mb-12">
-    <!-- Page Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-        Admin Dashboard
-      </h1>
-      <p class="mt-2 text-gray-600 dark:text-gray-400">
-        Manage users, content, and system settings
-      </p>
-    </div>
-
+  <div class="space-y-6">
     <!-- Dashboard Cards -->
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
       <!-- User Management Card -->
@@ -159,6 +149,7 @@ import { useAuth } from '../../composables/useAuth'
 
 // Page meta for middleware
 definePageMeta({
+  layout: 'admin',
   requiresAuth: true,
   requiredRole: 'admin'
 })

@@ -113,19 +113,21 @@
           <!-- <LanguageSwitcher /> -->
           
           <!-- Auth buttons -->
-          <div v-if="isAuthenticated" class="flex items-center gap-2">
-            <NuxtLink
-              to="/admin"
-              class="px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-            >
-              Admin
-            </NuxtLink>
-            <button
-              @click="handleSignOut"
-              class="px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-            >
-              Atsijungti
-            </button>
+          <div class="ml-4 pl-4 border-l border-gray-300 dark:border-gray-600">
+            <div v-if="isAuthenticated" class="flex items-center gap-2">
+              <NuxtLink
+                to="/admin"
+                class="px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              >
+                Admin
+              </NuxtLink>
+              <!-- <button
+                @click="handleSignOut"
+                class="px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              >
+                Atsijungti
+              </button> -->
+            </div>
           </div>
           <!-- <div v-else>
             <NuxtLink

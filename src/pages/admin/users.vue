@@ -1,23 +1,5 @@
 <template>
-  <div class="min-h-[60vh]">
-    <!-- Page Header -->
-    <div class="mb-8">
-      <div class="flex justify-between items-center">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">User Management</h1>
-          <p class="mt-2 text-gray-600 dark:text-gray-400">
-            Manage user accounts, roles, and permissions
-          </p>
-        </div>
-        <NuxtLink
-          to="/admin"
-          class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
-        >
-          ← Back to Dashboard
-        </NuxtLink>
-      </div>
-    </div>
-
+  <div class="space-y-6">
     <!-- Users Table -->
     <div class="bg-white dark:bg-slate-800 shadow-lg overflow-hidden sm:rounded-lg border border-gray-200 dark:border-gray-700">
       <div class="px-6 py-5">
@@ -128,6 +110,7 @@ type UserProfile = Database['public']['Tables']['user_profiles']['Row']
 
 // Page meta for middleware
 definePageMeta({
+  layout: 'admin',
   requiresAuth: true,
   requiredRole: 'admin'
 })

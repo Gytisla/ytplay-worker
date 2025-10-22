@@ -9,11 +9,11 @@
       <div class="mb-8">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
           <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">{{ t('topChannelsPage.title') }}</h1>
-          <div class="flex items-center gap-2">
-            <button @click="sortBy = 'subscribers'" :class="['px-4 py-2 rounded-lg text-sm font-medium transition', sortBy === 'subscribers' ? 'bg-primary-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
+          <div class="flex flex-wrap items-center gap-1 sm:gap-2">
+            <button @click="sortBy = 'subscribers'" :class="['px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition whitespace-nowrap', sortBy === 'subscribers' ? 'bg-primary-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
               {{ t('topChannelsPage.sortBySubscribers') }}
             </button>
-            <button @click="sortBy = 'views'" :class="['px-4 py-2 rounded-lg text-sm font-medium transition', sortBy === 'views' ? 'bg-primary-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
+            <button @click="sortBy = 'views'" :class="['px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition whitespace-nowrap', sortBy === 'views' ? 'bg-primary-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
               {{ t('topChannelsPage.sortByViews') }}
             </button>
           </div>

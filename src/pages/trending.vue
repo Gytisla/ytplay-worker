@@ -11,20 +11,21 @@
           <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">Populiariausi</h1>
 
           <!-- Period Filter -->
-          <div class="flex items-center gap-2">
-            <span class="text-sm font-medium text-gray-700 dark:text-gray-300 mr-2">Laikotarpis:</span>
+          <div class="flex flex-wrap items-center gap-1 sm:gap-2">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300 mr-1 sm:mr-2 whitespace-nowrap">Laikotarpis:</span>
             <button
               v-for="periodOption in periodOptions"
               :key="periodOption.key"
               @click="selectedPeriod = periodOption.key"
               :class="[
-                'px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap',
+                'px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition whitespace-nowrap',
                 selectedPeriod === periodOption.key
                   ? 'bg-red-600 text-white'
                   : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
               ]"
             >
-              {{ periodOption.label }}
+              <span class="hidden sm:inline">{{ periodOption.label }}</span>
+              <span class="sm:hidden">{{ periodOption.mobileLabel }}</span>
             </button>
           </div>
         </div>
@@ -88,9 +89,9 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 
 // Period options
 const periodOptions = [
-  { key: 'today', label: 'Šiandien' },
-  { key: '7', label: 'Šią savaitę' },
-  { key: '30', label: 'Šį mėnesį' }
+  { key: 'today', label: 'Šiandien', mobileLabel: 'Šiandien' },
+  { key: '7', label: 'Šią savaitę', mobileLabel: 'Šią sav.' },
+  { key: '30', label: 'Šį mėnesį', mobileLabel: 'Šį mėn.' }
 ]
 
 // Reactive state

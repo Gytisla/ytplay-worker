@@ -243,11 +243,11 @@
       <!-- Videos Grid -->
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-xl font-semibold">{{ t('channel.videos') }}</h3>
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-1 sm:gap-2">
             <button 
               @click="changeSort('new')"
               :class="[
-                'text-sm px-3 py-1 rounded-md border transition',
+                'text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1 rounded-md border transition whitespace-nowrap',
                 videoSort === 'new' 
                   ? 'bg-primary-600 text-white border-primary-600' 
                   : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
@@ -258,7 +258,7 @@
             <button 
               @click="changeSort('popular')"
               :class="[
-                'text-sm px-3 py-1 rounded-md border transition',
+                'text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1 rounded-md border transition whitespace-nowrap',
                 videoSort === 'popular' 
                   ? 'bg-primary-600 text-white border-primary-600' 
                   : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-muted dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'

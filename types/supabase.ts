@@ -323,6 +323,45 @@ export type Database = {
           },
         ]
       }
+      channel_submissions: {
+        Row: {
+          client_ip: unknown | null
+          id: string
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          submission_type: string
+          submitted_at: string | null
+          submitted_value: string
+          updated_at: string | null
+        }
+        Insert: {
+          client_ip?: unknown | null
+          id?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          submission_type: string
+          submitted_at?: string | null
+          submitted_value: string
+          updated_at?: string | null
+        }
+        Update: {
+          client_ip?: unknown | null
+          id?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          submission_type?: string
+          submitted_at?: string | null
+          submitted_value?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       channels: {
         Row: {
           branding_settings: Json | null
@@ -508,6 +547,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_profiles: {
+        Row: {
+          auth_user_id: string | null
+          avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          is_active: boolean | null
+          last_login_at: string | null
+          role: Database["public"]["Enums"]["user_role"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          auth_user_id?: string | null
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_login_at?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          auth_user_id?: string | null
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_login_at?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       video_categories: {
         Row: {
           color: string | null
@@ -628,6 +706,7 @@ export type Database = {
           privacy_status: string | null
           projection: string | null
           published_at: string
+          slug: string
           status: string | null
           tags: string[] | null
           thumbnail_url: string | null
@@ -660,6 +739,7 @@ export type Database = {
           privacy_status?: string | null
           projection?: string | null
           published_at: string
+          slug: string
           status?: string | null
           tags?: string[] | null
           thumbnail_url?: string | null
@@ -692,6 +772,7 @@ export type Database = {
           privacy_status?: string | null
           projection?: string | null
           published_at?: string
+          slug?: string
           status?: string | null
           tags?: string[] | null
           thumbnail_url?: string | null
@@ -778,10 +859,15 @@ export type Database = {
         Row: {
           age_days: number | null
           channel_id: string | null
+          channel_slug: string | null
+          channel_thumbnail_url: string | null
           channel_title: string | null
           comment_count: number | null
           duration: unknown | null
           engagement_rate_percent: number | null
+          gain_24h: number | null
+          gain_30d: number | null
+          gain_7d: number | null
           id: string | null
           last_stats_update: string | null
           latest_comments: number | null
@@ -790,9 +876,12 @@ export type Database = {
           like_count: number | null
           performance_score: number | null
           published_at: string | null
+          slug: string | null
+          thumbnail_url: string | null
           title: string | null
           updated_at: string | null
           view_count: number | null
+          youtube_video_id: string | null
         }
         Relationships: [
           {
@@ -912,10 +1001,24 @@ export type Database = {
             }
           | { p_job_type?: string; p_max_jobs?: number }
         Returns: {
-          job_id: string
+          attempt_count: number | null
+          completed_at: string | null
+          created_at: string | null
+          dedup_key: string | null
+          error_count: number | null
+          failed_at: string | null
+          id: string
           job_type: string
+          last_error: string | null
+          locked_by: string | null
+          locked_until: string | null
+          max_attempts: number | null
           payload: Json
-          priority: number
+          priority: number | null
+          scheduled_at: string | null
+          started_at: string | null
+          status: string | null
+          updated_at: string | null
         }[]
       }
       enqueue_job: {
@@ -938,6 +1041,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      enqueue_refresh_medium_videos: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       enqueue_scheduled_rss_polls: {
         Args: Record<PropertyKey, never>
         Returns: number
@@ -950,6 +1057,10 @@ export type Database = {
         Args: { channel_title: string }
         Returns: string
       }
+      generate_video_slug: {
+        Args: { video_title: string }
+        Returns: string
+      }
       get_channel_stats_history: {
         Args: { channel_id_param: string; days_back?: number }
         Returns: {
@@ -960,6 +1071,19 @@ export type Database = {
           video_growth: number
           view_count: number
           view_growth: number
+        }[]
+      }
+      get_current_user_profile: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          avatar_url: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          is_active: boolean
+          last_login_at: string
+          role: Database["public"]["Enums"]["user_role"]
         }[]
       }
       get_database_size_info: {
@@ -1009,6 +1133,10 @@ export type Database = {
           view_count: number
           view_growth: number
         }[]
+      }
+      has_role: {
+        Args: { check_role: Database["public"]["Enums"]["user_role"] }
+        Returns: boolean
       }
       is_admin: {
         Args: Record<PropertyKey, never>
@@ -1094,6 +1222,10 @@ export type Database = {
         Args: { error_message_param?: string; job_id_param: string }
         Returns: string
       }
+      setup_admin_user: {
+        Args: { user_email: string }
+        Returns: boolean
+      }
       should_poll_feed: {
         Args: { feed_id: string }
         Returns: boolean
@@ -1157,6 +1289,7 @@ export type Database = {
           privacy_status: string | null
           projection: string | null
           published_at: string
+          slug: string
           status: string | null
           tags: string[] | null
           thumbnail_url: string | null
@@ -1169,7 +1302,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      user_role: "user" | "moderator" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1299,7 +1432,9 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["user", "moderator", "admin"],
+    },
   },
 } as const
 

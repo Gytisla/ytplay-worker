@@ -1,4 +1,32 @@
-# One-time Video Categorization Script
+# Scripts
+
+This directory contains utility scripts for database management and maintenance.
+
+## Admin User Management
+
+### Promote User to Admin
+
+Promotes a registered user to admin role.
+
+```bash
+node scripts/promote-admin.js <email>
+```
+
+**Example:**
+```bash
+node scripts/promote-admin.js admin@example.com
+```
+
+**What it does:**
+1. Finds the user by email in Supabase auth
+2. Creates or updates their profile with admin role
+3. Enables access to admin dashboard and user management features
+
+**Requirements:**
+- User must already be registered
+- Environment variables must be set (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+
+## One-time Video Categorization Script
 
 This script categorizes existing videos in the database that don't have a `category_id` set yet.
 

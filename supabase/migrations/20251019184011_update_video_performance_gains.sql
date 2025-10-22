@@ -1,8 +1,11 @@
 -- Migration: 20251019184011_update_video_performance_gains.sql
 -- Description: Add gain columns to video_performance view
 
--- Add gain columns to existing video_performance view
-CREATE OR REPLACE VIEW video_performance AS
+-- Drop existing view if it exists
+DROP VIEW IF EXISTS video_performance;
+
+-- Create video_performance view with gain columns
+CREATE VIEW video_performance AS
 SELECT DISTINCT ON (v.id)
     v.id,
     v.youtube_video_id,

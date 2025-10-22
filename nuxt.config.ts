@@ -83,11 +83,6 @@ export default defineNuxtConfig({
     noExternal: ['@supabase', '@nuxtjs/supabase', 'cookie']
   },
 
-  // Build configuration
-  build: {
-    transpile: [],
-  },
-
   // Modules
   modules: [
     '@nuxtjs/tailwindcss',

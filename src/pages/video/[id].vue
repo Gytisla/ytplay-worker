@@ -145,62 +145,91 @@
 
       <!-- Performance Analytics -->
       <section v-if="videoStats" class="mb-8">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+          <!-- Header with toggle -->
+          <div class="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors" @click="statsCollapsed = !statsCollapsed">
             <h2 class="text-2xl font-semibold">{{ t('video.performanceAnalytics') }}</h2>
-            <select v-model="statsPeriod" @change="loadVideoStats" class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm" :disabled="!videoStats">
-              <option v-if="canShowTodayStats" value="1">{{ t('video.periods.1') }}</option>
-              <option value="7">{{ t('video.periods.7') }}</option>
-              <option value="30">{{ t('video.periods.30') }}</option>
-              <option value="90">{{ t('video.periods.90') }}</option>
-              <option value="365">{{ t('video.periods.365') }}</option>
-            </select>
-          </div>
-
-          <!-- Summary Cards -->
-          <div v-if="videoStats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div class="text-sm text-muted dark:text-gray-400">{{ t('video.stats.views') }}</div>
-              <div class="text-2xl font-bold">{{ videoStats.summary ? formatNumber(videoStats.summary.currentViews) : '0' }}</div>
-              <div v-if="videoStats.summary" class="text-sm" :class="videoStats.summary.viewChange >= 0 ? 'text-green-600' : 'text-red-600'">
-                {{ videoStats.summary.viewChange >= 0 ? '+' : '' }}{{ formatNumber(videoStats.summary.viewChange) }}
-              </div>
-              <div v-else class="text-sm text-muted dark:text-gray-400">{{ t('video.noData') }}</div>
-            </div>
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div class="text-sm text-muted dark:text-gray-400">{{ t('video.stats.likes') }}</div>
-              <div class="text-2xl font-bold">{{ videoStats.summary ? formatNumber(videoStats.summary.currentLikes) : '0' }}</div>
-              <div v-if="videoStats.summary" class="text-sm" :class="videoStats.summary.likeChange >= 0 ? 'text-green-600' : 'text-red-600'">
-                {{ videoStats.summary.likeChange >= 0 ? '+' : '' }}{{ formatNumber(videoStats.summary.likeChange) }}
-              </div>
-              <div v-else class="text-sm text-muted dark:text-gray-400">{{ t('video.noData') }}</div>
-            </div>
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div class="text-sm text-muted dark:text-gray-400">{{ t('video.stats.comments') }}</div>
-              <div class="text-2xl font-bold">{{ videoStats.summary ? formatNumber(videoStats.summary.currentComments) : '0' }}</div>
-              <div v-if="videoStats.summary" class="text-sm" :class="videoStats.summary.commentChange >= 0 ? 'text-green-600' : 'text-red-600'">
-                {{ videoStats.summary.commentChange >= 0 ? '+' : '' }}{{ formatNumber(videoStats.summary.commentChange) }}
-              </div>
-              <div v-else class="text-sm text-muted dark:text-gray-400">{{ t('video.noData') }}</div>
-            </div>
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div class="text-sm text-muted dark:text-gray-400">{{ t('video.stats.totalViewGains') }}</div>
-              <div class="text-2xl font-bold">{{ videoStats.summary ? formatNumber(videoStats.summary.totalViewGained) : '0' }}</div>
-              <div class="text-sm text-muted dark:text-gray-400">{{ videoStats.isTodayView ? t('video.today') : t('video.thisPeriod') }}</div>
+            <div class="flex items-center gap-3">
+              <button 
+                @click.stop="statsCollapsed = !statsCollapsed"
+                class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                :aria-expanded="!statsCollapsed"
+                aria-label="Toggle analytics"
+              >
+                <svg 
+                  :class="['w-4 h-4 transition-transform duration-200', !statsCollapsed ? 'rotate-180' : '']" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </button>
             </div>
           </div>
 
-          <!-- Loading Summary Cards -->
-          <div v-if="!videoStats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div v-for="i in 4" :key="`summary-skeleton-${i}`" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 animate-pulse">
-              <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-16 mb-2"></div>
-              <div class="h-8 bg-gray-200 dark:bg-gray-600 rounded w-20 mb-2"></div>
-              <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-12"></div>
+          <!-- Collapsible content -->
+          <div class="px-6 py-3 analytics-content">
+            <!-- Summary Cards (always visible) -->
+            <div v-if="videoStats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div class="text-sm text-muted dark:text-gray-400">{{ t('video.stats.views') }}</div>
+                <div class="text-2xl font-bold">{{ videoStats.summary ? formatNumber(videoStats.summary.currentViews) : '0' }}</div>
+                <div v-if="videoStats.summary" class="text-sm" :class="videoStats.summary.viewChange >= 0 ? 'text-green-600' : 'text-red-600'">
+                  {{ videoStats.summary.viewChange >= 0 ? '+' : '' }}{{ formatNumber(videoStats.summary.viewChange) }}
+                </div>
+                <div v-else class="text-sm text-muted dark:text-gray-400">{{ t('video.noData') }}</div>
+              </div>
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div class="text-sm text-muted dark:text-gray-400">{{ t('video.stats.likes') }}</div>
+                <div class="text-2xl font-bold">{{ videoStats.summary ? formatNumber(videoStats.summary.currentLikes) : '0' }}</div>
+                <div v-if="videoStats.summary" class="text-sm" :class="videoStats.summary.likeChange >= 0 ? 'text-green-600' : 'text-red-600'">
+                  {{ videoStats.summary.likeChange >= 0 ? '+' : '' }}{{ formatNumber(videoStats.summary.likeChange) }}
+                </div>
+                <div v-else class="text-sm text-muted dark:text-gray-400">{{ t('video.noData') }}</div>
+              </div>
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div class="text-sm text-muted dark:text-gray-400">{{ t('video.stats.comments') }}</div>
+                <div class="text-2xl font-bold">{{ videoStats.summary ? formatNumber(videoStats.summary.currentComments) : '0' }}</div>
+                <div v-if="videoStats.summary" class="text-sm" :class="videoStats.summary.commentChange >= 0 ? 'text-green-600' : 'text-red-600'">
+                  {{ videoStats.summary.commentChange >= 0 ? '+' : '' }}{{ formatNumber(videoStats.summary.commentChange) }}
+                </div>
+                <div v-else class="text-sm text-muted dark:text-gray-400">{{ t('video.noData') }}</div>
+              </div>
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div class="text-sm text-muted dark:text-gray-400">{{ t('video.stats.totalViewGains') }}</div>
+                <div class="text-2xl font-bold">{{ videoStats.summary ? formatNumber(videoStats.summary.totalViewGained) : '0' }}</div>
+                <div class="text-sm text-muted dark:text-gray-400">{{ videoStats.isTodayView ? t('video.today') : t('video.thisPeriod') }}</div>
+              </div>
             </div>
-          </div>
 
-          <!-- Charts -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Loading Summary Cards -->
+            <div v-if="!videoStats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div v-for="i in 4" :key="`summary-skeleton-${i}`" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 animate-pulse">
+                <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-16 mb-2"></div>
+                <div class="h-8 bg-gray-200 dark:bg-gray-600 rounded w-20 mb-2"></div>
+                <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-12"></div>
+              </div>
+            </div>
+
+            <!-- Period Selector (visible when expanded) -->
+            <div v-show="!statsCollapsed" class="mb-6 flex justify-center">
+              <select 
+                v-model="statsPeriod" 
+                @change="loadVideoStats" 
+                class="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm font-medium" 
+                :disabled="!videoStats"
+              >
+                <option v-if="canShowTodayStats" value="1">{{ t('video.periods.1') }}</option>
+                <option value="7">{{ t('video.periods.7') }}</option>
+                <option value="30">{{ t('video.periods.30') }}</option>
+                <option value="90">{{ t('video.periods.90') }}</option>
+                <option value="365">{{ t('video.periods.365') }}</option>
+              </select>
+            </div>
+
+            <!-- Charts (only visible when expanded) -->
+            <div v-show="!statsCollapsed" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- View Growth Chart -->
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
               <h3 class="text-lg font-semibold mb-4">{{ videoStats.isTodayView ? t('video.charts.hourlyViewGrowth') : t('video.charts.viewGrowth') }}</h3>
@@ -280,11 +309,23 @@
                 <canvas ref="commentChartRef" class="w-full h-full"></canvas>
               </div>
             </div>
+            </div>
+          </div>
+
+          <!-- Show More Button (only visible when collapsed) -->
+          <div v-show="statsCollapsed" class="flex justify-center pb-6">
+            <button 
+              @click="statsCollapsed = false"
+              class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md transition-colors duration-200"
+            >
+              <span>{{ t('video.showMoreAnalytics') }}</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
           </div>
         </div>
-      </section>
-
-      <!-- Loading State -->
+      </section>      <!-- Loading State -->
       <div v-else class="flex items-center justify-center min-h-96">
         <div class="flex items-center gap-3 text-muted dark:text-gray-400">
           <div class="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 dark:border-gray-600 border-t-primary-600"></div>
@@ -354,6 +395,7 @@ const maxTagsToShow = 8
 // Stats data
 const videoStats = ref<any>(null)
 const statsPeriod = ref('30')
+const statsCollapsed = ref(true) // Start collapsed by default
 
 // Chart refs
 const viewChartRef = ref<HTMLCanvasElement>()

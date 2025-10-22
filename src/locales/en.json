@@ -80,6 +80,7 @@
     "showLess": "Show less",
     "showMoreTags": "Show {count} more tags",
     "showLessTags": "Show less tags",
+    "showMoreAnalytics": "Show more analytics",
     "loadingVideo": "Loading video..."
   },
   "channel": {
@@ -135,6 +136,7 @@
     "subscribersText": "subscribers",
     "videosText": "videos",
     "joined": "Joined",
+    "showMoreAnalytics": "Show more analytics",
     "timeAgo": {
       "days_one": "{{count}} day ago",
       "days_other": "{{count}} days ago",

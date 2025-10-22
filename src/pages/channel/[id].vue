@@ -67,18 +67,6 @@
           >
             <h2 class="text-2xl font-semibold">{{ t('channel.performanceAnalytics') }}</h2>
             <div class="flex items-center gap-3">
-              <select 
-                v-model="statsPeriod" 
-                @change="loadChannelStats" 
-                @click.stop
-                class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm" 
-                :disabled="!channelStats"
-              >
-                <option value="7">{{ t('channel.periods.7') }}</option>
-                <option value="30">{{ t('channel.periods.30') }}</option>
-                <option value="90">{{ t('channel.periods.90') }}</option>
-                <option value="365">{{ t('channel.periods.365') }}</option>
-              </select>
               <button 
                 @click.stop="statsCollapsed = !statsCollapsed"
                 class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
@@ -136,6 +124,21 @@
                 <div class="h-8 bg-gray-200 dark:bg-gray-600 rounded w-20 mb-2"></div>
                 <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-12"></div>
               </div>
+            </div>
+
+            <!-- Period Selector (visible when expanded) -->
+            <div v-show="!statsCollapsed" class="mb-6 flex justify-center">
+              <select 
+                v-model="statsPeriod" 
+                @change="loadChannelStats" 
+                class="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm font-medium" 
+                :disabled="!channelStats"
+              >
+                <option value="7">{{ t('channel.periods.7') }}</option>
+                <option value="30">{{ t('channel.periods.30') }}</option>
+                <option value="90">{{ t('channel.periods.90') }}</option>
+                <option value="365">{{ t('channel.periods.365') }}</option>
+              </select>
             </div>
 
             <!-- Charts (only visible when expanded) -->
@@ -220,6 +223,19 @@
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- Show More Button (only visible when collapsed) -->
+          <div v-show="statsCollapsed" class="flex justify-center pb-6">
+            <button 
+              @click="statsCollapsed = false"
+              class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md transition-colors duration-200"
+            >
+              <span>{{ t('channel.showMoreAnalytics') }}</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
           </div>
         </div>
       </section>

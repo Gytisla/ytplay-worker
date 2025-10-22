@@ -85,6 +85,7 @@
     "showMoreTags_one": "Rodyti dar {count} žymę",
     "showMoreTags_other": "Rodyti dar {count} žymių",
     "showLessTags": "Rodyti mažiau žymių",
+    "showMoreAnalytics": "Rodyti daugiau analitikos",
     "loadingVideo": "Kraunamas vaizdo įrašas..."
   },
   "channel": {
@@ -140,6 +141,7 @@
     "subscribersText": "prenumeratoriai",
     "videosText": "vaizdo įrašai",
     "joined": "Prisijungė",
+    "showMoreAnalytics": "Rodyti daugiau analitikos",
     "timeAgo": {
       "days_one": "prieš {count} dieną",
       "days_other": "prieš {count} dienas",

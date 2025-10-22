@@ -37,6 +37,13 @@
                 </NuxtLink>
               </div>
               
+              <!-- Live/Upcoming Badge -->
+              <div v-if="videoBadge" class="mb-3 flex-shrink-0">
+                <span :class="['inline-flex items-center px-3 py-1 text-xs font-medium rounded-full', videoBadge.class]">
+                  {{ videoBadge.text }}
+                </span>
+              </div>
+              
               <div class="flex items-center gap-4 text-sm text-muted dark:text-gray-400 mb-4">
                 <span>{{ video.views }} {{ t('common.viewCount') }}</span>•
                 <span v-if="video.duration">{{ video.duration }}</span>•
@@ -366,6 +373,24 @@ const formattedUploadedTime = computed(() => {
   } else {
     return `${diffYears}${t('time.year')} ${t('time.ago')}`
   }
+})
+
+const videoBadge = computed(() => {
+  if (!video.value?.live_broadcast_content) return null
+  
+  if (video.value.live_broadcast_content === 'live') {
+    return {
+      text: 'LIVE',
+      class: 'bg-red-500 animate-pulse text-white'
+    }
+  } else if (video.value.live_broadcast_content === 'upcoming') {
+    return {
+      text: 'PREMJERA',
+      class: 'bg-purple-600 text-white'
+    }
+  }
+  
+  return null
 })
 
 // Fetch video and stats on the client after navigation so route change is instant

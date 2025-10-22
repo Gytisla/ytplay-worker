@@ -83,6 +83,7 @@ export default defineEventHandler(async (event) => {
         view_count,
         published_at,
         category_id,
+        live_broadcast_content,
         video_categories (
           id,
           name,
@@ -120,7 +121,8 @@ export default defineEventHandler(async (event) => {
           key: (video.video_categories as any).key,
           color: (video.video_categories as any).color,
           icon: (video.video_categories as any).icon
-        } : null
+        } : null,
+        live_broadcast_content: video.live_broadcast_content
       }
     })
 

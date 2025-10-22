@@ -109,7 +109,8 @@
                 channelId: video.channelId,
                 views: video.views,
                 age: video.age,
-                category: category
+                category: category,
+                live_broadcast_content: video.live_broadcast_content
               }"
             />
           </div>

@@ -67,6 +67,7 @@ export default defineEventHandler(async (event: any) => {
         duration,
         view_count,
         thumbnail_url,
+        live_broadcast_content,
         channels!inner (
           id,
           slug,

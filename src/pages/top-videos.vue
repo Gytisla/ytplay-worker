@@ -52,7 +52,8 @@
               channelId: video.channelId,
               views: video.views,
               age: video.age,
-              category: video.category
+              category: video.category,
+              live_broadcast_content: video.live_broadcast_content
             }"
             :ranking="{
               position: index + 1,
@@ -112,7 +113,8 @@ async function loadVideos() {
       age: video.age,
       duration: video.duration,
       trend: video.trend,
-      category: video.category
+      category: video.category,
+      live_broadcast_content: video.live_broadcast_content
     }))
   } catch (err: any) {
     error.value = String(err?.message ?? err)

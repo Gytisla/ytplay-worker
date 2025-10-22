@@ -61,6 +61,8 @@
             badge.type === 'new' ? 'bg-green-600' :
             badge.type === 'trending' ? 'bg-red-600' :
             badge.type === 'ranking' ? 'bg-primary-600' :
+            badge.text === 'LIVE' ? 'bg-red-500 animate-pulse' :
+            badge.text === 'PREMIERE' ? 'bg-purple-600' :
             'bg-gray-600'
           ]"
         >
@@ -143,6 +145,7 @@ interface Props {
       color: string
       icon: string
     }
+    live_broadcast_content?: string
   }
   badge?: {
     type: 'new' | 'trending' | 'ranking' | 'custom'
@@ -183,7 +186,24 @@ const autoBadges = computed(() => {
     badgeTypes.add('trending')
   }
 
-  {{ formattedAge }}
+  // Check for live badge: videos that are currently live
+  console.log('Video live_broadcast_content:', video.live_broadcast_content)
+  if (video.live_broadcast_content === 'live') {
+    badges.push({
+      type: 'custom' as const,
+      text: 'LIVE'
+    })
+    badgeTypes.add('live')
+  }
+
+  // Check for upcoming/premiere badge: videos scheduled for live
+  if (video.live_broadcast_content === 'upcoming') {
+    badges.push({
+      type: 'custom' as const,
+      text: 'PREMJERA'
+    })
+    badgeTypes.add('upcoming')
+  }
 
   // Check for new badge: videos less than 7 days old
   if (video.age) {

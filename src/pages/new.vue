@@ -42,7 +42,8 @@
               channelId: video.channelId,
               views: video.views,
               age: video.age,
-              category: video.category
+              category: video.category,
+              live_broadcast_content: video.live_broadcast_content
             }"
             :badge="{ type: 'new', text: 'NAUJAS' }"
           />

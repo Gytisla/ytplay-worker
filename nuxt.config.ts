@@ -71,6 +71,7 @@ export default defineNuxtConfig({
         url: process.env['SUPABASE_URL'],
         key: process.env['SUPABASE_ANON_KEY'],
       },
+      registrationEnabled: process.env['REGISTRATION_ENABLED'] !== 'false', // Default to true
     },
   },
 

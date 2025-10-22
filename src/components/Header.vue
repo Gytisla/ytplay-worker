@@ -111,6 +111,33 @@
             </NuxtLink>
           </div>
           <!-- <LanguageSwitcher /> -->
+          
+          <!-- Auth buttons -->
+          <div class="ml-4 pl-4 border-l border-gray-300 dark:border-gray-600">
+            <div v-if="isAuthenticated" class="flex items-center gap-2">
+              <NuxtLink
+                to="/admin"
+                class="px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              >
+                Admin
+              </NuxtLink>
+              <!-- <button
+                @click="handleSignOut"
+                class="px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              >
+                Atsijungti
+              </button> -->
+            </div>
+          </div>
+          <!-- <div v-else>
+            <NuxtLink
+              to="/login"
+              class="px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+            >
+              Prisijungti
+            </NuxtLink>
+          </div> -->
+          
           <button
             @click="toggleTheme"
             :aria-pressed="isDark.toString()"
@@ -217,6 +244,32 @@
           </NuxtLink>
         </div>
         <div class="pt-2 border-t border-gray-100 dark:border-gray-800 mt-2">
+          <!-- Auth buttons for mobile -->
+          <div v-if="isAuthenticated" class="px-3 py-2 space-y-2">
+            <NuxtLink
+              to="/admin"
+              @click="mobileOpen = false"
+              class="w-full block px-3 py-2 text-sm font-medium rounded-md text-center text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              Admin
+            </NuxtLink>
+            <button
+              @click="handleSignOut(); mobileOpen = false"
+              class="w-full px-3 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              Atsijungti
+            </button>
+          </div>
+          <!-- <div v-else class="px-3 py-2">
+            <NuxtLink
+              to="/login"
+              @click="mobileOpen = false"
+              class="w-full block px-3 py-2 text-sm font-medium rounded-md text-center text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              Prisijungti
+            </NuxtLink>
+          </div> -->
+          
           <button
             @click="toggleTheme(); mobileOpen = false"
             class="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -234,6 +287,7 @@ import { ref, onMounted, computed, onBeforeUnmount } from 'vue'
 // import LanguageSwitcher from '~/components/LanguageSwitcher.vue'
 
 const route = useRoute()
+const { isAuthenticated, user, signOut, initialize } = useAuth()
 const THEME_KEY = 'ytplay_theme'
 const theme = ref('system')
 const isDark = ref(false)
@@ -279,6 +333,10 @@ function toggleTheme() {
   applyTheme(theme.value)
 }
 
+async function handleSignOut() {
+  await signOut()
+}
+
 function onKeydown(e) {
   if (e.key === 'Escape' && mobileOpen.value) {
     mobileOpen.value = false
@@ -308,7 +366,10 @@ function onScroll() {
   lastScrollY.value = currentScrollY
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // Initialize auth state
+  await initialize()
+  
   if (typeof localStorage !== 'undefined') {
     const stored = localStorage.getItem(THEME_KEY)
     theme.value = stored || 'system'

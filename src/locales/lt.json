@@ -406,5 +406,12 @@
     "noVideosFound": "Vaizdo įrašų nerasta.",
     "ogTitle": "Nauji vaizdo įrašai - YTPlay.lt",
     "ogDescription": "Atraskite naujausius vaizdo įrašus iš lietuviškų kanalų. Sekite, kas ką tik buvo paskelbta ir nepraleiskite įdomiausio turinio."
+  },
+  "submitChannelPage": {
+    "title": "Pasiūlyti kanalą",
+    "metaTitle": "Pasiūlyti kanalą | YTPlay.lt",
+    "metaDescription": "Turite mėgstamą YouTube kanalą? Pasiūlykite jį mūsų platformai!",
+    "ogTitle": "Pasiūlyti kanalą | YTPlay.lt",
+    "ogDescription": "Pasiūlykite savo mėgstamus YouTube kanalus mūsų platformai."
   }
 }

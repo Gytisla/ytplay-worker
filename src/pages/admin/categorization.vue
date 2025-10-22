@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-[60vh]">
+  <div class="min-h-[60vh] mb-12">
     <!-- Page Header -->
     <div class="mb-8">
       <div class="flex justify-between items-center">
@@ -36,7 +36,7 @@
           All Categorization Rules
         </h3>
         <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
-          Rules are processed in priority order (lower numbers first). Only active rules are applied.
+          Rules are processed in priority order (lower numbers first). Only active rules are applied. All conditions within a rule must match for categorization to occur.
         </p>
       </div>
       <div v-if="loading" class="px-6 py-5">
@@ -52,41 +52,63 @@
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead class="bg-gray-50 dark:bg-slate-700">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-20">
                 Priority
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-32">
                 Name
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Category
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Conditions
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Conditions <span class="text-xs normal-case">(all must match)</span>
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-20">
                 Status
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-24">
                 Actions
               </th>
             </tr>
           </thead>
           <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-gray-700">
-            <tr v-for="rule in rules" :key="rule.id">
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                {{ rule.priority }}
+            <tr v-for="rule in rules" :key="rule.id" class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors duration-150">
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center space-x-2">
+                  <button
+                    @click="moveRuleUp(rule)"
+                    :disabled="rule.priority === 1"
+                    class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-150"
+                    :title="'Move up'"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+                    </svg>
+                  </button>
+                  <span class="text-sm font-medium text-gray-900 dark:text-white min-w-8 text-center">{{ rule.priority }}</span>
+                  <button
+                    @click="moveRuleDown(rule)"
+                    :disabled="rule.priority === rules.length"
+                    class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-150"
+                    :title="'Move down'"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+                </div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900 dark:text-white">
+              <td class="px-4 py-4">
+                <div class="text-sm font-medium text-gray-900 dark:text-white truncate max-w-32" :title="rule.name">
                   {{ rule.name }}
                 </div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
+              <td class="px-4 py-4">
                 <div class="flex items-center">
                   <span class="text-lg mr-2">{{ rule.video_categories?.icon }}</span>
-                  <div>
-                    <div class="text-sm font-medium text-gray-900 dark:text-white">
+                  <div class="min-w-0 flex-1">
+                    <div class="text-sm font-medium text-gray-900 dark:text-white truncate">
                       {{ rule.video_categories?.name }}
                     </div>
                     <div class="text-xs text-gray-500 dark:text-gray-400">
@@ -95,30 +117,46 @@
                   </div>
                 </div>
               </td>
-              <td class="px-6 py-4">
-                <div class="text-sm text-gray-900 dark:text-white max-w-xs truncate">
-                  {{ formatConditions(rule.conditions) }}
+              <td class="px-4 py-4">
+                <div class="flex flex-wrap gap-1">
+                  <span 
+                    v-for="(condition, index) in parseConditions(rule.conditions)" 
+                    :key="index"
+                    :class="['inline-flex items-center px-2 py-1 rounded-full text-xs font-medium', condition.color]"
+                    :title="condition.label"
+                  >
+                    <span class="mr-1">{{ condition.icon }}</span>
+                    <span class="truncate max-w-24">{{ condition.label }}</span>
+                  </span>
                 </div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
+              <td class="px-4 py-4 whitespace-nowrap">
                 <span :class="rule.active ? 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/20' : 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20'"
                       class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
                   {{ rule.active ? 'Active' : 'Inactive' }}
                 </span>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button
-                  @click="editRule(rule)"
-                  class="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300 mr-3 transition-colors duration-200"
-                >
-                  Edit
-                </button>
-                <button
-                  @click="deleteRule(rule.id)"
-                  class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-colors duration-200"
-                >
-                  Delete
-                </button>
+              <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex items-center space-x-2">
+                  <button
+                    @click="editRule(rule)"
+                    class="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300 transition-colors duration-150"
+                    :title="'Edit rule'"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                  </button>
+                  <button
+                    @click="deleteRule(rule.id)"
+                    class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-colors duration-150"
+                    :title="'Delete rule'"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -182,38 +220,112 @@
 
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Conditions</label>
-              <div class="space-y-2">
-                <div v-for="(condition, index) in ruleForm.conditionsArray" :key="index" class="flex space-x-2">
-                  <select
-                    v-model="condition.type"
-                    class="flex-1 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm"
-                  >
-                    <option value="channel_id">Channel ID</option>
-                    <option value="title_contains">Title Contains</option>
-                    <option value="description_contains">Description Contains</option>
-                    <option value="title_regex">Title Regex</option>
-                    <option value="duration_lt">Duration Less Than (seconds)</option>
-                  </select>
-                  <input
-                    v-model="condition.value"
-                    type="text"
-                    placeholder="Value"
-                    class="flex-1 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm"
-                  />
+              <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Define rules that must ALL be true for a video to be categorized</p>
+              <div class="space-y-3">
+                <div v-for="(condition, index) in ruleForm.conditionsArray" :key="index" class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-slate-700 rounded-lg">
+                  <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/20">
+                    <span class="text-sm font-medium text-primary-600 dark:text-primary-400">{{ index + 1 }}</span>
+                  </div>
+                  <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Condition Type</label>
+                      <select
+                        v-model="condition.type"
+                        @change="onConditionTypeChange(condition)"
+                        class="w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm"
+                      >
+                        <option value="channel_id">📺 Channel Name</option>
+                        <option value="title_contains">📝 Title Contains</option>
+                        <option value="description_contains">📄 Description Contains</option>
+                        <option value="title_regex">🔍 Title Regex</option>
+                        <option value="duration_lt">⏱️ Duration Less Than</option>
+                      </select>
+                    </div>
+                    <div class="relative">
+                      <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Value</label>
+                      
+                      <!-- Channel autocomplete for channel_id type -->
+                      <div v-if="condition.type === 'channel_id'" class="relative">
+                        <input
+                          v-model="channelSearchQuery"
+                          @input="handleChannelInput"
+                          @focus="handleChannelFocus"
+                          @blur="handleChannelBlur"
+                          type="text"
+                          placeholder="Search for a channel..."
+                          class="w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm"
+                        />
+                        
+                        <!-- Autocomplete dropdown -->
+                        <div v-if="channels.length > 0" class="absolute z-10 mt-1 w-full bg-white dark:bg-slate-700 shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                          <div v-if="channelSearchLoading" class="px-3 py-2 text-gray-500 dark:text-gray-400">
+                            <div class="flex items-center">
+                              <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600 dark:border-primary-400 mr-2"></div>
+                              Searching...
+                            </div>
+                          </div>
+                          <div v-else>
+                            <div
+                              v-for="channel in channels"
+                              :key="channel.id"
+                              @click="selectChannel(condition, channel)"
+                              class="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 dark:hover:bg-slate-600"
+                            >
+                              <div class="flex items-center">
+                                <div class="w-6 h-6 rounded-full mr-3 flex items-center justify-center bg-gray-200 dark:bg-gray-600 overflow-hidden relative">
+                                  <img 
+                                    v-if="channel.thumbnail" 
+                                    :src="channel.thumbnail" 
+                                    :alt="channel.title" 
+                                    class="w-full h-full object-cover rounded-full"
+                                    @error="handleImageError"
+                                  />
+                                  <span class="text-xs text-gray-600 dark:text-gray-400 absolute inset-0 flex items-center justify-center">📺</span>
+                                </div>
+                                <div class="flex-1">
+                                  <div class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                    {{ channel.title }}
+                                  </div>
+                                  <div class="text-xs text-gray-500 dark:text-gray-400">
+                                    {{ channel.subscribers ? `${channel.subscribers.toLocaleString()} subscribers` : 'Unknown subscribers' }}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <!-- Regular input for other condition types -->
+                      <input
+                        v-else
+                        v-model="condition.value"
+                        type="text"
+                        :placeholder="getConditionPlaceholder(condition.type)"
+                        class="w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm"
+                      />
+                    </div>
+                  </div>
                   <button
                     type="button"
                     @click="removeCondition(index)"
-                    class="px-2 py-1 text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
+                    class="flex-shrink-0 p-2 text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors duration-200"
+                    :title="'Remove condition ' + (index + 1)"
                   >
-                    ×
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
                   </button>
                 </div>
                 <button
                   type="button"
                   @click="addCondition"
-                  class="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-300 text-sm"
+                  class="inline-flex items-center px-3 py-2 border border-dashed border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors duration-200"
                 >
-                  + Add Condition
+                  <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                  </svg>
+                  Add Condition
                 </button>
               </div>
             </div>
@@ -277,18 +389,37 @@ interface VideoCategory {
   icon: string
 }
 
+interface Channel {
+  id: string
+  title: string
+  thumbnail: string | null
+  subscribers: number | null
+  slug: string
+}
+
 interface Condition {
   type: string
   value: string
 }
 
+interface DisplayCondition {
+  type: string
+  value: string
+  label: string
+  icon: string
+  color: string
+}
+
 // State
 const rules = ref<CategorizationRule[]>([])
 const categories = ref<VideoCategory[]>([])
+const channels = ref<Channel[]>([])
 const loading = ref(true)
 const showCreateModal = ref(false)
 const editingRule = ref<CategorizationRule | null>(null)
 const saving = ref(false)
+const channelSearchQuery = ref('')
+const channelSearchLoading = ref(false)
 
 const ruleForm = ref({
   name: '',
@@ -330,30 +461,152 @@ const loadCategories = async () => {
   }
 }
 
-const formatConditions = (conditions: Record<string, unknown>) => {
-  const parts = []
+const getConditionPlaceholder = (type: string): string => {
+  switch (type) {
+    case 'channel_id':
+      return 'Search for a channel...'
+    case 'title_contains':
+      return 'keyword or phrase'
+    case 'description_contains':
+      return 'description text'
+    case 'title_regex':
+      return 'regular expression'
+    case 'duration_lt':
+      return 'seconds (e.g., 300)'
+    default:
+      return 'value'
+  }
+}
+
+const searchChannels = async (query: string) => {
+  channelSearchLoading.value = true
+  try {
+    const queryParams: any = {}
+    if (query.trim()) {
+      queryParams.search = query.trim()
+      queryParams.limit = 10
+    } else {
+      // No search - show all channels (no limit)
+      queryParams.limit = 1000 // High limit to show all
+    }
+
+    const response = await $fetch('/api/admin/channels', {
+      query: queryParams
+    }) as { channels: Channel[] }
+    channels.value = response.channels || []
+  } catch (error) {
+    console.error('Failed to search channels:', error)
+    channels.value = []
+  } finally {
+    channelSearchLoading.value = false
+  }
+}
+
+// Debounced search to avoid too many API calls
+let searchTimeout: NodeJS.Timeout | null = null
+const debouncedSearchChannels = (query?: string) => {
+  const searchQuery = query !== undefined ? query : channelSearchQuery.value
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+  searchTimeout = setTimeout(() => {
+    searchChannels(searchQuery)
+  }, 300)
+}
+
+const handleChannelInput = () => {
+  debouncedSearchChannels()
+}
+
+const handleChannelFocus = () => {
+  debouncedSearchChannels('')
+}
+
+const handleChannelBlur = () => {
+  // Delay hiding to allow click on dropdown items
+  setTimeout(() => {
+    channels.value = []
+  }, 150)
+}
+
+const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  img.style.display = 'none'
+}
+
+const selectChannel = (condition: Condition, channel: Channel) => {
+  condition.value = channel.id
+  channelSearchQuery.value = channel.title
+  channels.value = [] // Close dropdown
+}
+
+// Handle when condition type changes to channel_id
+const onConditionTypeChange = (condition: Condition) => {
+  if (condition.type === 'channel_id') {
+    // If we have a channel ID but no search query, try to find the channel name
+    if (condition.value && !channelSearchQuery.value) {
+      // For now, just clear the search query - in a real app you'd fetch the channel name
+      channelSearchQuery.value = ''
+    }
+  } else {
+    // Clear channel search state for non-channel conditions
+    channelSearchQuery.value = ''
+    channels.value = []
+  }
+}
+
+const getChannelDisplayName = (channelId: string): string => {
+  // This would ideally cache channel names, but for now just return the ID
+  return channelId
+}
+
+const parseConditions = (conditions: Record<string, unknown>): DisplayCondition[] => {
+  const result: DisplayCondition[] = []
   for (const [key, value] of Object.entries(conditions)) {
+    let label = ''
+    let icon = ''
+    let color = 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+
     switch (key) {
       case 'channel_id':
-        parts.push(`Channel: ${String(value).slice(0, 8)}...`)
+        label = `Channel: ${String(value)}`
+        icon = '📺'
+        color = 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
         break
       case 'title_contains':
-        parts.push(`Title: "${String(value)}"`)
+        label = `Title: "${String(value)}"`
+        icon = '📝'
+        color = 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
         break
       case 'description_contains':
-        parts.push(`Desc: "${String(value)}"`)
+        label = `Desc: "${String(value)}"`
+        icon = '📄'
+        color = 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400'
         break
       case 'title_regex':
-        parts.push(`Title ~ /${String(value)}/`)
+        label = `Title ~ /${String(value)}/`
+        icon = '🔍'
+        color = 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400'
         break
       case 'duration_lt':
-        parts.push(`Duration < ${String(value)}s`)
+        label = `Duration < ${String(value)}s`
+        icon = '⏱️'
+        color = 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
         break
       default:
-        parts.push(`${key}: ${String(value)}`)
+        label = `${key}: ${String(value)}`
+        icon = '❓'
     }
+
+    result.push({
+      type: key,
+      value: String(value),
+      label,
+      icon,
+      color
+    })
   }
-  return parts.join(', ')
+  return result
 }
 
 const addCondition = () => {
@@ -376,6 +629,10 @@ const editRule = (rule: CategorizationRule) => {
       value: String(value)
     }))
   }
+
+  // Reset channel search state
+  channelSearchQuery.value = ''
+  channels.value = []
 }
 
 const saveRule = async () => {
@@ -425,6 +682,46 @@ const deleteRule = async (ruleId: string) => {
   }
 }
 
+const moveRuleUp = async (rule: CategorizationRule) => {
+  if (rule.priority === 1) return
+
+  try {
+    await $fetch(`/api/admin/categorization/${rule.id}`, {
+      method: 'PUT',
+      body: {
+        name: rule.name,
+        category_id: rule.category_id,
+        conditions: rule.conditions,
+        priority: rule.priority - 1,
+        is_active: rule.active
+      }
+    })
+    await loadRules()
+  } catch (error) {
+    console.error('Error moving rule up:', error)
+  }
+}
+
+const moveRuleDown = async (rule: CategorizationRule) => {
+  if (rule.priority === rules.value.length) return
+
+  try {
+    await $fetch(`/api/admin/categorization/${rule.id}`, {
+      method: 'PUT',
+      body: {
+        name: rule.name,
+        category_id: rule.category_id,
+        conditions: rule.conditions,
+        priority: rule.priority + 1,
+        is_active: rule.active
+      }
+    })
+    await loadRules()
+  } catch (error) {
+    console.error('Error moving rule down:', error)
+  }
+}
+
 const closeModal = () => {
   showCreateModal.value = false
   editingRule.value = null
@@ -435,6 +732,9 @@ const closeModal = () => {
     active: true,
     conditionsArray: []
   }
+  // Reset channel search state
+  channelSearchQuery.value = ''
+  channels.value = []
 }
 
 // Load data on mount

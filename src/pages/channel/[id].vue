@@ -51,7 +51,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                   </svg>
                   <span class="text-gray-500 dark:text-gray-400">{{ t('channel.joined') }}</span>
-                  <span class="font-medium text-gray-700 dark:text-gray-300">{{ channel.joined }}</span>
+                  <span class="font-medium text-gray-700 dark:text-gray-300">{{ t(`channel.timeAgo.${channel.joined.unit}_${channel.joined.count === 1 ? 'one' : 'other'}`, { count: channel.joined.count }) }}</span>
                 </div>
               </div>
             </div>

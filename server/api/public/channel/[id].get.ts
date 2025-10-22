@@ -115,19 +115,19 @@ function formatSubscriberCount(count: number): string {
   return count.toString()
 }
 
-function formatJoinDate(dateString: string): string {
+function formatJoinDate(dateString: string): { count: number; unit: string } {
   const date = new Date(dateString)
   const now = new Date()
   const diffTime = Math.abs(now.getTime() - date.getTime())
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
   if (diffDays < 30) {
-    return `${diffDays} days ago`
+    return { count: diffDays, unit: 'days' }
   } else if (diffDays < 365) {
     const months = Math.floor(diffDays / 30)
-    return `${months} month${months > 1 ? 's' : ''} ago`
+    return { count: months, unit: 'months' }
   } else {
     const years = Math.floor(diffDays / 365)
-    return `${years} year${years > 1 ? 's' : ''} ago`
+    return { count: years, unit: 'years' }
   }
 }

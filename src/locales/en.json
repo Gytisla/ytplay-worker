@@ -4,7 +4,15 @@
     "channels": "Channels",
     "videos": "Videos",
     "popular": "Popular",
-    "trending": "Trending",
+    "joined": "Joined",
+    "timeAgo": {
+      "days_one": "{count} day ago",
+      "days_other": "{count} days ago",
+      "months_one": "{count} month ago",
+      "months_other": "{count} months ago",
+      "years_one": "{count} year ago",
+      "years_other": "{count} years ago"
+    },
     "new": "New",
     "search": "Search",
     "loading": "Loading...",
@@ -126,7 +134,15 @@
     "noDescription": "No description available",
     "subscribersText": "subscribers",
     "videosText": "videos",
-    "joined": "Joined"
+    "joined": "Joined",
+    "timeAgo": {
+      "days_one": "{{count}} day ago",
+      "days_other": "{{count}} days ago",
+      "months_one": "{{count}} month ago",
+      "months_other": "{{count}} months ago",
+      "years_one": "{{count}} year ago",
+      "years_other": "{{count}} years ago"
+    }
   },
   "time": {
     "now": "now",

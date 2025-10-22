@@ -137,7 +137,15 @@
     "noDescription": "Aprašymo nėra",
     "subscribersText": "prenumeratoriai",
     "videosText": "vaizdo įrašai",
-    "joined": "Prisijungė"
+    "joined": "Prisijungė",
+    "timeAgo": {
+      "days_one": "prieš {count} dieną",
+      "days_other": "prieš {count} dienas",
+      "months_one": "prieš {count} mėnesį",
+      "months_other": "prieš {count} mėnesius",
+      "years_one": "prieš {count} metus",
+      "years_other": "prieš {count} metų"
+    }
   },
   "search": {
     "placeholder": "Ieškoti kanalų arba vaizdo įrašų...",

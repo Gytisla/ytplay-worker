@@ -23,146 +23,201 @@
                   {{ t('channel.openInYouTube') }}
                 </button>
               </div>
-              <p class="text-muted dark:text-gray-400 mb-4">{{ channel.description || t('channel.noDescription') }}</p>
-              <div class="flex flex-wrap justify-center md:justify-start gap-4 text-sm mb-4">
-                <span class="text-muted dark:text-gray-400">{{ channel.subs }} {{ t('channel.subscribersText') }}</span>•
-                <span class="text-muted dark:text-gray-400">{{ channel.videos }} {{ t('channel.videosText') }}</span>•
-                <span class="text-muted dark:text-gray-400">{{ t('channel.joined') }} {{ channel.joined }}</span>
+              <p class="text-muted dark:text-gray-400 mb-4">{{ displayDescription }}</p>
+              <button 
+                v-if="shouldShowDescriptionToggle"
+                @click="descriptionExpanded = !descriptionExpanded"
+                class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors mb-4"
+              >
+                {{ descriptionExpanded ? t('channel.showLessDescription') : t('channel.showMoreDescription') }}
+              </button>
+              <div class="flex flex-wrap justify-center md:justify-start gap-6 text-sm mb-4">
+                <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                  </svg>
+                  <span class="font-medium text-gray-700 dark:text-gray-300">{{ channel.subs }}</span>
+                  <span class="text-gray-500 dark:text-gray-400">{{ t('channel.subscribersText') }}</span>
+                </div>
+                <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                  </svg>
+                  <span class="font-medium text-gray-700 dark:text-gray-300">{{ channel.videos }}</span>
+                  <span class="text-gray-500 dark:text-gray-400">{{ t('channel.videosText') }}</span>
+                </div>
+                <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                  <span class="text-gray-500 dark:text-gray-400">{{ t('channel.joined') }}</span>
+                  <span class="font-medium text-gray-700 dark:text-gray-300">{{ channel.joined }}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       <!-- Performance Analytics -->
       <section class="mb-8">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+          <!-- Header with toggle -->
+          <div 
+            class="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+            @click="statsCollapsed = !statsCollapsed"
+          >
             <h2 class="text-2xl font-semibold">{{ t('channel.performanceAnalytics') }}</h2>
-            <select v-model="statsPeriod" @change="loadChannelStats" class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm" :disabled="!channelStats">
-              <option value="7">{{ t('channel.periods.7') }}</option>
-              <option value="30">{{ t('channel.periods.30') }}</option>
-              <option value="90">{{ t('channel.periods.90') }}</option>
-              <option value="365">{{ t('channel.periods.365') }}</option>
-            </select>
-          </div>
-
-          <!-- Summary Cards -->
-          <div v-if="channelStats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.subscribers') }}</div>
-              <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.currentSubscribers) }}</div>
-              <div class="text-sm" :class="channelStats.summary.subscriberChange >= 0 ? 'text-green-600' : 'text-red-600'">
-                {{ channelStats.summary.subscriberChange >= 0 ? '+' : '' }}{{ formatNumber(channelStats.summary.subscriberChange) }}
-              </div>
-            </div>
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.totalViews') }}</div>
-              <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.currentViews) }}</div>
-              <div class="text-sm" :class="channelStats.summary.viewChange >= 0 ? 'text-green-600' : 'text-red-600'">
-                {{ channelStats.summary.viewChange >= 0 ? '+' : '' }}{{ formatNumber(channelStats.summary.viewChange) }}
-              </div>
-            </div>
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.videos') }}</div>
-              <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.currentVideos) }}</div>
-              <div class="text-sm" :class="channelStats.summary.videoChange >= 0 ? 'text-green-600' : 'text-red-600'">
-                {{ channelStats.summary.videoChange >= 0 ? '+' : '' }}{{ formatNumber(channelStats.summary.videoChange) }}
-              </div>
-            </div>
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.avgSubscriberGain') }}</div>
-              <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.avgSubscriberGain) }}</div>
-              <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.perDay') }}</div>
+            <div class="flex items-center gap-3">
+              <select 
+                v-model="statsPeriod" 
+                @change="loadChannelStats" 
+                @click.stop
+                class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-sm" 
+                :disabled="!channelStats"
+              >
+                <option value="7">{{ t('channel.periods.7') }}</option>
+                <option value="30">{{ t('channel.periods.30') }}</option>
+                <option value="90">{{ t('channel.periods.90') }}</option>
+                <option value="365">{{ t('channel.periods.365') }}</option>
+              </select>
+              <button 
+                @click.stop="statsCollapsed = !statsCollapsed"
+                class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                :aria-expanded="!statsCollapsed"
+                aria-label="Toggle analytics"
+              >
+                <svg 
+                  :class="['w-4 h-4 transition-transform duration-200', !statsCollapsed ? 'rotate-180' : '']" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </button>
             </div>
           </div>
 
-          <!-- Loading Summary Cards -->
-          <div v-else class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div v-for="i in 4" :key="`summary-skeleton-${i}`" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 animate-pulse">
-              <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-16 mb-2"></div>
-              <div class="h-8 bg-gray-200 dark:bg-gray-600 rounded w-20 mb-2"></div>
-              <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-12"></div>
-            </div>
-          </div>
-
-          <!-- Charts -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Subscriber Growth Chart -->
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <h3 class="text-lg font-semibold mb-4">{{ t('channel.charts.subscriberGrowth') }}</h3>
-              <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
-                <div class="animate-pulse">
-                  <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
-                  <div class="h-32 bg-gray-200 dark:bg-gray-600 rounded w-full"></div>
+          <!-- Collapsible content -->
+          <div class="px-6 pb-4 pt-4 analytics-content">
+            <!-- Summary Cards (always visible) -->
+            <div v-if="channelStats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.subscribers') }}</div>
+                <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.currentSubscribers) }}</div>
+                <div class="text-sm" :class="channelStats.summary.subscriberChange >= 0 ? 'text-green-600' : 'text-red-600'">
+                  {{ channelStats.summary.subscriberChange >= 0 ? '+' : '' }}{{ formatNumber(channelStats.summary.subscriberChange) }}
                 </div>
               </div>
-              <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-64 flex items-center justify-center">
-                <div class="text-center text-muted dark:text-gray-400">
-                  <div class="text-4xl mb-2">📊</div>
-                  <div class="text-sm">{{ t('channel.noData') }}</div>
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.totalViews') }}</div>
+                <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.currentViews) }}</div>
+                <div class="text-sm" :class="channelStats.summary.viewChange >= 0 ? 'text-green-600' : 'text-red-600'">
+                  {{ channelStats.summary.viewChange >= 0 ? '+' : '' }}{{ formatNumber(channelStats.summary.viewChange) }}
                 </div>
               </div>
-              <div v-else class="relative h-64">
-                <canvas ref="subscriberChartRef" class="block w-full h-full" style="height:100%"></canvas>
-              </div>
-            </div>
-
-            <!-- View Growth Chart -->
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <h3 class="text-lg font-semibold mb-4">{{ t('channel.charts.viewGrowth') }}</h3>
-              <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
-                <div class="animate-pulse">
-                  <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
-                  <div class="h-32 bg-gray-200 dark:bg-gray-600 rounded w-full"></div>
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.videos') }}</div>
+                <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.currentVideos) }}</div>
+                <div class="text-sm" :class="channelStats.summary.videoChange >= 0 ? 'text-green-600' : 'text-red-600'">
+                  {{ channelStats.summary.videoChange >= 0 ? '+' : '' }}{{ formatNumber(channelStats.summary.videoChange) }}
                 </div>
               </div>
-              <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-64 flex items-center justify-center">
-                <div class="text-center text-muted dark:text-gray-400">
-                  <div class="text-4xl mb-2">📈</div>
-                  <div class="text-sm">{{ t('channel.noData') }}</div>
-                </div>
-              </div>
-              <div v-else class="relative h-64">
-                <canvas ref="viewChartRef" class="block w-full h-full" style="height:100%"></canvas>
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.avgSubscriberGain') }}</div>
+                <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.avgSubscriberGain) }}</div>
+                <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.perDay') }}</div>
               </div>
             </div>
 
-            <!-- Subscriber Gains/Losses -->
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <h3 class="text-lg font-semibold mb-4">{{ t('channel.charts.dailySubscriberChanges') }}</h3>
-              <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
-                <div class="animate-pulse">
-                  <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-40 mb-4"></div>
-                  <div class="h-32 bg-gray-200 dark:bg-gray-600 rounded w-full"></div>
-                </div>
-              </div>
-              <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-96 sm:h-64 flex items-center justify-center">
-                <div class="text-center text-muted dark:text-gray-400">
-                  <div class="text-4xl mb-2">📊</div>
-                  <div class="text-sm">{{ t('channel.noData') }}</div>
-                </div>
-              </div>
-              <div v-else class="relative h-64">
-                <canvas ref="subscriberChangeChartRef" class="block w-full h-full" style="height:100%"></canvas>
+            <!-- Loading Summary Cards -->
+            <div v-else class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div v-for="i in 4" :key="`summary-skeleton-${i}`" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 animate-pulse">
+                <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-16 mb-2"></div>
+                <div class="h-8 bg-gray-200 dark:bg-gray-600 rounded w-20 mb-2"></div>
+                <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-12"></div>
               </div>
             </div>
 
-            <!-- View Gains -->
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-              <h3 class="text-lg font-semibold mb-4">{{ t('channel.charts.dailyViewGains') }}</h3>
-              <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
-                <div class="animate-pulse">
-                  <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
-                  <div class="h-32 bg-gray-200 dark:bg-gray-600 rounded w-full"></div>
+            <!-- Charts (only visible when expanded) -->
+            <div v-show="!statsCollapsed" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Subscriber Growth Chart -->
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <h3 class="text-lg font-semibold mb-4">{{ t('channel.charts.subscriberGrowth') }}</h3>
+                <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
+                  <div class="animate-pulse">
+                    <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
+                    <div class="h-32 bg-gray-200 dark:bg-gray-600 rounded w-full"></div>
+                  </div>
+                </div>
+                <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-64 flex items-center justify-center">
+                  <div class="text-center text-muted dark:text-gray-400">
+                    <div class="text-4xl mb-2">📊</div>
+                    <div class="text-sm">{{ t('channel.noData') }}</div>
+                  </div>
+                </div>
+                <div v-else class="relative h-64">
+                  <canvas ref="subscriberChartRef" class="block w-full h-full" style="height:100%"></canvas>
                 </div>
               </div>
-              <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-64 flex items-center justify-center">
-                <div class="text-center text-muted dark:text-gray-400">
-                  <div class="text-4xl mb-2">👁️</div>
-                  <div class="text-sm">{{ t('channel.noData') }}</div>
+
+              <!-- View Growth Chart -->
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <h3 class="text-lg font-semibold mb-4">{{ t('channel.charts.viewGrowth') }}</h3>
+                <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
+                  <div class="animate-pulse">
+                    <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
+                    <div class="h-32 bg-gray-200 dark:bg-gray-600 rounded w-full"></div>
+                  </div>
+                </div>
+                <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-64 flex items-center justify-center">
+                  <div class="text-center text-muted dark:text-gray-400">
+                    <div class="text-4xl mb-2">📈</div>
+                    <div class="text-sm">{{ t('channel.noData') }}</div>
+                  </div>
+                </div>
+                <div v-else class="relative h-64">
+                  <canvas ref="viewChartRef" class="block w-full h-full" style="height:100%"></canvas>
                 </div>
               </div>
-              <div v-else class="relative h-64">
-                <canvas ref="viewGainChartRef" class="block w-full h-full" style="height:100%"></canvas>
+
+              <!-- Subscriber Gains/Losses -->
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <h3 class="text-lg font-semibold mb-4">{{ t('channel.charts.dailySubscriberChanges') }}</h3>
+                <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
+                  <div class="animate-pulse">
+                    <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-40 mb-4"></div>
+                    <div class="h-32 bg-gray-200 dark:bg-gray-600 rounded w-full"></div>
+                  </div>
+                </div>
+                <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-96 sm:h-64 flex items-center justify-center">
+                  <div class="text-center text-muted dark:text-gray-400">
+                    <div class="text-4xl mb-2">📊</div>
+                    <div class="text-sm">{{ t('channel.noData') }}</div>
+                  </div>
+                </div>
+                <div v-else class="relative h-64">
+                  <canvas ref="subscriberChangeChartRef" class="block w-full h-full" style="height:100%"></canvas>
+                </div>
+              </div>
+
+              <!-- View Gains -->
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <h3 class="text-lg font-semibold mb-4">{{ t('channel.charts.dailyViewGains') }}</h3>
+                <div v-if="!channelStats" class="relative h-64 flex items-center justify-center">
+                  <div class="animate-pulse">
+                    <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-32 mb-4"></div>
+                    <div class="h-32 bg-gray-200 dark:bg-gray-600 rounded w-full"></div>
+                  </div>
+                </div>
+                <div v-else-if="channelStats && (!channelStats.stats || channelStats.stats.length === 0)" class="relative h-64 flex items-center justify-center">
+                  <div class="text-center text-muted dark:text-gray-400">
+                    <div class="text-4xl mb-2">👁️</div>
+                    <div class="text-sm">{{ t('channel.noData') }}</div>
+                  </div>
+                </div>
+                <div v-else class="relative h-64">
+                  <canvas ref="viewGainChartRef" class="block w-full h-full" style="height:100%"></canvas>
+                </div>
               </div>
             </div>
           </div>
@@ -252,7 +307,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onBeforeUnmount, onMounted, watch } from 'vue'
+import { ref, nextTick, onBeforeUnmount, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   Chart as ChartJS,
@@ -312,6 +367,11 @@ const videoSort = ref<'new' | 'popular'>('new')
 // Stats data
 const channelStats = ref<any>(null)
 const statsPeriod = ref('30')
+const statsCollapsed = ref(true) // Start collapsed by default
+
+// Description collapse state
+const descriptionExpanded = ref(false)
+const descriptionMaxLength = 200
 
 // Chart refs
 const subscriberChartRef = ref<HTMLCanvasElement>()
@@ -324,6 +384,20 @@ let subscriberChart: any = null
 let viewChart: any = null
 let subscriberChangeChart: any = null
 let viewGainChart: any = null
+
+// Computed properties for description display
+const displayDescription = computed(() => {
+  if (!channel.value?.description) return ''
+  if (descriptionExpanded.value || channel.value.description.length <= descriptionMaxLength) {
+    return channel.value.description
+  }
+  return channel.value.description.substring(0, descriptionMaxLength) + '...'
+})
+
+const shouldShowDescriptionToggle = computed(() => {
+  if (!channel.value?.description) return false
+  return channel.value.description.length > descriptionMaxLength
+})
 
 // Fetch channel data client-side after navigation so route change is instant
 onMounted(async () => {
@@ -636,7 +710,41 @@ function formatNumber(num: number): string {
 useHead({
   title: () => channel.value ? `${channel.value.name} - YTPlay.lt` : 'Channel - YTPlay.lt'
 })
+
 </script>
+
+<style scoped>
+/* Smooth transition for the collapsible analytics section */
+.analytics-content {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Custom scrollbar for better UX */
+.analytics-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.analytics-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.analytics-content::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.5);
+  border-radius: 3px;
+}
+
+.analytics-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.7);
+}
+
+.dark .analytics-content::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.5);
+}
+
+.dark .analytics-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(75, 85, 99, 0.7);
+}
+</style>
 
 <style scoped>
 .text-muted { color: rgba(17,24,39,0.6); }

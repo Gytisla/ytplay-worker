@@ -104,6 +104,8 @@
       "dailyViews": "Daily Views"
     },
     "noData": "No data available for this period",
+    "showMoreDescription": "Show more",
+    "showLessDescription": "Show less",
     "videos": "Videos",
     "sort": {
       "latest": "Latest",

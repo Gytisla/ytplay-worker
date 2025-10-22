@@ -115,6 +115,8 @@
       "dailyViews": "Kasdienės peržiūros"
     },
     "noData": "Šiam laikotarpiui duomenų nėra",
+    "showMoreDescription": "Rodyti daugiau",
+    "showLessDescription": "Rodyti mažiau",
     "videos": "Vaizdo įrašai",
     "sort": {
       "latest": "Naujausi",

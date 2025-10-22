@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { YouTubeVideosClient, type FetchVideosOptions } from '../../../../src/lib/youtube/videos.ts'
 import { createYouTubeClientFromEnv } from '../../../../src/lib/youtube/client.ts'
 import { logger } from '../../../../src/lib/obs/logger.ts'
+import { categorizeVideo } from '../../../../src/lib/categorization.ts'
 
 /**
  * REFRESH_VIDEO_STATS job handler
@@ -143,6 +144,59 @@ export async function handleRefreshVideoStats(
     if (updateError) {
       logger.error('failed to update videos table', { error: updateError })
       return { success: false, error: `Failed to update videos: ${updateError.message}` }
+    }
+
+    // Re-categorize videos now that we have full metadata including duration
+    // Only categorize videos that don't already have a category assigned
+    logger.info('re-categorizing videos with updated metadata', { count: videos.length })
+    
+    // Get current category status for these videos
+    const youtubeVideoIds = videos.map(v => v.id)
+    const { data: existingVideos, error: categoryQueryError } = await supabase
+      .from('videos')
+      .select('youtube_video_id, category_id')
+      .in('youtube_video_id', youtubeVideoIds)
+    
+    if (categoryQueryError) {
+      logger.warn('failed to query existing video categories', { error: categoryQueryError })
+    }
+    
+    const videosWithoutCategory = existingVideos 
+      ? existingVideos.filter(v => !v.category_id).map(v => v.youtube_video_id)
+      : youtubeVideoIds // If query failed, try to categorize all
+    
+    logger.info('videos needing categorization', { count: videosWithoutCategory.length })
+    
+    for (const video of videos) {
+      // Only categorize if this video doesn't already have a category
+      if (!videosWithoutCategory.includes(video.id)) {
+        continue
+      }
+      
+      try {
+        const categoryId = await categorizeVideo({
+          id: '', // Not needed for matching
+          youtube_video_id: video.id,
+          title: video.snippet?.title ?? '',
+          description: video.snippet?.description ?? '',
+          channel_id: channelIdMap.get(video.id) || '',
+          duration: video.contentDetails?.duration || undefined
+        }, supabase)
+
+        if (categoryId) {
+          // Update the category for this video
+          const { error: categoryError } = await supabase
+            .from('videos')
+            .update({ category_id: categoryId })
+            .eq('youtube_video_id', video.id)
+
+          if (categoryError) {
+            logger.warn('failed to update video category', { videoId: video.id, error: categoryError })
+          }
+        }
+      } catch (categoryError) {
+        logger.warn('failed to categorize video', { videoId: video.id, error: categoryError })
+      }
     }
 
     // Prepare statistics data for storage

@@ -6,7 +6,6 @@ import { RSSParser } from '../../../../src/lib/rss/parser.ts'
 import { FeedStateManager } from '../../../../src/lib/rss/state.ts'
 import type { FeedState } from '../../../../src/lib/rss/state.ts'
 import { logger } from '../../../../src/lib/obs/logger.ts'
-import { categorizeVideo } from '../../../../src/lib/categorization.ts'
 
 /**
  * RSS_POLL_CHANNEL job handler
@@ -134,7 +133,7 @@ export async function handleRSSPollChannel(
         }
 
         if (channelRow) {
-          const videoPayload = await Promise.all(newVideos.map(async (v) => {
+          const videoPayload = newVideos.map((v) => {
             const p: Record<string, unknown> = {
               youtube_video_id: v.videoId,
               channel_id: channelRow.id,
@@ -144,21 +143,11 @@ export async function handleRSSPollChannel(
             if (v.description) p.description = v.description
             if (v.thumbnailUrl) p.thumbnail_url = v.thumbnailUrl
             
-            // Categorize the video
-            const categoryId = await categorizeVideo({
-              id: '', // Not needed for matching
-              youtube_video_id: v.videoId,
-              title: v.title,
-              description: v.description,
-              channel_id: channelRow.id
-            }, supabase)
-            
-            if (categoryId) {
-              p.category_id = categoryId
-            }
+            // Note: Categorization will happen later when video stats are fetched from YouTube API
+            // (which provides duration and other metadata needed for proper categorization)
             
             return p
-          }))
+          })
 
           if (videoPayload.length > 0) {
             type UpsertVideoPayload = Array<{

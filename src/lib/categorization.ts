@@ -6,7 +6,8 @@ export interface VideoForCategorization {
   title: string
   description?: string
   channel_id: string
-  duration: string  // YouTube duration format like "PT4M13S"
+  duration?: string  // YouTube duration format like "PT4M13S" - optional for live videos
+  live_broadcast_content?: string  // 'none', 'upcoming', 'live', 'completed'
 }
 
 export interface CategorizationRule {
@@ -103,6 +104,10 @@ function matchesRule(video: VideoForCategorization, rule: CategorizationRule): b
         break
 
       case 'duration_lt':  // New condition: duration less than X seconds
+        // Skip duration conditions for live videos or videos without duration
+        if (!video.duration || video.live_broadcast_content === 'live' || video.live_broadcast_content === 'upcoming') {
+          return false // Don't match duration rules for live/upcoming videos
+        }
         const videoSeconds = parseDurationToSeconds(video.duration)
         const thresholdSeconds = Number(value)
         if (videoSeconds >= thresholdSeconds) return false

@@ -180,7 +180,8 @@ export async function handleRefreshVideoStats(
           title: video.snippet?.title ?? '',
           description: video.snippet?.description ?? '',
           channel_id: channelIdMap.get(video.id) || '',
-          duration: video.contentDetails?.duration || undefined
+          ...(video.contentDetails?.duration && { duration: video.contentDetails.duration }),
+          live_broadcast_content: video.snippet?.liveBroadcastContent || 'none'
         }, supabase)
 
         if (categoryId) {

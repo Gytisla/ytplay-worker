@@ -210,7 +210,7 @@ export type VideoSnippet = z.infer<typeof VideoSnippetSchema>
  * YouTube Video Statistics Schema
  */
 export const VideoStatisticsSchema = z.object({
-  viewCount: z.string(),
+  viewCount: z.string().optional(),
   likeCount: z.string().optional(),
   dislikeCount: z.string().optional(),
   favoriteCount: z.string().optional(),

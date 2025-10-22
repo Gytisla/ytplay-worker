@@ -7,11 +7,11 @@ CREATE EXTENSION IF NOT EXISTS pg_cron;
 
 DO $$
 BEGIN
-  -- RSS poll every 10 minutes
-  IF NOT EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'rss_poll_every_10_minutes') THEN
+  -- RSS poll every 15 minutes
+  IF NOT EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'rss_poll_every_15_minutes') THEN
     PERFORM cron.schedule(
-      'rss_poll_every_10_minutes',
-      '*/10 * * * *',
+      'rss_poll_every_15_minutes',
+      '*/15 * * * *',
       $cron$SELECT enqueue_scheduled_rss_polls();$cron$
     );
   END IF;

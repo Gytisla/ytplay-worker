@@ -81,6 +81,8 @@
     "viewOnYouTube": "Žiūrėti YouTube",
     "showMore": "Rodyti daugiau",
     "showLess": "Rodyti mažiau",
+    "showMoreTags": "Rodyti dar {count} žymes",
+    "showLessTags": "Rodyti mažiau žymių",
     "loadingVideo": "Kraunamas vaizdo įrašas..."
   },
   "channel": {

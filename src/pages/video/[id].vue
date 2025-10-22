@@ -44,6 +44,43 @@
                 </span>
               </div>
               
+              <!-- Tags -->
+              <div v-if="displayedTags.length > 0" class="mb-4">
+                <div class="flex flex-wrap gap-2 mb-2">
+                  <span
+                    v-for="tag in displayedTags"
+                    :key="tag"
+                    class="inline-flex items-center px-3 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer"
+                    @click="searchByTag(tag)"
+                  >
+                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                    </svg>
+                    {{ tag }}
+                  </span>
+                </div>
+                <button
+                  v-if="shouldShowTagsToggle"
+                  @click="tagsExpanded = true"
+                  class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
+                >
+                  {{ t('video.showMoreTags', { count: video.tags.length - maxTagsToShow }) }}
+                  <svg class="w-4 h-4 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </button>
+                <button
+                  v-else-if="tagsExpanded && hasMoreTags"
+                  @click="tagsExpanded = false"
+                  class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
+                >
+                  {{ t('video.showLessTags') }}
+                  <svg class="w-4 h-4 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                  </svg>
+                </button>
+              </div>
+              
               <div class="flex items-center gap-4 text-sm text-muted dark:text-gray-400 mb-4">
                 <span>{{ video.views }} {{ t('common.viewCount') }}</span>•
                 <span v-if="video.duration">{{ video.duration }}</span>•
@@ -308,6 +345,10 @@ const loading = ref(true)
 const descriptionExpanded = ref(false)
 const descriptionMaxLength = 300
 
+// Tags display state
+const tagsExpanded = ref(false)
+const maxTagsToShow = 8
+
 // Stats data
 const videoStats = ref<any>(null)
 const statsPeriod = ref('30')
@@ -391,6 +432,19 @@ const videoBadge = computed(() => {
   }
   
   return null
+})
+
+const displayedTags = computed(() => {
+  if (!video.value?.tags || video.value.tags.length === 0) return []
+  return tagsExpanded.value ? video.value.tags : video.value.tags.slice(0, maxTagsToShow)
+})
+
+const hasMoreTags = computed(() => {
+  return video.value?.tags && video.value.tags.length > maxTagsToShow
+})
+
+const shouldShowTagsToggle = computed(() => {
+  return hasMoreTags.value && !tagsExpanded.value
 })
 
 // Fetch video and stats on the client after navigation so route change is instant
@@ -521,6 +575,11 @@ function navigateToChannel() {
     const slug = video.value.channel.slug
     router.push(`/channel/${slug || video.value.channel.id}`)
   }
+}
+
+function searchByTag(tag: string) {
+  // Navigate to search page with tag filter
+  router.push(`/search?q=${encodeURIComponent('#' + tag)}`)
 }
 
 function updateCharts() {

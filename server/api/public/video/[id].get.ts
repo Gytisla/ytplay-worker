@@ -38,6 +38,7 @@ export default defineEventHandler(async (event) => {
         channel_id,
         category_id,
         live_broadcast_content,
+        tags,
         video_categories (
           id,
           name,
@@ -92,6 +93,7 @@ export default defineEventHandler(async (event) => {
       uploaded: formatUploadDate(video.published_at),
       publishedAt: video.published_at, // Raw date for date calculations
       live_broadcast_content: video.live_broadcast_content,
+      tags: video.tags || [],
       category: (video.video_categories as any) ? {
         id: (video.video_categories as any).id,
         name: (video.video_categories as any).name,

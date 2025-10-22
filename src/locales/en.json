@@ -70,6 +70,8 @@
     "viewOnYouTube": "View on YouTube",
     "showMore": "Show more",
     "showLess": "Show less",
+    "showMoreTags": "Show {count} more tags",
+    "showLessTags": "Show less tags",
     "loadingVideo": "Loading video..."
   },
   "channel": {

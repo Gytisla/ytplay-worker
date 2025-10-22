@@ -9,20 +9,22 @@
       <section v-if="video" class="mb-8">
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm mb-6">
           <!-- Video Player -->
-          <div class="aspect-video w-full mb-6 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-            <iframe
-              :src="`https://www.youtube.com/embed/${video.id}`"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-              class="w-full h-full"
-            ></iframe>
+          <div class="relative w-full mb-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl overflow-hidden shadow-xl border border-gray-200 dark:border-gray-600">
+            <div class="aspect-[4/3] sm:aspect-[16/10] lg:aspect-video w-full max-w-full sm:max-w-4xl lg:max-w-5xl mx-auto">
+              <iframe
+                :src="`https://www.youtube.com/embed/${video.id}`"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                class="w-full h-full rounded-xl shadow-lg"
+              ></iframe>
+            </div>
           </div>
 
           <!-- Video Info -->
           <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
             <div class="flex-1">
-              <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-50 mb-2">{{ video.title }}</h1>
+              <h1 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-50 mb-2">{{ video.title }}</h1>
               
               <!-- Category Badge -->
               <div v-if="video.category" class="mb-3 flex-shrink-0">

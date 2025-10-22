@@ -79,37 +79,12 @@ export default defineEventHandler(async (event) => {
         // Get videos with 24h gains from video_performance view
         const { data: performanceData, error: performanceError } = await supabase
           .from('video_performance')
-          .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_24h')
+          .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_24h, live_broadcast_content, category_id, category_name, category_key, category_color, category_icon')
           .gt('gain_24h', 0)
           .order('gain_24h', { ascending: false })
           .range(offset, offset + limit - 1)
 
         if (!performanceError && performanceData && performanceData.length > 0) {
-          // Get category and live broadcast data for popular videos
-          const videoIds = performanceData.map((r: any) => r.youtube_video_id)
-          const { data: categoryData, error: categoryError } = await supabase
-            .from('videos')
-            .select('youtube_video_id, category_id, live_broadcast_content, video_categories(id, name, key, color, icon)')
-            .in('youtube_video_id', videoIds)
-
-          // Create category lookup map
-          const categoryMap = new Map()
-          if (!categoryError && categoryData) {
-            categoryData.forEach((item: any) => {
-              if (item.video_categories) {
-                categoryMap.set(item.youtube_video_id, item.video_categories)
-              }
-            })
-          }
-
-          // Create live broadcast lookup map
-          const liveBroadcastMap = new Map()
-          if (!categoryError && categoryData) {
-            categoryData.forEach((item: any) => {
-              liveBroadcastMap.set(item.youtube_video_id, item.live_broadcast_content || 'none')
-            })
-          }
-
           result = {
             items: performanceData.map((r: any) => ({
               id: r.youtube_video_id,
@@ -128,14 +103,14 @@ export default defineEventHandler(async (event) => {
                 gain: r.gain_24h,
                 period: 'today'
               },
-              category: categoryMap.get(r.youtube_video_id) ? {
-                id: categoryMap.get(r.youtube_video_id).id,
-                name: categoryMap.get(r.youtube_video_id).name,
-                key: categoryMap.get(r.youtube_video_id).key,
-                color: categoryMap.get(r.youtube_video_id).color,
-                icon: categoryMap.get(r.youtube_video_id).icon
+              category: r.category_id ? {
+                id: r.category_id,
+                name: r.category_name,
+                key: r.category_key,
+                color: r.category_color,
+                icon: r.category_icon
               } : null,
-              live_broadcast_content: liveBroadcastMap.get(r.youtube_video_id) || 'none'
+              live_broadcast_content: r.live_broadcast_content || 'none'
             })),
             section,
             limit
@@ -145,37 +120,12 @@ export default defineEventHandler(async (event) => {
         // Get videos with 7-day gains from video_performance view
         const { data: performanceData, error: performanceError } = await supabase
           .from('video_performance')
-          .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_7d')
+          .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_7d, live_broadcast_content, category_id, category_name, category_key, category_color, category_icon')
           .gt('gain_7d', 0)
           .order('gain_7d', { ascending: false })
           .range(offset, offset + limit - 1)
 
         if (!performanceError && performanceData && performanceData.length > 0) {
-          // Get category and live broadcast data for popular videos
-          const videoIds = performanceData.map((r: any) => r.youtube_video_id)
-          const { data: categoryData, error: categoryError } = await supabase
-            .from('videos')
-            .select('youtube_video_id, category_id, live_broadcast_content, video_categories(id, name, key, color, icon)')
-            .in('youtube_video_id', videoIds)
-
-          // Create category lookup map
-          const categoryMap = new Map()
-          if (!categoryError && categoryData) {
-            categoryData.forEach((item: any) => {
-              if (item.video_categories) {
-                categoryMap.set(item.youtube_video_id, item.video_categories)
-              }
-            })
-          }
-
-          // Create live broadcast lookup map
-          const liveBroadcastMap = new Map()
-          if (!categoryError && categoryData) {
-            categoryData.forEach((item: any) => {
-              liveBroadcastMap.set(item.youtube_video_id, item.live_broadcast_content || 'none')
-            })
-          }
-
           result = {
             items: performanceData.map((r: any) => ({
               id: r.youtube_video_id,
@@ -194,14 +144,14 @@ export default defineEventHandler(async (event) => {
                 gain: r.gain_7d,
                 period: '7'
               },
-              category: categoryMap.get(r.youtube_video_id) ? {
-                id: categoryMap.get(r.youtube_video_id).id,
-                name: categoryMap.get(r.youtube_video_id).name,
-                key: categoryMap.get(r.youtube_video_id).key,
-                color: categoryMap.get(r.youtube_video_id).color,
-                icon: categoryMap.get(r.youtube_video_id).icon
+              category: r.category_id ? {
+                id: r.category_id,
+                name: r.category_name,
+                key: r.category_key,
+                color: r.category_color,
+                icon: r.category_icon
               } : null,
-              live_broadcast_content: liveBroadcastMap.get(r.youtube_video_id) || 'none'
+              live_broadcast_content: r.live_broadcast_content || 'none'
             })),
             section,
             limit
@@ -211,37 +161,12 @@ export default defineEventHandler(async (event) => {
         // Get videos with 30-day gains from video_performance view
         const { data: performanceData, error: performanceError } = await supabase
           .from('video_performance')
-          .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_30d')
+          .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_30d, live_broadcast_content, category_id, category_name, category_key, category_color, category_icon')
           .gt('gain_30d', 0)
           .order('gain_30d', { ascending: false })
           .range(offset, offset + limit - 1)
 
         if (!performanceError && performanceData && performanceData.length > 0) {
-          // Get category and live broadcast data for popular videos
-          const videoIds = performanceData.map((r: any) => r.youtube_video_id)
-          const { data: categoryData, error: categoryError } = await supabase
-            .from('videos')
-            .select('youtube_video_id, category_id, live_broadcast_content, video_categories(id, name, key, color, icon)')
-            .in('youtube_video_id', videoIds)
-
-          // Create category lookup map
-          const categoryMap = new Map()
-          if (!categoryError && categoryData) {
-            categoryData.forEach((item: any) => {
-              if (item.video_categories) {
-                categoryMap.set(item.youtube_video_id, item.video_categories)
-              }
-            })
-          }
-
-          // Create live broadcast lookup map
-          const liveBroadcastMap = new Map()
-          if (!categoryError && categoryData) {
-            categoryData.forEach((item: any) => {
-              liveBroadcastMap.set(item.youtube_video_id, item.live_broadcast_content || 'none')
-            })
-          }
-
           result = {
             items: performanceData.map((r: any) => ({
               id: r.youtube_video_id,
@@ -260,14 +185,14 @@ export default defineEventHandler(async (event) => {
                 gain: r.gain_30d,
                 period: '30'
               },
-              category: categoryMap.get(r.youtube_video_id) ? {
-                id: categoryMap.get(r.youtube_video_id).id,
-                name: categoryMap.get(r.youtube_video_id).name,
-                key: categoryMap.get(r.youtube_video_id).key,
-                color: categoryMap.get(r.youtube_video_id).color,
-                icon: categoryMap.get(r.youtube_video_id).icon
+              category: r.category_id ? {
+                id: r.category_id,
+                name: r.category_name,
+                key: r.category_key,
+                color: r.category_color,
+                icon: r.category_icon
               } : null,
-              live_broadcast_content: liveBroadcastMap.get(r.youtube_video_id) || 'none'
+              live_broadcast_content: r.live_broadcast_content || 'none'
             })),
             section,
             limit
@@ -356,7 +281,13 @@ export default defineEventHandler(async (event) => {
           published_at,
           gain_24h,
           gain_7d,
-          gain_30d
+          gain_30d,
+          live_broadcast_content,
+          category_id,
+          category_name,
+          category_key,
+          category_color,
+          category_icon
         `)
         .gte('published_at', thirtyDaysAgo)
         .gt('view_count', 0)
@@ -364,25 +295,6 @@ export default defineEventHandler(async (event) => {
         .range(offset, offset + limit - 1)
 
       if (!error && data && data.length > 0) {
-        // Get category data for trending videos
-        const videoIds = data.map((r: any) => r.youtube_video_id)
-        const { data: categoryData, error: categoryError } = await supabase
-          .from('videos')
-          .select('youtube_video_id, category_id, live_broadcast_content, video_categories(id, name, key, color, icon)')
-          .in('youtube_video_id', videoIds)
-
-        // Create category lookup map
-        const categoryMap = new Map()
-        const liveBroadcastMap = new Map()
-        if (!categoryError && categoryData) {
-          categoryData.forEach((item: any) => {
-            if (item.video_categories) {
-              categoryMap.set(item.youtube_video_id, item.video_categories)
-            }
-            liveBroadcastMap.set(item.youtube_video_id, item.live_broadcast_content || 'none')
-          })
-        }
-
         result = {
           items: data.map((r: any) => ({
             id: r.youtube_video_id,
@@ -397,17 +309,17 @@ export default defineEventHandler(async (event) => {
             views: r.view_count ? `${r.view_count.toLocaleString()} views` : '—',
             age: formatAge(new Date(r.published_at)),
             duration: r.duration ?? '—',
-            live_broadcast_content: liveBroadcastMap.get(r.youtube_video_id) || 'none',
+            live_broadcast_content: r.live_broadcast_content || 'none',
             trend: {
               gain: r.gain_24h || r.gain_7d || r.gain_30d || 0,
               period: r.gain_24h ? 'today' : r.gain_7d ? '7' : r.gain_30d ? '30' : 'all'
             },
-            category: categoryMap.get(r.youtube_video_id) ? {
-              id: categoryMap.get(r.youtube_video_id).id,
-              name: categoryMap.get(r.youtube_video_id).name,
-              key: categoryMap.get(r.youtube_video_id).key,
-              color: categoryMap.get(r.youtube_video_id).color,
-              icon: categoryMap.get(r.youtube_video_id).icon
+            category: r.category_id ? {
+              id: r.category_id,
+              name: r.category_name,
+              key: r.category_key,
+              color: r.category_color,
+              icon: r.category_icon
             } : null
           })),
           section,

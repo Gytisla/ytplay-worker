@@ -22,6 +22,12 @@ SELECT DISTINCT ON (v.id)
     v.duration,
     v.published_at,
     v.updated_at,
+    v.live_broadcast_content,
+    vc.id as category_id,
+    vc.name as category_name,
+    vc.key as category_key,
+    vc.color as category_color,
+    vc.icon as category_icon,
     -- Engagement rate
     CASE
         WHEN v.view_count > 0 THEN
@@ -89,6 +95,7 @@ SELECT DISTINCT ON (v.id)
     END as gain_30d
 FROM videos v
 JOIN channels c ON v.channel_id = c.id
+LEFT JOIN video_categories vc ON v.category_id = vc.id
 LEFT JOIN video_stats vs ON v.id = vs.video_id
 ORDER BY v.id, vs.date DESC, vs.hour DESC;
 

@@ -2,11 +2,12 @@ import { serverSupabaseClient } from '#supabase/server'
 import { getSupabaseAdmin } from '../../../src/lib/supabase'
 
 export default defineEventHandler(async (event) => {
-  // Get the Supabase client with user session
-  const supabase = await serverSupabaseClient(event)
+  // Get the Supabase admin client for admin operations
+  const supabase = getSupabaseAdmin()
 
-  // Get current user
-  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  // Get current user for authorization check only
+  const client = await serverSupabaseClient(event)
+  const { data: { user }, error: userError } = await client.auth.getUser()
 
   if (userError || !user) {
     throw createError({
@@ -16,8 +17,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check if user is admin
-  const supabaseAdmin = getSupabaseAdmin()
-  const { data: profile, error: profileError } = await supabaseAdmin
+  const { data: profile, error: profileError } = await supabase
     .from('user_profiles')
     .select('role')
     .eq('auth_user_id', user.id)

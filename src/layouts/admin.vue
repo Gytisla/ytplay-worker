@@ -1,7 +1,17 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
+    <!-- Mobile menu backdrop -->
+    <div 
+      v-if="sidebarOpen" 
+      @click="sidebarOpen = false"
+      class="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+    ></div>
+
     <!-- Admin Sidebar -->
-    <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-800 shadow-lg border-r border-gray-200 dark:border-gray-700">
+    <div 
+      class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-800 shadow-lg border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 ease-in-out lg:translate-x-0"
+      :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+    >
       <div class="flex flex-col h-full">
         <!-- Logo/Brand -->
         <div class="flex items-center justify-center h-16 px-4 border-b border-gray-200 dark:border-gray-700">
@@ -21,6 +31,7 @@
         <nav class="flex-1 px-4 py-6 space-y-2">
           <NuxtLink
             to="/admin"
+            @click="closeSidebar"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200"
             :class="isActiveRoute('/admin') && !$route.path.includes('/admin/') ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'"
           >
@@ -33,6 +44,7 @@
 
           <NuxtLink
             to="/admin/users"
+            @click="closeSidebar"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200"
             :class="isActiveRoute('/admin/users') ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'"
           >
@@ -44,6 +56,7 @@
 
           <NuxtLink
             to="/admin/categorization"
+            @click="closeSidebar"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200"
             :class="isActiveRoute('/admin/categorization') ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'"
           >
@@ -109,13 +122,23 @@
     </div>
 
     <!-- Main Content -->
-    <div class="pl-64">
+    <div class="lg:pl-64">
       <!-- Top Bar -->
       <div class="bg-white dark:bg-slate-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-        <div class="px-6 py-4">
+        <div class="px-4 sm:px-6 py-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center">
-              <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">
+              <!-- Mobile menu button -->
+              <button
+                @click="sidebarOpen = !sidebarOpen"
+                class="lg:hidden mr-4 p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-gray-200 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+              >
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path v-if="!sidebarOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                  <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+              <h1 class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">
                 {{ pageTitle }}
               </h1>
             </div>
@@ -139,7 +162,7 @@
       </div>
 
       <!-- Page Content -->
-      <main class="flex-1 p-6">
+      <main class="flex-1 p-4 sm:p-6">
         <slot />
       </main>
     </div>
@@ -147,7 +170,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useAuth } from '~/composables/useAuth'
 
 const route = useRoute()
@@ -157,6 +180,9 @@ const { user, signOut } = useAuth()
 const THEME_KEY = 'ytplay_theme'
 const theme = ref('system')
 const isDark = ref(false)
+
+// Sidebar management
+const sidebarOpen = ref(false)
 
 // Computed properties
 const userInitials = computed(() => {
@@ -209,6 +235,18 @@ function toggleTheme() {
   if (typeof localStorage !== 'undefined') localStorage.setItem(THEME_KEY, theme.value)
   applyTheme(theme.value)
 }
+
+// Sidebar functions
+function closeSidebar() {
+  sidebarOpen.value = false
+}
+
+// Watch route changes to close sidebar on mobile
+watch(() => route.path, () => {
+  if (window.innerWidth < 1024) { // lg breakpoint
+    sidebarOpen.value = false
+  }
+})
 
 async function handleSignOut() {
   await signOut()

@@ -1,10 +1,10 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-6 sm:space-y-8">
     <!-- Dashboard Cards -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
       <!-- User Management Card -->
       <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-lg rounded-lg border border-gray-200 dark:border-gray-700">
-        <div class="p-6">
+        <div class="p-4 sm:p-6">
           <div class="flex items-center">
             <div class="flex-shrink-0">
               <svg class="h-8 w-8 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,7 +34,7 @@
 
       <!-- Content Management Card -->
       <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-lg rounded-lg border border-gray-200 dark:border-gray-700">
-        <div class="p-6">
+        <div class="p-4 sm:p-6">
           <div class="flex items-center">
             <div class="flex-shrink-0">
               <svg class="h-8 w-8 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,7 +90,7 @@
 
       <!-- Categorization Card -->
       <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-lg rounded-lg border border-gray-200 dark:border-gray-700">
-        <div class="p-6">
+        <div class="p-4 sm:p-6">
           <div class="flex items-center">
             <div class="flex-shrink-0">
               <svg class="h-8 w-8 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,15 +120,15 @@
     </div>
 
     <!-- User Statistics -->
-    <div class="mt-12 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6">
-      <div class="flex items-center justify-between mb-6">
+    <div class="mt-8 sm:mt-12 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-6">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
           User Statistics
         </h3>
         <button 
           @click="fetchStats"
           :disabled="isLoadingStats"
-          class="inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 group"
+          class="inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 group self-end sm:self-auto"
           :title="isLoadingStats ? 'Refreshing...' : 'Refresh statistics'"
         >
           <svg 
@@ -144,7 +144,7 @@
       </div>
       
       <!-- Error Alert -->
-      <div v-if="statsError" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+      <div v-if="statsError" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
         <div class="flex items-center">
           <svg class="w-5 h-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
@@ -156,7 +156,7 @@
         </div>
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         <!-- Users Stats -->
         <div class="text-center">
           <div v-if="isLoadingStats" class="animate-pulse">
@@ -201,15 +201,15 @@
     </div>
 
     <!-- Content & System Statistics -->
-    <div class="mt-8 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6">
-      <div class="flex items-center justify-between mb-6">
+    <div class="mt-6 sm:mt-8 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-6">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
           Content & System Statistics
         </h3>
         <button 
           @click="fetchStats"
           :disabled="isLoadingStats"
-          class="inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 group"
+          class="inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 group self-end sm:self-auto"
           :title="isLoadingStats ? 'Refreshing...' : 'Refresh statistics'"
         >
           <svg 
@@ -224,7 +224,7 @@
         </button>
       </div>
       
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
         <!-- Content Stats -->
         <div class="text-center">
           <div v-if="isLoadingStats" class="animate-pulse">
@@ -300,14 +300,14 @@
       </div>
       
       <!-- Additional Metrics Row -->
-      <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div class="flex justify-between">
-            <span class="text-gray-600 dark:text-gray-400">Avg Videos per Channel:</span>
+      <div class="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200 dark:border-gray-600">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
+          <div class="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+            <span class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">Avg Videos per Channel:</span>
             <span class="font-semibold text-gray-900 dark:text-white">{{ formattedAvgVideos }}</span>
           </div>
-          <div class="flex justify-between">
-            <span class="text-gray-600 dark:text-gray-400">Avg Views per Video:</span>
+          <div class="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+            <span class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">Avg Views per Video:</span>
             <span class="font-semibold text-gray-900 dark:text-white">{{ formattedAvgViewsPerVideo }}</span>
           </div>
         </div>

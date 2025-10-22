@@ -82,6 +82,8 @@
     "showMore": "Rodyti daugiau",
     "showLess": "Rodyti mažiau",
     "showMoreTags": "Rodyti dar {count} žymes",
+    "showMoreTags_one": "Rodyti dar {count} žymę",
+    "showMoreTags_other": "Rodyti dar {count} žymių",
     "showLessTags": "Rodyti mažiau žymių",
     "loadingVideo": "Kraunamas vaizdo įrašas..."
   },

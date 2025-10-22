@@ -64,7 +64,7 @@
                   @click="tagsExpanded = true"
                   class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
                 >
-                  {{ t('video.showMoreTags', { count: video.tags.length - maxTagsToShow }) }}
+                  {{ showMoreTagsText }}
                   <svg class="w-4 h-4 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                   </svg>
@@ -333,9 +333,9 @@ const videoId = route.params['id'] as string
 // make TS happy in this file for useHead (Nuxt auto-import may already provide it)
 declare const useHead: any
 // Provide a minimal declaration so the TS checker knows about the auto-imported `useI18n` in SFCs
-declare function useI18n(): { t: (key: string, ...args: any[]) => string }
+declare function useI18n(): { t: (key: string, ...args: any[]) => string; locale: string }
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 // Video data
 const video = ref<any>(null)
@@ -400,19 +400,30 @@ const formattedUploadedTime = computed(() => {
   const diffMonths = Math.floor(diffDays / 30)
   const diffYears = Math.floor(diffDays / 365)
   
+  // Check if current locale is Lithuanian (where "ago" comes before the time)
+  const isLithuanian = locale === 'lt'
+  
+  const formatTime = (value: number, unit: string) => {
+    if (isLithuanian) {
+      return `${t('time.ago')} ${value}${t(`time.${unit}`)}`
+    } else {
+      return `${value}${t(`time.${unit}`)} ${t('time.ago')}`
+    }
+  }
+  
   if (diffHours < 1) {
     return t('time.now')
   } else if (diffHours < 24) {
-    return `${diffHours}${t('time.hour')} ${t('time.ago')}`
+    return formatTime(diffHours, 'hour')
   } else if (diffDays < 7) {
-    return `${diffDays}${t('time.day')} ${t('time.ago')}`
+    return formatTime(diffDays, 'day')
   } else if (diffDays < 30) {
     // Show weeks for anything under 30 days to avoid "0 months ago" when days are 28-29
-    return `${diffWeeks}${t('time.week')} ${t('time.ago')}`
+    return formatTime(diffWeeks, 'week')
   } else if (diffDays < 365) {
-    return `${diffMonths}${t('time.month')} ${t('time.ago')}`
+    return formatTime(diffMonths, 'month')
   } else {
-    return `${diffYears}${t('time.year')} ${t('time.ago')}`
+    return formatTime(diffYears, 'year')
   }
 })
 
@@ -437,6 +448,18 @@ const videoBadge = computed(() => {
 const displayedTags = computed(() => {
   if (!video.value?.tags || video.value.tags.length === 0) return []
   return tagsExpanded.value ? video.value.tags : video.value.tags.slice(0, maxTagsToShow)
+})
+
+const showMoreTagsText = computed(() => {
+  if (!video.value?.tags) return ''
+  const remainingCount = video.value.tags.length - maxTagsToShow
+  
+  // Lithuanian plural rules for "žymės" (tags)
+  if (remainingCount === 1) {
+    return `Rodyti dar ${remainingCount} žymę`
+  } else {
+    return `Rodyti dar ${remainingCount} žymių`
+  }
 })
 
 const hasMoreTags = computed(() => {

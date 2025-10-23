@@ -209,7 +209,7 @@
       },
       "trending": {
         "title": "Žiūrimiausi",
-        "description": "Populiarūs vaizdo įrašai, gaunantys dėmesį tinkle."
+        "description": "Populiarūs vaizdo įrašai, gaunantys dėmesį tinkle per paskutines 30 dienų."
       },
       "topChannels": {
         "title": "Geriausi kanalai",

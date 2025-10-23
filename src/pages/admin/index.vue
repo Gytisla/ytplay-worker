@@ -44,10 +44,10 @@
             <div class="ml-5 w-0 flex-1">
               <dl>
                 <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                  Content Management
+                  Channel Management
                 </dt>
                 <dd class="text-lg font-semibold text-gray-900 dark:text-white">
-                  Manage videos and channels
+                  Manage YouTube channels
                 </dd>
               </dl>
             </div>
@@ -55,7 +55,9 @@
         </div>
         <div class="bg-gray-50 dark:bg-slate-700 px-6 py-4 border-t border-gray-200 dark:border-gray-600">
           <div class="text-sm">
-            <span class="text-gray-500 dark:text-gray-400">Coming soon</span>
+            <NuxtLink to="/admin/channels" class="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200">
+              View channels →
+            </NuxtLink>
           </div>
         </div>
       </div>

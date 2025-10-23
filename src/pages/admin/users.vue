@@ -52,8 +52,9 @@
                     </div>
                   </div>
                   <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900 dark:text-white">
+                    <div class="text-sm font-medium text-gray-900 dark:text-white flex items-center">
                       {{ user.full_name || 'No name' }}
+                      <span v-if="isMainAdmin(user)" class="ml-2 text-xs text-amber-600 dark:text-amber-400 font-bold">👑</span>
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">
                       {{ user.email }}
@@ -65,19 +66,22 @@
                 <select
                   :value="user.role"
                   @change="(event) => updateUserRole(user.id, (event.target as HTMLSelectElement).value)"
-                  class="text-sm border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:border-primary-500 focus:ring-primary-500 transition-colors duration-200"
-                  :disabled="updatingUser === user.id"
+                  class="text-sm p-2 border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:border-primary-500 focus:ring-primary-500 transition-colors duration-200"
+                  :disabled="updatingUser === user.id || isMainAdmin(user)"
                 >
                   <option value="user">User</option>
                   <option value="moderator">Moderator</option>
                   <option value="admin">Admin</option>
                 </select>
+                <span v-if="isMainAdmin(user)" class="ml-2 text-xs text-amber-600 dark:text-amber-400 font-medium">(Main Admin)</span>
+                <span v-else-if="updatingUser === user.id" class="ml-2 text-xs text-gray-500 dark:text-gray-400">(Updating...)</span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span :class="user.is_active ? 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/20' : 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20'"
                       class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
                   {{ user.is_active ? 'Active' : 'Inactive' }}
                 </span>
+                <span v-if="isMainAdmin(user)" class="ml-2 text-xs text-amber-600 dark:text-amber-400 font-medium">★</span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                 {{ formatDate(user.created_at) }}
@@ -85,12 +89,16 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <button
                   @click="toggleUserStatus(user.id, !user.is_active)"
-                  :disabled="updatingUser === user.id"
-                  :class="user.is_active ? 'text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300' : 'text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300'"
-                  class="mr-3 disabled:opacity-50 transition-colors duration-200"
+                  :disabled="updatingUser === user.id || isMainAdmin(user)"
+                  :class="[
+                    user.is_active ? 'text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300' : 'text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300',
+                    (updatingUser === user.id || isMainAdmin(user)) ? 'opacity-50 cursor-not-allowed' : ''
+                  ]"
+                  class="mr-3 transition-colors duration-200"
                 >
                   {{ user.is_active ? 'Deactivate' : 'Activate' }}
                 </button>
+                <span v-if="isMainAdmin(user)" class="text-xs text-amber-600 dark:text-amber-400 font-medium">(Protected)</span>
               </td>
             </tr>
           </tbody>
@@ -119,6 +127,14 @@ definePageMeta({
 const users = ref<UserProfile[]>([])
 const loading = ref(true)
 const updatingUser = ref<string | null>(null)
+
+// Main admin user ID (from seed data)
+const MAIN_ADMIN_AUTH_USER_ID = '46f41081-c641-4cf8-a2ec-96fa9a0fd249'
+
+// Check if user is the main admin
+const isMainAdmin = (user: UserProfile) => {
+  return user.auth_user_id === MAIN_ADMIN_AUTH_USER_ID
+}
 
 // Load users
 const loadUsers = async () => {

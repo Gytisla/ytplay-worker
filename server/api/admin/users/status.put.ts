@@ -39,6 +39,20 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  // Prevent changes to main admin user
+  const { data: targetUser } = await supabase
+    .from('user_profiles')
+    .select('auth_user_id')
+    .eq('id', userId)
+    .single()
+
+  if (targetUser?.auth_user_id === '46f41081-c641-4cf8-a2ec-96fa9a0fd249') {
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'Cannot modify the main admin user'
+    })
+  }
+
   // Update user status
   const { error } = await supabase
     .from('user_profiles')

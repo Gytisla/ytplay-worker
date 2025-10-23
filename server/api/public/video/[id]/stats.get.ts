@@ -102,7 +102,7 @@ export default defineEventHandler(async (event) => {
       videoId,
       days,
       stats: formattedStats,
-      summary: calculateSummary(formattedStats, isTodayView),
+      summary: calculateSummary(formattedStats),
       isTodayView
     }
 
@@ -156,7 +156,12 @@ function groupByDay(stats: any[]) {
     }
   }
 
-  return grouped
+  // Filter out records where views equals viewGained (likely invalid/first records)
+  const filteredGrouped = Object.fromEntries(
+    Object.entries(grouped).filter(([_, record]: [string, any]) => record.views !== record.viewGained)
+  )
+
+  return filteredGrouped
 }
 
 function groupByHour(stats: any[]) {
@@ -193,13 +198,13 @@ function groupByHour(stats: any[]) {
   return grouped
 }
 
-function calculateSummary(stats: any[], isTodayView: boolean = false) {
+function calculateSummary(stats: any[]) {
   if (stats.length === 0) return null
 
   const latest = stats[stats.length - 1]
   const previous = stats.length > 1 ? stats[stats.length - 2] : null
 
-  // For today view, calculate changes differently (hourly vs daily)
+  // Calculate changes from latest vs previous
   const viewChange = previous ? latest.views - previous.views : 0
   const likeChange = previous ? latest.likes - previous.likes : 0
   const commentChange = previous ? latest.comments - previous.comments : 0

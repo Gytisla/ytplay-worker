@@ -9,6 +9,31 @@
         <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">
           Rules are processed in priority order (lower numbers first). Only active rules are applied. All conditions within a rule must match for categorization to occur.
         </p>
+        <div class="mt-4">
+          <button
+            @click="showCreateModal = true"
+            class="inline-flex items-center px-4 py-2 border border-transconst closeModal = () => {
+  showCreateModal.value = false
+  editingRule.value = null
+  saveError.value = ''
+  ruleForm.value = {
+    name: '',
+    priority: 999,
+    category_id: '',
+    active: true,
+    conditionsArray: []
+  }
+  // Reset channel search state
+  channelSearchQuery.value = ''
+  channels.value = []
+}-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 transition-colors duration-200"
+          >
+            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            Create New Rule
+          </button>
+        </div>
       </div>
       <div v-if="loading" class="px-6 py-5">
         <div class="flex items-center justify-center">
@@ -153,6 +178,25 @@
 
           <!-- Modal Body -->
           <div class="px-6 py-6">
+            <!-- Error Message -->
+            <div v-if="saveError" class="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-red-800 dark:text-red-200">
+                    Error saving rule
+                  </h3>
+                  <div class="mt-2 text-sm text-red-700 dark:text-red-300">
+                    {{ saveError }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <form @submit.prevent="saveRule" class="space-y-6">
               <!-- Basic Settings Section -->
               <div class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4">
@@ -456,6 +500,7 @@ const saving = ref(false)
 const channelSearchQuery = ref('')
 const channelSearchLoading = ref(false)
 const channelNames = ref<Map<string, string>>(new Map())
+const saveError = ref('')
 
 const ruleForm = ref({
   name: '',
@@ -720,6 +765,7 @@ const editRule = async (rule: CategorizationRule) => {
 
 const saveRule = async () => {
   saving.value = true
+  saveError.value = ''
   try {
     const ruleData = {
       name: ruleForm.value.name,
@@ -745,8 +791,9 @@ const saveRule = async () => {
 
     await loadRules()
     closeModal()
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error saving rule:', error)
+    saveError.value = error?.data?.message || error?.message || 'An error occurred while saving the rule'
   } finally {
     saving.value = false
   }

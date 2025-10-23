@@ -88,6 +88,25 @@ export default defineEventHandler(async (event) => {
     conditionsObject[condition.type] = condition.value
   }
 
+  // Handle priority assignment
+  let priority = body.priority || 1
+
+  // Check if the desired priority is already taken by another rule
+  const { data: conflictingRule } = await supabase
+    .from('categorization_rules')
+    .select('id')
+    .eq('priority', priority)
+    .neq('id', id) // Exclude the current rule
+    .single()
+
+  // If priority is taken, throw an error
+  if (conflictingRule) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `Priority ${priority} is already taken by another rule. Please choose a different priority.`
+    })
+  }
+
   // Update the categorization rule
   const { error: updateError } = await supabase
     .from('categorization_rules')
@@ -95,7 +114,7 @@ export default defineEventHandler(async (event) => {
       name: body.name,
       category_id: body.category_id,
       conditions: conditionsObject,
-      priority: body.priority || 0,
+      priority: priority,
       active: body.active !== undefined ? body.active : true
     })
     .eq('id', id)

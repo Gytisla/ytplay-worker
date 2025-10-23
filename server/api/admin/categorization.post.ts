@@ -79,19 +79,22 @@ export default defineEventHandler(async (event) => {
     conditionsObject[condition.type] = condition.value
   }
 
-  // Find the next available priority if the requested one is taken
+  // Handle priority assignment
   let priority = body.priority || 1
-  const { data: existingRules } = await supabase
-    .from('categorization_rules')
-    .select('priority')
-    .order('priority', { ascending: false })
-    .limit(1)
 
-  if (existingRules && existingRules.length > 0) {
-    const maxPriority = existingRules[0]?.priority || 0
-    if (priority <= maxPriority) {
-      priority = maxPriority + 1
-    }
+  // Check if the desired priority is already taken
+  const { data: conflictingRule } = await supabase
+    .from('categorization_rules')
+    .select('id')
+    .eq('priority', priority)
+    .single()
+
+  // If priority is taken, throw an error
+  if (conflictingRule) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `Priority ${priority} is already taken by another rule. Please choose a different priority.`
+    })
   }
 
   // Create the categorization rule

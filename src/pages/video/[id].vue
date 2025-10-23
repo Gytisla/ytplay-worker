@@ -38,6 +38,12 @@
                   <span>{{ video.category.name }}</span>
                 </NuxtLink>
               </div>
+
+              <!-- Admin Category Manager -->
+              <VideoCategoryManager
+                :video-id="video.dbId"
+                :current-category-id="video.category_id"
+              />
               
               <!-- Live/Upcoming Badge -->
               <div v-if="videoBadge" class="mb-3 flex-shrink-0">

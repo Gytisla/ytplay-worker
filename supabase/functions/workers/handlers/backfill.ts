@@ -160,7 +160,9 @@ export async function handleBackfillChannel(
             youtube_video_id: video.id,
             title: video.snippet?.title ?? '',
             description: video.snippet?.description ?? '',
-            channel_id: channelUuid
+            channel_id: channelUuid,
+            ...(video.contentDetails?.duration && { duration: video.contentDetails.duration }),
+            live_broadcast_content: video.snippet?.liveBroadcastContent || 'none'
           }, supabase)
 
           return {

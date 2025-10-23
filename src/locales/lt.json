@@ -153,10 +153,10 @@
     }
   },
   "liveUpcoming": {
-    "title": "Tiesioginiai ir artimiausi",
-    "description": "Žiūrėkite tiesiogines transliacijas ir atraskite artimiausius suplanuotus transliacijas",
+    "title": "Tiesiogiai ir artimiausi",
+    "description": "Žiūrėkite tiesiogines transliacijas ir atraskite artimiausias suplanuotas transliacijas",
     "tabs": {
-      "live": "Tiesioginiai",
+      "live": "Tiesiogiai",
       "upcoming": "Artimiausi"
     },
     "noLive": {
@@ -243,7 +243,7 @@
     "categories": "Kategorijos",
     "topChannels": "Top kanalai",
     "topVideos": "Top vaizdo įrašai",
-    "liveUpcoming": "Tiesioginiai",
+    "liveUpcoming": "Tiesiogiai",
     "submitChannel": "Pasiūlyti kanalą",
     "searchPlaceholder": "Ieškoti vaizdo įrašų, kanalų...",
     "toggleTheme": "Perjungti temą",

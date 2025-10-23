@@ -1,5 +1,76 @@
 <template>
   <div class="space-y-6 mb-12">
+    <!-- Filters -->
+    <div class="bg-white dark:bg-slate-800 shadow-lg sm:rounded-lg border border-gray-200 dark:border-gray-700">
+      <div class="px-6 py-4">
+        <h3 class="text-lg leading-6 font-semibold text-gray-900 dark:text-white mb-4">
+          Filters
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Category Filter -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Category
+            </label>
+            <select
+              v-model="categoryFilter"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm"
+            >
+              <option value="">All Categories</option>
+              <option
+                v-for="category in categories"
+                :key="category.id"
+                :value="category.id"
+              >
+                {{ category.icon }} {{ category.name }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Channel Filter -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Channel Name
+            </label>
+            <input
+              v-model="channelFilter"
+              type="text"
+              placeholder="Filter by channel name..."
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm"
+            />
+          </div>
+
+          <!-- Rule Type Filter -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Rule Type
+            </label>
+            <select
+              v-model="ruleTypeFilter"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm"
+            >
+              <option value="">All Rule Types</option>
+              <option value="channel_id">📺 Channel Name</option>
+              <option value="title_contains">📝 Title Contains</option>
+              <option value="description_contains">📄 Description Contains</option>
+              <option value="title_regex">🔍 Title Regex</option>
+              <option value="duration_lt">⏱️ Duration Less Than</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Clear Filters -->
+        <div class="mt-4 flex justify-end">
+          <button
+            @click="clearFilters"
+            class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-md transition-colors duration-200"
+          >
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Rules Table -->
     <div class="bg-white dark:bg-slate-800 shadow-lg overflow-hidden sm:rounded-lg border border-gray-200 dark:border-gray-700">
       <div class="px-6 py-5">
@@ -69,7 +140,7 @@
             </tr>
           </thead>
           <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-gray-700">
-            <tr v-for="rule in rules" :key="rule.id" class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors duration-150">
+            <tr v-for="rule in filteredRules" :key="rule.id" class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors duration-150">
               <td class="px-4 py-4 whitespace-nowrap">
                 <div class="flex items-center space-x-2">
                   <span class="text-sm font-medium text-gray-900 dark:text-white min-w-8 text-center">{{ rule.priority }}</span>
@@ -502,6 +573,11 @@ const channelSearchLoading = ref(false)
 const channelNames = ref<Map<string, string>>(new Map())
 const saveError = ref('')
 
+// Filter state
+const categoryFilter = ref('')
+const channelFilter = ref('')
+const ruleTypeFilter = ref('')
+
 const ruleForm = ref({
   name: '',
   priority: 999,
@@ -826,6 +902,48 @@ const closeModal = () => {
   channelSearchQuery.value = ''
   channels.value = []
 }
+
+// Filter methods
+const clearFilters = () => {
+  categoryFilter.value = ''
+  channelFilter.value = ''
+  ruleTypeFilter.value = ''
+}
+
+const filteredRules = computed(() => {
+  return rules.value.filter(rule => {
+    // Category filter
+    if (categoryFilter.value && rule.category_id !== categoryFilter.value) {
+      return false
+    }
+
+    // Channel filter - check if any condition has channel_id and matches the filter
+    if (channelFilter.value) {
+      const hasMatchingChannel = rule.parsedConditions?.some(condition => {
+        if (condition.type === 'channel_id') {
+          const channelName = condition.label.toLowerCase()
+          return channelName.includes(channelFilter.value.toLowerCase())
+        }
+        return false
+      })
+      if (!hasMatchingChannel) {
+        return false
+      }
+    }
+
+    // Rule type filter
+    if (ruleTypeFilter.value) {
+      const hasMatchingType = rule.parsedConditions?.some(condition =>
+        condition.type === ruleTypeFilter.value
+      )
+      if (!hasMatchingType) {
+        return false
+      }
+    }
+
+    return true
+  })
+})
 
 // Load data on mount
 onMounted(() => {

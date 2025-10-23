@@ -84,6 +84,7 @@ export default defineEventHandler(async (event) => {
     // Format the response
     const formattedVideo = {
       id: video.youtube_video_id,
+      dbId: video.id, // Database ID for admin operations
       slug: video.slug,
       title: video.title,
       description: video.description,
@@ -94,6 +95,7 @@ export default defineEventHandler(async (event) => {
       publishedAt: video.published_at, // Raw date for date calculations
       live_broadcast_content: video.live_broadcast_content,
       tags: video.tags || [],
+      category_id: video.category_id, // Add category_id for admin management
       category: (video.video_categories as any) ? {
         id: (video.video_categories as any).id,
         name: (video.video_categories as any).name,

@@ -80,7 +80,13 @@ export default defineEventHandler(async (event) => {
     channelId: video.channels?.id,
     views: video.view_count,
     age: formatAge(new Date(video.published_at)),
-    category: video.video_categories?.[0]?.name || 'Uncategorized',
+    category: video.video_categories ? {
+        id: video.video_categories.id,
+        name: video.video_categories.name,
+        key: video.video_categories.key,
+        color: video.video_categories.color,
+        icon: video.video_categories.icon
+    } : null,
     category_id: video.category_id,
     live_broadcast_content: video.live_broadcast_content
   })) || []

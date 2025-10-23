@@ -29,7 +29,7 @@
         class="w-full h-full object-cover group-hover:scale-105 transition"
         loading="lazy"
       />
-      <div class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
+      <div v-if="!video.live_broadcast_content || (video.live_broadcast_content !== 'live' && video.live_broadcast_content !== 'upcoming')" class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
         {{ video.duration }}
       </div>
       <!-- Ranking Badge -->

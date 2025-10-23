@@ -152,6 +152,22 @@
       "years_other": "prieš {count} metų"
     }
   },
+  "liveUpcoming": {
+    "title": "Tiesioginiai ir artimiausi",
+    "description": "Žiūrėkite tiesiogines transliacijas ir atraskite artimiausius suplanuotus transliacijas",
+    "tabs": {
+      "live": "Tiesioginiai",
+      "upcoming": "Artimiausi"
+    },
+    "noLive": {
+      "title": "Nėra tiesioginių transliacijų",
+      "description": "Šiuo metu nėra tiesioginių transliacijų. Patikrinkite vėliau dėl artėjančių transliacijų."
+    },
+    "noUpcoming": {
+      "title": "Nėra artėjančių vaizdo įrašų",
+      "description": "Šiuo metu nėra suplanuotų artėjančių vaizdo įrašų."
+    }
+  },
   "search": {
     "placeholder": "Ieškoti kanalų arba vaizdo įrašų...",
     "noResults": "Rezultatų nerasta",
@@ -227,6 +243,7 @@
     "categories": "Kategorijos",
     "topChannels": "Top kanalai",
     "topVideos": "Top vaizdo įrašai",
+    "liveUpcoming": "Tiesioginiai",
     "submitChannel": "Pasiūlyti kanalą",
     "searchPlaceholder": "Ieškoti vaizdo įrašų, kanalų...",
     "toggleTheme": "Perjungti temą",

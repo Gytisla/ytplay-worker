@@ -87,6 +87,17 @@
             Naujausi
           </NuxtLink>
           <NuxtLink
+            to="/live-upcoming"
+            :class="[
+              'px-3 py-2 text-sm font-medium rounded-md transition',
+              isActiveRoute('/live-upcoming')
+                ? 'text-primary-600 dark:text-primary-400 font-semibold'
+                : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
+            ]"
+          >
+            {{ $t('header.liveUpcoming') }}
+          </NuxtLink>
+          <NuxtLink
             to="/top-videos"
             :class="[
               'px-3 py-2 text-sm font-medium rounded-md transition',
@@ -214,6 +225,19 @@
           :aria-current="isActiveRoute('/new') ? 'page' : null"
         >
           Naujausi
+        </NuxtLink>
+        <NuxtLink
+          to="/live-upcoming"
+          @click="mobileOpen = false"
+          :class="[
+            'px-3 py-2 rounded-md text-sm font-medium transition',
+            isActiveRoute('/live-upcoming')
+              ? 'text-primary-600 dark:text-primary-400 font-semibold'
+              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+          ]"
+          :aria-current="isActiveRoute('/live-upcoming') ? 'page' : null"
+        >
+          {{ $t('header.liveUpcoming') }}
         </NuxtLink>
         <NuxtLink
           to="/top-videos"

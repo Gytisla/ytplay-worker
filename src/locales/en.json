@@ -147,6 +147,22 @@
       "years_other": "{{count}} years ago"
     }
   },
+  "liveUpcoming": {
+    "title": "Live & Upcoming",
+    "description": "Watch live streams and discover upcoming scheduled broadcasts",
+    "tabs": {
+      "live": "Live",
+      "upcoming": "Upcoming"
+    },
+    "noLive": {
+      "title": "No Live Streams",
+      "description": "There are currently no live streams. Check back later for upcoming broadcasts."
+    },
+    "noUpcoming": {
+      "title": "No Upcoming Videos",
+      "description": "There are no scheduled upcoming videos at the moment."
+    }
+  },
   "time": {
     "now": "now",
     "hour": "h",
@@ -230,6 +246,7 @@
     "categories": "Categories",
     "topChannels": "Top Channels",
     "topVideos": "Top Videos",
+    "liveUpcoming": "Live & Upcoming",
     "submitChannel": "Submit Channel",
     "searchPlaceholder": "Search videos, channels...",
     "toggleTheme": "Toggle theme"

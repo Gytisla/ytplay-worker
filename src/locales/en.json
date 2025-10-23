@@ -113,6 +113,7 @@
       "dailyViews": "Daily Views"
     },
     "noData": "No data available for this period",
+    "noStats": "Channel statistics are not available",
     "showMoreDescription": "Show more",
     "showLessDescription": "Show less",
     "videos": "Videos",

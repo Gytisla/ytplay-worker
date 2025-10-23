@@ -88,7 +88,7 @@
           <!-- Collapsible content -->
           <div class="px-6 pb-4 pt-4 analytics-content">
             <!-- Summary Cards (always visible) -->
-            <div v-if="channelStats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div v-if="channelStats && channelStats.summary" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
               <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                 <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.subscribers') }}</div>
                 <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.currentSubscribers) }}</div>
@@ -114,6 +114,14 @@
                 <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.avgSubscriberGain') }}</div>
                 <div class="text-2xl font-bold">{{ formatNumber(channelStats.summary.avgSubscriberGain) }}</div>
                 <div class="text-sm text-muted dark:text-gray-400">{{ t('channel.stats.perDay') }}</div>
+              </div>
+            </div>
+
+            <!-- No Stats Available -->
+            <div v-else-if="channelStats && !channelStats.summary" class="mb-6 bg-gray-50 dark:bg-gray-700 rounded-lg p-6 text-center">
+              <div class="text-muted dark:text-gray-400">
+                <div class="text-4xl mb-2">📊</div>
+                <div class="text-sm">{{ t('channel.noStats') || 'Channel statistics are not available' }}</div>
               </div>
             </div>
 

@@ -137,7 +137,7 @@ async function loadVideos() {
 
 // Meta tags
 useHead({
-  title: `${t('topVideosPage.title')} - YTPlay.lt`,
+  title: `${t('topVideosPage.title')} - ToPlay.lt`,
   meta: [
     {
       name: 'description',
@@ -158,7 +158,7 @@ useHead({
     },
     {
       property: 'og:url',
-      content: 'https://ytplay-worker.vercel.app/top-videos'
+      content: 'https://toplay.lt/top-videos'
     },
     {
       property: 'og:type',
@@ -166,7 +166,7 @@ useHead({
     },
     {
       property: 'og:site_name',
-  content: 'YTPlay.lt'
+      content: 'ToPlay.lt'
     },
     // Twitter Card
     {

@@ -32,11 +32,11 @@
         <!-- Stats -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
           <div class="text-center">
-            <div class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1">10K+</div>
+            <div class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1">50K+</div>
             <div class="text-gray-600 dark:text-gray-400 text-sm uppercase tracking-wide">{{ t('hero.stats.videos') }}</div>
           </div>
           <div class="text-center">
-            <div class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1">500+</div>
+            <div class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1">300+</div>
             <div class="text-gray-600 dark:text-gray-400 text-sm uppercase tracking-wide">{{ t('hero.stats.channels') }}</div>
           </div>
           <div class="text-center">

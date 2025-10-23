@@ -242,7 +242,7 @@
     }
   },
   "header": {
-    "brand": "YTPlay.lt",
+    "brand": "ToPlay.lt",
     "categories": "Categories",
     "topChannels": "Top Channels",
     "topVideos": "Top Videos",
@@ -304,45 +304,45 @@
   },
   "seo": {
     "home": {
-      "title": "YTPlay.lt - Discover Amazing Videos",
+      "title": "ToPlay.lt - Discover Amazing Videos",
       "description": "Discover and explore amazing YouTube videos organized by categories. Watch trending content, top channels, and new videos all in one place.",
-      "ogTitle": "YTPlay.lt - Discover Amazing Videos",
+      "ogTitle": "ToPlay.lt - Discover Amazing Videos",
       "ogDescription": "Discover and explore amazing YouTube videos organized by categories. Watch trending content, top channels, and new videos all in one place."
     },
     "categories": {
-      "title": "Categories - YTPlay.lt",
+      "title": "Categories - ToPlay.lt",
       "description": "Explore videos organized by category",
-      "ogTitle": "Video Categories - YTPlay.lt",
+      "ogTitle": "Video Categories - ToPlay.lt",
       "ogDescription": "Explore videos organized by category. Discover content from gaming, music, technology, and more."
     },
     "topChannels": {
-      "title": "Top Channels - YTPlay.lt",
+      "title": "Top Channels - ToPlay.lt",
       "description": "Discover the most popular YouTube channels by subscriber count and total views",
-      "ogTitle": "Top Channels - YTPlay.lt",
+      "ogTitle": "Top Channels - ToPlay.lt",
       "ogDescription": "Discover the most popular YouTube channels by subscriber count and total views"
     },
     "topVideos": {
-      "title": "Top Videos - YTPlay.lt",
+      "title": "Top Videos - ToPlay.lt",
       "description": "Discover the most popular YouTube videos by view count and trending content",
-      "ogTitle": "Top Videos - YTPlay.lt",
+      "ogTitle": "Top Videos - ToPlay.lt",
       "ogDescription": "Discover the most popular YouTube videos by view count and trending content"
     },
     "category": {
-      "title": "{name} - YTPlay.lt",
+      "title": "{name} - ToPlay.lt",
       "description": "Explore {count} videos in the {name} category",
-      "ogTitle": "{name} - YTPlay.lt",
+      "ogTitle": "{name} - ToPlay.lt",
       "ogDescription": "Explore {count} videos in the {name} category. {description}"
     },
     "privacy": {
-      "title": "Privacy Policy - YTPlay.lt",
-      "description": "Learn how YTPlay.lt collects, uses, and protects your data. Privacy policy about Google Analytics and future features.",
-      "ogTitle": "Privacy Policy - YTPlay.lt",
-      "ogDescription": "Learn how YTPlay.lt collects, uses, and protects your data. Privacy policy about Google Analytics and future features."
+      "title": "Privacy Policy - ToPlay.lt",
+      "description": "Learn how ToPlay.lt collects, uses, and protects your data. Privacy policy about Google Analytics and future features.",
+      "ogTitle": "Privacy Policy - ToPlay.lt",
+      "ogDescription": "Learn how ToPlay.lt collects, uses, and protects your data. Privacy policy about Google Analytics and future features."
     },
-    "siteName": "YTPlay.lt"
+    "siteName": "ToPlay.lt"
   },
   "footer": {
-    "brandLine1": "YTPlay.lt",
+    "brandLine1": "ToPlay.lt",
     "brandLine2": "Discover videos & channels",
     "tagline": "A small discovery front-end for exploring new and trending videos across the web. Fast, privacy-friendly, and beautiful.",
     "explore": "Explore",
@@ -350,10 +350,10 @@
     "stayInLoop": "Stay in the loop",
     "subscribeText": "Subscribe to a short monthly update about top videos and channels.",
   "emailLocal": "info",
-  "emailDomain": "ytplay.lt",
+  "emailDomain": "toplay.lt",
     "subscribe": "Subscribe",
     "comingSoon": "Coming soon",
-    "copyright": "© YTPlay.lt — discovery for public viewers",
+    "copyright": "© ToPlay.lt — discovery for public viewers",
     "exploreLinks": {
       "new": "New",
       "trending": "Trending",
@@ -370,7 +370,7 @@
   },
   "about": {
     "hero": {
-      "title": "YTPlay.lt",
+      "title": "ToPlay.lt",
       "subtitle": "Discover top videos & channels",
       "description": "A modern platform to help you find new, trending, and top videos and channels in the Lithuanian space."
     },
@@ -437,9 +437,9 @@
   },
   "submitChannelPage": {
     "title": "Submit Channel",
-    "metaTitle": "Submit Channel | YTPlay.lt",
+    "metaTitle": "Submit Channel | ToPlay.lt",
     "metaDescription": "Submit a YouTube channel to our platform. We will review and approve submissions manually.",
-    "ogTitle": "Submit Channel | YTPlay.lt",
+    "ogTitle": "Submit Channel | ToPlay.lt",
     "ogDescription": "Have a favorite YouTube channel? Submit it to our platform!"
   }
 }

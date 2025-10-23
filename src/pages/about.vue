@@ -180,7 +180,7 @@
                 </div>
                 <div>
                   <p class="font-medium text-gray-900 dark:text-white">{{ $t('about.contact.info.email') }}</p>
-                  <p class="text-gray-600 dark:text-gray-300">info@ytplay.lt</p>
+                  <p class="text-gray-600 dark:text-gray-300">info@toplay.lt</p>
                 </div>
               </div>
 
@@ -192,7 +192,7 @@
                 </div>
                 <div>
                   <p class="font-medium text-gray-900 dark:text-white">{{ $t('about.contact.info.website') }}</p>
-                  <p class="text-gray-600 dark:text-gray-300">www.ytplay.lt</p>
+                  <p class="text-gray-600 dark:text-gray-300">www.toplay.lt</p>
                 </div>
               </div>
             </div>
@@ -252,7 +252,7 @@
                     {{ $t('about.contact.form.overlay.description') }}
                   </p>
                   <a
-                    href="mailto:info@ytplay.lt"
+                    href="mailto:info@toplay.lt"
                     class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-500 transition font-medium"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -23,7 +23,7 @@
           <div class="mb-12">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">1. Įvadas</h2>
             <p class="text-base leading-relaxed mb-6">
-              YTPlay.lt ("mes", "mūsų" arba "platforma") įsipareigoja apsaugoti jūsų privatumą.
+              ToPlay.lt ("mes", "mūsų" arba "platforma") įsipareigoja apsaugoti jūsų privatumą.
               Ši privatumo politika paaiškina, kaip mes renkame, naudojame ir saugome informaciją,
               kai naudojatės mūsų svetaine.
             </p>
@@ -397,11 +397,11 @@
             <ul class="space-y-3 ml-6">
               <li class="flex items-start">
                 <span class="inline-block w-2 h-2 bg-primary-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <div><strong class="text-gray-900 dark:text-white">El. paštas:</strong> <a href="mailto:info@ytplay.lt" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">info@ytplay.lt</a></div>
+                <div><strong class="text-gray-900 dark:text-white">El. paštas:</strong> <a href="mailto:info@toplay.lt" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">info@toplay.lt</a></div>
               </li>
               <li class="flex items-start">
                 <span class="inline-block w-2 h-2 bg-primary-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <div><strong class="text-gray-900 dark:text-white">Svetainė:</strong> <a href="https://ytplay.lt" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300" target="_blank">ytplay.lt</a></div>
+                <div><strong class="text-gray-900 dark:text-white">Svetainė:</strong> <a href="https://toplay.lt" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300" target="_blank">toplay.lt</a></div>
               </li>
             </ul>
           </div>

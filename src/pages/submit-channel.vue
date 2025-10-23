@@ -400,7 +400,7 @@ async function handleSubmit() {
 
 // Meta tags
 useHead({
-  title: () => `${t('submitChannelPage.title')} | YTPlay.lt`,
+  title: () => `${t('submitChannelPage.title')} | ToPlay.lt`,
   meta: [
     {
       name: 'description',

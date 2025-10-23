@@ -9,7 +9,7 @@ export default defineNuxtConfig({
   // App configuration
   app: {
     head: {
-      title: 'YTPlay.lt',
+      title: 'ToPlay.lt',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },

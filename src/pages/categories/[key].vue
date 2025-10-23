@@ -301,7 +301,7 @@ onMounted(() => {
 
 // SEO
 useHead(() => ({
-  title: category.value ? `${category.value.name} - YTPlay.lt` : 'Category - YTPlay.lt',
+  title: category.value ? `${category.value.name} - ToPlay.lt` : 'Category - ToPlay.lt',
   meta: [
     {
       name: 'description',
@@ -310,7 +310,7 @@ useHead(() => ({
     // Open Graph
     {
       property: 'og:title',
-  content: category.value ? `${category.value.name} - YTPlay.lt` : 'Category - YTPlay.lt'
+  content: category.value ? `${category.value.name} - ToPlay.lt` : 'Category - ToPlay.lt'
     },
     {
       property: 'og:description',
@@ -322,7 +322,7 @@ useHead(() => ({
     },
     {
       property: 'og:url',
-      content: `https://ytplay-worker.vercel.app/categories/${categoryKey}`
+      content: `https://toplay.lt/categories/${categoryKey}`
     },
     {
       property: 'og:type',
@@ -330,7 +330,7 @@ useHead(() => ({
     },
     {
       property: 'og:site_name',
-  content: 'YTPlay.lt'
+      content: 'ToPlay.lt'
     },
     // Twitter Card
     {
@@ -339,7 +339,7 @@ useHead(() => ({
     },
     {
       name: 'twitter:title',
-      content: category.value ? `${category.value.name} - YTPlay.lt` : 'Category - YTPlay.lt'
+      content: category.value ? `${category.value.name} - ToPlay.lt` : 'Category - ToPlay.lt'
     },
     {
       name: 'twitter:description',

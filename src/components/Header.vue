@@ -8,11 +8,11 @@
       <NuxtLink to="/" class="flex items-center gap-3">
         <img 
           src="/assets/logo.png" 
-          alt="YTPlay.lt" 
+          alt="ToPlay.lt" 
           class="w-8 h-8"
         />
         <span class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          YTPlay<span class="text-sm transform translate-y-0.5">.lt</span>
+          ToPlay<span class="text-sm transform translate-y-0.5">.lt</span>
         </span>
       </NuxtLink>
 

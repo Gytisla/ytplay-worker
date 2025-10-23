@@ -206,7 +206,7 @@ onMounted(() => {
 
 // Meta tags
 useHead({
-  title: `${t('newVideosPage.title')} - YTPlay.lt`,
+  title: `${t('newVideosPage.title')} - ToPlay.lt`,
   meta: [
     {
       name: 'description',
@@ -227,7 +227,7 @@ useHead({
     },
     {
       property: 'og:url',
-      content: 'https://ytplay.lt/new'
+      content: 'https://toplay.lt/new'
     },
     {
       property: 'og:type',
@@ -235,7 +235,7 @@ useHead({
     },
     {
       property: 'og:site_name',
-      content: 'YTPlay.lt'
+      content: 'ToPlay.lt'
     },
     // Twitter Card
     {

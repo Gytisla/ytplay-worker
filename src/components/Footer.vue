@@ -5,7 +5,7 @@
         <div class="flex items-center gap-3">
           <img 
             src="/assets/logo.png" 
-            alt="YTPlay.lt" 
+            alt="ToPlay.lt" 
             class="h-12 w-auto"
           />
           <div>

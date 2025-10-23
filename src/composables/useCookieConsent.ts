@@ -12,7 +12,7 @@ if (typeof window !== 'undefined') {
   (window as any).cookieConsentState = cookieConsentState
 }
 
-const COOKIE_CONSENT_KEY = 'ytplay_cookie_consent'
+const COOKIE_CONSENT_KEY = 'toplay_cookie_consent'
 
 interface CookieSettings {
   necessary: boolean

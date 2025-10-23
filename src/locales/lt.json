@@ -239,7 +239,7 @@
     }
   },
   "header": {
-    "brand": "YTPlay.lt",
+    "brand": "ToPlay.lt",
     "categories": "Kategorijos",
     "topChannels": "Top kanalai",
     "topVideos": "Top vaizdo įrašai",
@@ -332,15 +332,15 @@
       "ogDescription": "Tyrinėkite {count} vaizdo įrašus {name} kategorijoje. {description}"
     },
     "privacy": {
-      "title": "Privatumo politika - YTPlay.lt",
-      "description": "Sužinokite, kaip YTPlay.lt renka, naudoja ir saugo jūsų duomenis. Privatumo politika apie Google Analytics ir būsimas funkcijas.",
-      "ogTitle": "Privatumo politika - YTPlay.lt",
-      "ogDescription": "Sužinokite, kaip YTPlay.lt renka, naudoja ir saugo jūsų duomenis. Privatumo politika apie Google Analytics ir būsimas funkcijas."
+      "title": "Privatumo politika - ToPlay.lt",
+      "description": "Sužinokite, kaip ToPlay.lt renka, naudoja ir saugo jūsų duomenis. Privatumo politika apie Google Analytics ir būsimas funkcijas.",
+      "ogTitle": "Privatumo politika - ToPlay.lt",
+      "ogDescription": "Sužinokite, kaip ToPlay.lt renka, naudoja ir saugo jūsų duomenis. Privatumo politika apie Google Analytics ir būsimas funkcijas."
     },
-    "siteName": "YTPlay.lt"
+    "siteName": "ToPlay.lt"
   },
   "footer": {
-    "brandLine1": "YTPlay.lt",
+    "brandLine1": "ToPlay.lt",
     "brandLine2": "Atraskite vaizdo įrašus ir kanalus",
     "tagline": "Atradimų vieta, skirta nuolatiniams ir populiariems vaizdo įrašams. Greita, gerbianti privatumą ir estetiška.",
     "explore": "Atrask",
@@ -348,10 +348,10 @@
     "stayInLoop": "Sekite naujienas",
     "subscribeText": "Prenumeruokite trumpą mėnesinį pranešimą apie geriausius vaizdo įrašus ir kanalus.",
     "emailLocal": "info",
-    "emailDomain": "ytplay.lt",
+    "emailDomain": "toplay.lt",
     "subscribe": "Prenumeruoti",
     "comingSoon": "Jau greitai...",
-    "copyright": "© YTPlay.lt — atradimai visiems žiūrovams",
+    "copyright": "© ToPlay.lt — atradimai visiems žiūrovams",
     "exploreLinks": {
       "new": "Nauji",
       "trending": "Tendencijos",
@@ -368,7 +368,7 @@
   },
   "about": {
     "hero": {
-      "title": "YTPlay.lt",
+      "title": "ToPlay.lt",
       "subtitle": "Atraskite geriausius vaizdo įrašus ir kanalus",
       "description": "Moderni platforma, padedanti atrasti naujus, populiarius ir geriausius vaizdo įrašus bei kanalus lietuviškoje erdvėje."
     },
@@ -438,14 +438,14 @@
     "breadcrumb": "Nauji vaizdo įrašai",
     "description": "Atraskite naujausius vaizdo įrašus iš lietuviškų kanalų. Sekite, kas ką tik buvo paskelbta ir nepraleiskite įdomiausio turinio.",
     "noVideosFound": "Vaizdo įrašų nerasta.",
-    "ogTitle": "Nauji vaizdo įrašai - YTPlay.lt",
+    "ogTitle": "Nauji vaizdo įrašai - ToPlay.lt",
     "ogDescription": "Atraskite naujausius vaizdo įrašus iš lietuviškų kanalų. Sekite, kas ką tik buvo paskelbta ir nepraleiskite įdomiausio turinio."
   },
   "submitChannelPage": {
     "title": "Pasiūlyti kanalą",
-    "metaTitle": "Pasiūlyti kanalą | YTPlay.lt",
+    "metaTitle": "Pasiūlyti kanalą | ToPlay.lt",
     "metaDescription": "Turite mėgstamą YouTube kanalą? Pasiūlykite jį mūsų platformai!",
-    "ogTitle": "Pasiūlyti kanalą | YTPlay.lt",
+    "ogTitle": "Pasiūlyti kanalą | ToPlay.lt",
     "ogDescription": "Pasiūlykite savo mėgstamus YouTube kanalus mūsų platformai."
   }
 }

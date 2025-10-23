@@ -46,7 +46,7 @@ export default defineNuxtPlugin(() => {
   })
 
   // Check for existing cookie consent
-  const cookieConsent = localStorage.getItem('ytplay_cookie_consent')
+  const cookieConsent = localStorage.getItem('toplay_cookie_consent')
   if (cookieConsent) {
     const settings = JSON.parse(cookieConsent)
     if (settings.analytics) {

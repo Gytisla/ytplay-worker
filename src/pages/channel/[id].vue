@@ -732,7 +732,7 @@ function formatNumber(num: number): string {
 
 // Meta tags
 useHead({
-  title: () => channel.value ? `${channel.value.name} - YTPlay.lt` : 'Channel - YTPlay.lt'
+  title: () => channel.value ? `${channel.value.name} - ToPlay.lt` : 'Channel - ToPlay.lt'
 })
 
 </script>

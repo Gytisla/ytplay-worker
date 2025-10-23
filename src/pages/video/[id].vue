@@ -820,7 +820,7 @@ function formatNumber(num: number): string {
 
 // Meta tags
 useHead({
-  title: () => video.value ? `${video.value.title} - YTPlay.lt` : 'Video - YTPlay.lt'
+  title: () => video.value ? `${video.value.title} - ToPlay.lt` : 'Video - ToPlay.lt'
 })
 </script>
 

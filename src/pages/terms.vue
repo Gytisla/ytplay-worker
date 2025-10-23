@@ -23,7 +23,7 @@
           <div class="mb-12">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">1. Įvadas</h2>
             <p class="text-base leading-relaxed mb-6">
-              Šios naudojimo sąlygos ("Sąlygos") reglamentuoja jūsų naudojimąsi YTPlay.lt svetaine ("Platforma" arba "Svetainė").
+              Šios naudojimo sąlygos ("Sąlygos") reglamentuoja jūsų naudojimąsi ToPlay.lt svetaine ("Platforma" arba "Svetainė").
               Naudodamiesi mūsų svetaine, jūs sutinkate laikytis šių sąlygų.
             </p>
           </div>
@@ -31,7 +31,7 @@
           <div class="mb-12">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">2. Paslaugos aprašymas</h2>
             <p class="text-base leading-relaxed mb-6">
-              YTPlay.lt yra informacinė platforma, kuri teikia informaciją apie YouTube vaizdo įrašus ir kanalus.
+              ToPlay.lt yra informacinė platforma, kuri teikia informaciją apie YouTube vaizdo įrašus ir kanalus.
               Mes naudojame viešai prieinamus duomenis ir API, kad suteiktume naudotojams galimybę atrasti ir tyrinėti YouTube turinį.
             </p>
           </div>
@@ -44,7 +44,7 @@
                 <div class="flex items-center">
                   <span class="inline-block w-3 h-3 bg-amber-500 rounded-full mr-3 flex-shrink-0"></span>
                   <p class="text-base leading-relaxed text-amber-900 dark:text-amber-100">
-                    <strong>YTPlay.lt nėra susijusi, priklausanti arba kontroliuojama Google LLC arba YouTube.</strong>
+                    <strong>ToPlay.lt nėra susijusi, priklausanti arba kontroliuojama Google LLC arba YouTube.</strong>
                     Mes nesame YouTube partneriai, filialai, atstovai arba bet kokiu kitu būdu susiję su YouTube platforma.
                   </p>
                 </div>
@@ -223,11 +223,11 @@
             <ul class="space-y-3 ml-6">
               <li class="flex items-start">
                 <span class="inline-block w-2 h-2 bg-primary-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <div><strong class="text-gray-900 dark:text-white">El. paštas:</strong> <a href="mailto:info@ytplay.lt" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">info@ytplay.lt</a></div>
+                <div><strong class="text-gray-900 dark:text-white">El. paštas:</strong> <a href="mailto:info@toplay.lt" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">info@toplay.lt</a></div>
               </li>
               <li class="flex items-start">
                 <span class="inline-block w-2 h-2 bg-primary-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                <div><strong class="text-gray-900 dark:text-white">Svetainė:</strong> <a href="https://ytplay.lt" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300" target="_blank">ytplay.lt</a></div>
+                <div><strong class="text-gray-900 dark:text-white">Svetainė:</strong> <a href="https://toplay.lt" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300" target="_blank">toplay.lt</a></div>
               </li>
             </ul>
           </div>
@@ -242,7 +242,7 @@
               <div>
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Svarbus pranešimas apie YouTube</h3>
                 <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-                  YTPlay.lt yra nepriklausoma platforma, kuri nenaudoja, nekopijuoja ar neplatiną YouTube vaizdo įrašų.
+                  ToPlay.lt yra nepriklausoma platforma, kuri nenaudoja, nekopijuoja ar neplatiną YouTube vaizdo įrašų.
                   Mes tik teikiame informaciją apie viešai prieinamą turinį pagal YouTube Data API naudojimo taisykles.
                 </p>
                 <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
@@ -278,19 +278,19 @@
 declare const useHead: any
 
 useHead({
-  title: 'Naudojimo sąlygos | YTPlay.lt',
+  title: 'Naudojimo sąlygos | ToPlay.lt',
   meta: [
     {
       name: 'description',
-      content: 'YTPlay.lt naudojimo sąlygos. Sužinokite apie mūsų paslaugas, API naudojimą ir teisines sąlygas.'
+      content: 'ToPlay.lt naudojimo sąlygos. Sužinokite apie mūsų paslaugas, API naudojimą ir teisines sąlygas.'
     },
     {
       property: 'og:title',
-      content: 'Naudojimo sąlygos | YTPlay.lt'
+      content: 'Naudojimo sąlygos | ToPlay.lt'
     },
     {
       property: 'og:description',
-      content: 'YTPlay.lt naudojimo sąlygos ir taisyklės. Mes naudojame YouTube API, bet nesame susiję su YouTube.'
+      content: 'ToPlay.lt naudojimo sąlygos ir taisyklės. Mes naudojame YouTube API, bet nesame susiję su YouTube.'
     }
   ]
 })

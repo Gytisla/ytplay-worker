@@ -61,7 +61,7 @@ import TopChannelsSection from '~/components/home/TopChannelsSection.vue'
 
 // SEO and Open Graph meta tags
 useHead({
-  title: 'YTPlay.lt - Discover Amazing Videos',
+  title: 'ToPlay.lt - Discover Amazing Videos',
   meta: [
     {
       name: 'description',
@@ -70,7 +70,7 @@ useHead({
     // Open Graph
     {
       property: 'og:title',
-  content: 'YTPlay.lt - Discover Amazing Videos'
+      content: 'ToPlay.lt - Discover Amazing Videos'
     },
     {
       property: 'og:description',
@@ -82,7 +82,7 @@ useHead({
     },
     {
       property: 'og:url',
-      content: 'https://ytplay-worker.vercel.app'
+      content: 'https://toplay.lt'
     },
     {
       property: 'og:type',
@@ -90,7 +90,7 @@ useHead({
     },
     {
       property: 'og:site_name',
-  content: 'YTPlay.lt'
+      content: 'ToPlay.lt'
     },
     // Twitter Card
     {
@@ -99,7 +99,7 @@ useHead({
     },
     {
       name: 'twitter:title',
-  content: 'YTPlay.lt - Discover Amazing Videos'
+      content: 'ToPlay.lt - Discover Amazing Videos'
     },
     {
       name: 'twitter:description',

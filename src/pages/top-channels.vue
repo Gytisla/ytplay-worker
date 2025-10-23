@@ -144,7 +144,7 @@ async function loadChannels() {
 
 // Meta tags
 useHead({
-  title: `${t('topChannelsPage.title')} - YTPlay.lt`,
+  title: `${t('topChannelsPage.title')} - ToPlay.lt`,
   meta: [
     {
       name: 'description',
@@ -165,7 +165,7 @@ useHead({
     },
     {
       property: 'og:url',
-      content: 'https://ytplay-worker.vercel.app/top-channels'
+      content: 'https://toplay.lt/top-channels'
     },
     {
       property: 'og:type',
@@ -173,7 +173,7 @@ useHead({
     },
     {
       property: 'og:site_name',
-  content: 'YTPlay.lt'
+      content: 'ToPlay.lt'
     },
     // Twitter Card
     {

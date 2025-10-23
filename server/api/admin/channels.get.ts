@@ -1,6 +1,10 @@
 import { serverSupabaseClient } from '#supabase/server'
+import { requireAdminAuth } from '../../lib/admin-auth'
 
 export default defineEventHandler(async (event) => {
+  // Require admin authentication
+  await requireAdminAuth(event)
+
   const client = await serverSupabaseClient(event)
   const query = getQuery(event)
 

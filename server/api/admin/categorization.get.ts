@@ -1,34 +1,12 @@
-import { serverSupabaseClient } from '#supabase/server'
 import { getSupabaseAdmin } from '../../../src/lib/supabase'
+import { requireAdminAuth } from '../../lib/admin-auth'
 
 export default defineEventHandler(async (event) => {
-  // Get the Supabase admin client for admin operations
+  // Require admin authentication
+  await requireAdminAuth(event)
+
+  // Get admin client for database operations
   const supabase = getSupabaseAdmin()
-
-  // Get current user for authorization check only
-  const client = await serverSupabaseClient(event)
-  const { data: { user }, error: userError } = await client.auth.getUser()
-
-  if (userError || !user) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized'
-    })
-  }
-
-  // Check if user is admin
-  const { data: profile, error: profileError } = await supabase
-    .from('user_profiles')
-    .select('role')
-    .eq('auth_user_id', user.id)
-    .single()
-
-  if (profileError || profile?.role !== 'admin') {
-    throw createError({
-      statusCode: 403,
-      statusMessage: 'Forbidden: Admin access required'
-    })
-  }
 
   // Get all categorization rules with category info
   const { data: rules, error } = await supabase

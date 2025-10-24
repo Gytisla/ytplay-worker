@@ -1,32 +1,21 @@
 <template>
-  <section ref="sectionRef" id="trending">
+  <section id="trending">
     <div class="mb-6">
-      <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{{ t('home.sections.trending.title') }}</h2>
-      <p class="text-sm text-muted dark:text-gray-400">{{ t('home.sections.trending.description') }}</p>
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Populiarūs vaizdo įrašai</h2>
+      <p class="text-sm text-muted dark:text-gray-400">Žiūrimiausi vaizdo įrašai įkelti per pastarasias 30 dienų</p>
     </div>
 
     <div class="mt-6 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-      <ClientOnly>
-        <template v-if="localLoading">
-          <VideoCardSkeleton v-for="i in 8" :key="`t-skel-${i}`" />
-        </template>
-
-        <template v-else>
-          <VideoCard
-            v-for="item in items"
-            :key="item.id"
-            :video="item"
-            :badge="{ type: 'trending', text: 'POPULIARUS' }"
-          />
-        </template>
-        <template #fallback>
-          <VideoCardSkeleton v-for="i in 8" :key="`t-fallback-${i}`" />
-        </template>
-      </ClientOnly>
+      <VideoCard
+        v-for="item in videos"
+        :key="item.id"
+        :video="item"
+        :badge="{ type: 'trending', text: 'POPULIARUS' }"
+      />
     </div>
 
     <!-- CTA Button -->
-    <div v-if="!localLoading && items.length > 0" class="mt-6 text-center">
+    <div v-if="videos && videos.length > 0" class="mt-6 text-center">
       <NuxtLink
         to="/top-videos"
         class="inline-flex items-center gap-2 px-6 py-2 border border-primary-600 text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 text-sm font-medium rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group"
@@ -41,73 +30,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import VideoCard from '~/components/VideoCard.vue'
-import VideoCardSkeleton from '~/components/VideoCardSkeleton.vue'
-import { usePriorityLoading } from '../../composables/usePriorityLoading'
+import { computed } from 'vue'
 
-const { t } = useI18n()
+const props = defineProps<{
+  videos?: any[]
+}>()
 
-// Use a simple static path as a safe fallback for the bundled SVG asset to
-// avoid TypeScript import issues for image modules in this environment.
-const thumb = '/assets/hero-thumb.svg'
-
-const props = defineProps({
-  loading: { type: Boolean, default: false },
-  priority: { type: Number, default: 1 }
-})
-
-// Ref for section element
-const sectionRef = ref<HTMLElement | null>(null)
-
-// Real data state
-const items = ref<Array<any>>([])
-const localLoading = ref(true)
-const error = ref<string | null>(null)
-
-// Priority-based loading instead of intersection observer
-const { isLoaded } = usePriorityLoading(props.priority, loadTrendingVideos)
-
-async function loadTrendingVideos() {
-  try {
-    localLoading.value = true
-
-    const data = await $fetch('/api/public/discovery', {
-      query: { section: 'trending', limit: 8 }
-    }) as { items: any[] }
-
-    items.value = (data.items || []).map((item: any) => ({
-      id: item.id,
-      slug: item.slug,
-      thumb: item.thumb,
-      title: item.title,
-      channel: item.channel,
-      channelSlug: item.channelSlug,
-      channelId: item.channelId,
-      channelThumb: item.channelThumb,
-      views: item.views,
-      age: item.age,
-      duration: item.duration,
-      category: item.category,
-    }))
-  } catch (err: any) {
-    error.value = String(err?.message ?? err)
-    console.error('Error loading trending videos:', err)
-    // Fallback to placeholder items on error
-    items.value = Array.from({ length: 8 }).map((_, i) => ({
-      id: `trend-${i}`,
-      thumb,
-      title: `Trending video ${i + 1} — watch this now`,
-      channel: `Channel ${i + 1}`,
-      channelThumb: null,
-      views: `${Math.floor(Math.random() * 200) + 20}K views`,
-      age: `${Math.floor(Math.random() * 30) + 1}h`,
-      duration: `${Math.floor(Math.random() * 12) + 1}:0${Math.floor(Math.random() * 9)}`,
-    }))
-  } finally {
-    localLoading.value = false
-  }
-}
+// Use videos from props
+const videos = computed(() => props.videos || [])
 </script>
 
 <style scoped>

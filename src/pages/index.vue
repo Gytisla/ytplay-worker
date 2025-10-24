@@ -8,7 +8,7 @@
     </div>
 
     <div>
-      <NewSection :loading="false" :priority="1" />
+      <NewSection :videos="newVideosData" />
     </div>
 
     <!-- Modern HR Separator -->
@@ -17,7 +17,7 @@
     </div>
 
     <div>
-      <TrendingSection :loading="false" :priority="2" />
+      <TrendingSection :videos="trendingVideosData" />
     </div>
 
     <!-- Modern HR Separator -->
@@ -26,7 +26,7 @@
     </div>
 
     <div class="mb-12">
-      <TopChannelsSection :loading="false" :priority="3" />
+      <TopChannelsSection :channels="topChannelsData" />
     </div>
 
     <!-- Submit Channel CTA -->
@@ -57,6 +57,36 @@ import Hero from '~/components/home/Hero.vue'
 import NewSection from '~/components/home/NewSection.vue'
 import TrendingSection from '~/components/home/TrendingSection.vue'
 import TopChannelsSection from '~/components/home/TopChannelsSection.vue'
+
+// SSR data fetching for new videos section
+const { data: newVideosData } = await useAsyncData('new-videos', () =>
+  $fetch('/api/public/discovery', {
+    query: {
+      section: 'new',
+      limit: 8
+    }
+  }).then(res => res.items || [])
+)
+
+// SSR data fetching for trending videos section
+const { data: trendingVideosData } = await useAsyncData('trending-videos', () =>
+  $fetch('/api/public/discovery', {
+    query: {
+      section: 'trending',
+      limit: 8
+    }
+  }).then(res => res.items || [])
+)
+
+// SSR data fetching for top channels section
+const { data: topChannelsData } = await useAsyncData('top-channels', () =>
+  $fetch('/api/public/discovery', {
+    query: {
+      section: 'channels',
+      limit: 8
+    }
+  }).then(res => res.channels || [])
+)
 
 // SEO and Open Graph meta tags
 useHead({

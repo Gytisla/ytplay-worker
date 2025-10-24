@@ -3,7 +3,7 @@
   "outputDirectory": ".output",
   "framework": "nuxtjs",
   "functions": {
-    "src/server/api/**/*.ts": {
+    "server/api/**/*.ts": {
       "runtime": "@vercel/node@3.0.0"
     }
   },

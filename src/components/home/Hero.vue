@@ -55,7 +55,7 @@
   <!-- Popular Videos Sections -->
   <section class="py-12">
     <!-- Today -->
-    <div v-if="todayHasContent" class="mb-12">
+    <div v-if="todayData" class="mb-12">
       <div class="mb-6">
         <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
           <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,11 +65,11 @@
         </h2>
         <p class="text-sm text-muted dark:text-gray-400">{{ t('home.sections.popularToday.description') }}</p>
       </div>
-      <PopularVideosSection :period="'today'" :immediate="true" @has-content="onTodayContent" />
+      <PopularVideosSection :period="'today'" :videos="todayData" />
     </div>
 
     <!-- Last 7 Days -->
-    <div v-if="weekHasContent" class="mb-12">
+    <div v-if="weekData" class="mb-12">
       <div class="mb-6">
         <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
           <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,11 +79,11 @@
         </h2>
         <p class="text-sm text-muted dark:text-gray-400">{{ t('home.sections.trendingWeek.description') }}</p>
       </div>
-      <PopularVideosSection :period="'7'" @has-content="onWeekContent" />
+      <PopularVideosSection :period="'7'" :videos="weekData" />
     </div>
 
     <!-- Last 30 Days -->
-    <div v-if="monthHasContent">
+    <div v-if="monthData">
       <div class="mb-6">
         <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
           <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,7 +93,7 @@
         </h2>
         <p class="text-sm text-muted dark:text-gray-400">{{ t('home.sections.topMonth.description') }}</p>
       </div>
-      <PopularVideosSection :period="'30'" @has-content="onMonthContent" />
+      <PopularVideosSection :period="'30'" :videos="monthData" />
     </div>
   </section>
 </template>
@@ -101,26 +101,42 @@
 <script setup lang="ts">
 // Popular videos component will be imported
 import PopularVideosSection from './PopularVideosSection.vue'
-import { ref } from 'vue'
 
 const { t } = useI18n()
 
-// Track which sections have content
-const todayHasContent = ref(true) // Start with true, hide only when confirmed empty
-const weekHasContent = ref(true)
-const monthHasContent = ref(true)
+// SSR data fetching for popular videos with priority loading
+// Priority 1: Today (highest priority - loads first during SSR)
+const { data: todayData } = await useAsyncData('popular-today', () =>
+  $fetch('/api/public/discovery', {
+    query: {
+      section: 'popular',
+      period: 'today',
+      limit: 6
+    }
+  }).then((res: any) => res.items || [])
+)
 
-function onTodayContent(hasContent: boolean) {
-  todayHasContent.value = hasContent
-}
+// Priority 2: Week (medium priority - loads second during SSR)
+const { data: weekData } = await useAsyncData('popular-week', () =>
+  $fetch('/api/public/discovery', {
+    query: {
+      section: 'popular',
+      period: '7',
+      limit: 6
+    }
+  }).then((res: any) => res.items || [])
+)
 
-function onWeekContent(hasContent: boolean) {
-  weekHasContent.value = hasContent
-}
-
-function onMonthContent(hasContent: boolean) {
-  monthHasContent.value = hasContent
-}
+// Priority 3: Month (lowest priority - loads last during SSR)
+const { data: monthData } = await useAsyncData('popular-month', () =>
+  $fetch('/api/public/discovery', {
+    query: {
+      section: 'popular',
+      period: '30',
+      limit: 6
+    }
+  }).then((res: any) => res.items || [])
+)
 </script>
 
 <style scoped>

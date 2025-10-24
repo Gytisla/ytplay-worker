@@ -49,12 +49,13 @@ export default defineNuxtConfig({
   // CSS framework
   css: ['~/assets/css/main.css'],
 
-  // Nitro server configuration
+  // Nitro server configuration for Vercel
   nitro: {
     experimental: {
       wasm: true,
     },
     compatibilityDate: '2025-10-19',
+    preset: 'vercel-edge',
   },
 
   // Runtime config for environment variables
@@ -79,10 +80,8 @@ export default defineNuxtConfig({
     redirect: false // ⛔ disables the module’s automatic auth redirects
   },
 
-  // Server-side rendering configuration (disabled for API-only app)
-  ssr: {
-    noExternal: ['@supabase', '@nuxtjs/supabase', 'cookie']
-  },
+  // Server-side rendering configuration
+  ssr: true,
 
   // Modules
   modules: [

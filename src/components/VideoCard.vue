@@ -187,7 +187,6 @@ const autoBadges = computed(() => {
   }
 
   // Check for live badge: videos that are currently live
-  console.log('Video live_broadcast_content:', video.live_broadcast_content)
   if (video.live_broadcast_content === 'live') {
     badges.push({
       type: 'custom' as const,

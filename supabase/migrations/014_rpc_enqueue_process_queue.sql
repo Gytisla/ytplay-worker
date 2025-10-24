@@ -11,7 +11,7 @@ DECLARE
   -- v_job_id UUID; -- Removed v_job_id as fallback is no longer needed
   v_url text := (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'WORKER_URL');
   v_auth text := (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'WORKER_AUTH');
-  v_body jsonb := jsonb_build_object('action','process_queue');
+  v_body jsonb := jsonb_build_object('action','process_queue', 'maxJobs', 10);
   v_headers jsonb := NULL;
   v_called boolean := false;
   v_http_res bigint := NULL;

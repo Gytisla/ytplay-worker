@@ -222,6 +222,55 @@ export async function handleBackfillChannel(
               return { success: false, error: `Failed to store video batch: ${videosError.message}` }
             }
 
+            // Insert initial video stats for the batch
+            try {
+              // Get the internal video IDs for the newly upserted videos
+              const youtubeVideoIds = batch.map(v => v.youtube_video_id)
+              const { data: videoRecords, error: videosQueryError } = await supabase
+                .from('videos')
+                .select('id, youtube_video_id')
+                .in('youtube_video_id', youtubeVideoIds)
+
+              if (videosQueryError) {
+                logger.error('Failed to query video records for stats', { channelId, batchIndex: Math.floor(i / batchSize) + 1, error: videosQueryError })
+                // Continue processing even if stats insertion fails
+              } else if (videoRecords && videoRecords.length > 0) {
+                const today = new Date()
+                const currentDate = today.toISOString().split('T')[0] // YYYY-MM-DD format
+                const currentHour = today.getHours()
+
+                const statsPayload = videoRecords.map((video) => ({
+                  video_id: video.id,
+                  date: currentDate,
+                  hour: currentHour,
+                  view_count: 0,
+                  like_count: 0,
+                  comment_count: 0,
+                  share_count: 0,
+                  view_gained: 0,
+                  estimated_minutes_watched: 0
+                }))
+
+                logger.info('inserting initial video stats for batch', { channelId, batchIndex: Math.floor(i / batchSize) + 1, count: statsPayload.length })
+
+                // Insert stats directly using Supabase client
+                const { error: statsInsertError } = await supabase
+                  .from('video_stats')
+                  .upsert(statsPayload, {
+                    onConflict: 'video_id,date,hour',
+                    ignoreDuplicates: true
+                  })
+
+                if (statsInsertError) {
+                  logger.error('Failed to insert video stats for batch', { channelId, batchIndex: Math.floor(i / batchSize) + 1, error: statsInsertError })
+                  // Continue processing even if stats insertion fails
+                }
+              }
+            } catch (statsError) {
+              logger.error('Failed to insert initial video stats for batch', { channelId, batchIndex: Math.floor(i / batchSize) + 1, error: statsError })
+              // Continue processing even if stats insertion fails
+            }
+
             totalStored += batch.length
             logger.info('stored video batch', { channelId, batchIndex: Math.floor(i / batchSize) + 1, stored: batch.length, totalStored })
           }

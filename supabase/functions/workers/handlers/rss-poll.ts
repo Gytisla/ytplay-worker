@@ -159,7 +159,58 @@ export async function handleRSSPollChannel(
               thumbnail_url?: string
             }>
             logger.info('upserting discovered videos to db', { channelId, count: videoPayload.length })
-            await dbOps.upsertVideos(videoPayload as UpsertVideoPayload)
+            const upsertResult = await dbOps.upsertVideos(videoPayload as UpsertVideoPayload)
+
+            // Insert initial video stats for newly discovered videos
+            if (upsertResult && upsertResult.length > 0) {
+              try {
+                // Get the internal video IDs for the newly upserted videos
+                const youtubeVideoIds = upsertResult.map(v => v.video_id)
+                const { data: videoRecords, error: videosQueryError } = await supabase
+                  .from('videos')
+                  .select('id, youtube_video_id')
+                  .in('youtube_video_id', youtubeVideoIds)
+
+                if (videosQueryError) {
+                  throw new Error(`Failed to query video records: ${videosQueryError.message}`)
+                }
+
+                if (videoRecords && videoRecords.length > 0) {
+                  const today = new Date()
+                  const currentDate = today.toISOString().split('T')[0] // YYYY-MM-DD format
+                  const currentHour = today.getHours()
+
+                  const statsPayload = videoRecords.map((video) => ({
+                    video_id: video.id,
+                    date: currentDate,
+                    hour: currentHour,
+                    view_count: 0,
+                    like_count: 0,
+                    comment_count: 0,
+                    share_count: 0,
+                    view_gained: 0,
+                    estimated_minutes_watched: 0
+                  }))
+
+                  logger.info('inserting initial video stats', { channelId, count: statsPayload.length })
+
+                  // Insert stats directly using Supabase client
+                  const { error: statsInsertError } = await supabase
+                    .from('video_stats')
+                    .upsert(statsPayload, {
+                      onConflict: 'video_id,date,hour',
+                      ignoreDuplicates: true
+                    })
+
+                  if (statsInsertError) {
+                    throw new Error(`Failed to insert video stats: ${statsInsertError.message}`)
+                  }
+                }
+              } catch (statsError) {
+                logger.error('Failed to insert initial video stats', { channelId, error: statsError })
+                // Continue processing even if stats insertion fails
+              }
+            }
           }
         } else {
           logger.warn('could not ensure channel exists for upserting videos', { channelId })

@@ -10,7 +10,7 @@ AS $$
 DECLARE
   v_url text := (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'RSS_WORKER_URL');
   v_auth text := (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'WORKER_AUTH');
-  v_body jsonb := jsonb_build_object('action','process_rss_jobs');
+  v_body jsonb := jsonb_build_object('action','process_rss_jobs', 'maxJobs', 10);
   v_headers jsonb := NULL;
   v_called boolean := false;
   v_http_res bigint := NULL;

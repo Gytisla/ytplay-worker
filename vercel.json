@@ -4,7 +4,7 @@
   "framework": "nuxtjs",
   "functions": {
     "src/server/api/**/*.ts": {
-      "runtime": "@vercel/node"
+      "runtime": "@vercel/node@3.0.0"
     }
   },
   "rewrites": [

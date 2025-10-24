@@ -119,7 +119,8 @@ export default defineEventHandler(async (event: any) => {
         channel: (video.channels as any)?.title || 'Unknown',
         channelThumb: (video.channels as any)?.thumbnail_url,
         channelSlug: (video.channels as any)?.slug,
-        channelId: (video.channels as any)?.id
+        channelId: (video.channels as any)?.id,
+        live_broadcast_content: video.live_broadcast_content
       })),
       total_count: totalCount || 0,
       page,

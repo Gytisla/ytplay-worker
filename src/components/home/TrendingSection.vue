@@ -44,7 +44,7 @@
 import { ref } from 'vue'
 import VideoCard from '~/components/VideoCard.vue'
 import VideoCardSkeleton from '~/components/VideoCardSkeleton.vue'
-import { useLazyLoadOnIntersection } from '../../composables/useLazyLoadOnIntersection'
+import { usePriorityLoading } from '../../composables/usePriorityLoading'
 
 const { t } = useI18n()
 
@@ -54,9 +54,10 @@ const thumb = '/assets/hero-thumb.svg'
 
 const props = defineProps({
   loading: { type: Boolean, default: false },
+  priority: { type: Number, default: 1 }
 })
 
-// Ref for intersection observer
+// Ref for section element
 const sectionRef = ref<HTMLElement | null>(null)
 
 // Real data state
@@ -64,8 +65,8 @@ const items = ref<Array<any>>([])
 const localLoading = ref(true)
 const error = ref<string | null>(null)
 
-// Lazy load on intersection
-const { isLoaded } = useLazyLoadOnIntersection(sectionRef, loadTrendingVideos, { delay: 200, skipInitialCheck: true })
+// Priority-based loading instead of intersection observer
+const { isLoaded } = usePriorityLoading(props.priority, loadTrendingVideos)
 
 async function loadTrendingVideos() {
   try {
@@ -105,7 +106,7 @@ async function loadTrendingVideos() {
     }))
   } finally {
     localLoading.value = false
-    console.log('✅ TrendingSection: Finished loading trending videos')
+    console.log(`✅ TrendingSection (Priority ${props.priority}): Finished loading trending videos`)
   }
 }
 </script>

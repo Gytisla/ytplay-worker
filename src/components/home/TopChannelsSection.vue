@@ -65,7 +65,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useLazyLoadOnIntersection } from '../../composables/useLazyLoadOnIntersection'
+import { usePriorityLoading } from '../../composables/usePriorityLoading'
 
 const { t } = useI18n()
 
@@ -75,9 +75,10 @@ const avatar = '/assets/hero-thumb.svg'
 
 const props = defineProps({
   loading: { type: Boolean, default: false },
+  priority: { type: Number, default: 1 }
 })
 
-// Ref for intersection observer
+// Ref for section element
 const sectionRef = ref<HTMLElement | null>(null)
 
 // Real data state
@@ -85,8 +86,8 @@ const channels = ref<Array<any>>([])
 const localLoading = ref(true)
 const error = ref<string | null>(null)
 
-// Lazy load on intersection
-const { isLoaded } = useLazyLoadOnIntersection(sectionRef, loadTopChannels, { delay: 300, skipInitialCheck: true })
+// Priority-based loading instead of intersection observer
+const { isLoaded } = usePriorityLoading(props.priority, loadTopChannels)
 
 async function loadTopChannels() {
   try {
@@ -117,6 +118,7 @@ async function loadTopChannels() {
     }))
   } finally {
     localLoading.value = false
+    console.log(`✅ TopChannelsSection (Priority ${props.priority}): Finished loading top channels`)
   }
 }
 </script>

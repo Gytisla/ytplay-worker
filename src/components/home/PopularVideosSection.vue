@@ -31,19 +31,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import VideoCardSkeleton from '~/components/VideoCardSkeleton.vue'
-import { useLazyLoadOnIntersection } from '../../composables/useLazyLoadOnIntersection'
+import { usePriorityLoading } from '../../composables/usePriorityLoading'
 
 const props = defineProps<{
   period: 'today' | '7' | '30'
   immediate?: boolean
+  priority?: number
 }>()
 
 const videos = ref<any[]>([])
 const loading = ref(true)
-
-// Ref for intersection observer
+// Ref for section element
 const sectionRef = ref<HTMLElement | null>(null)
 
 // Emit event when videos are loaded
@@ -65,15 +65,8 @@ function getCtaText() {
   }
 }
 
-// Lazy load on intersection (unless immediate loading is requested)
-if (!props.immediate) {
-  useLazyLoadOnIntersection(sectionRef, loadPopularVideos)
-} else {
-  // Load immediately on mount
-  onMounted(() => {
-    loadPopularVideos()
-  })
-}
+// Priority-based loading instead of intersection observer
+usePriorityLoading(props.priority || 1, loadPopularVideos)
 
 async function loadPopularVideos() {
   try {
@@ -88,7 +81,7 @@ async function loadPopularVideos() {
     }) as { items: any[] }
 
     videos.value = data.items || []
-    
+
     // Emit whether we have content
     const hasContent = videos.value.length > 0
     emit('hasContent', hasContent)

@@ -1,34 +1,34 @@
 <template>
   <div>
     <Hero />
-    
+
     <!-- Modern HR Separator -->
     <div class="flex items-center justify-center py-8">
       <hr class="w-full max-w-4xl border-0 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent">
     </div>
-    
+
     <div>
-      <NewSection :loading="false" />
+      <NewSection :loading="false" :priority="1" />
     </div>
-    
+
     <!-- Modern HR Separator -->
     <div class="flex items-center justify-center py-8">
       <hr class="w-full max-w-4xl border-0 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent">
     </div>
-    
+
     <div>
-      <TrendingSection :loading="false" />
+      <TrendingSection :loading="false" :priority="2" />
     </div>
-    
+
     <!-- Modern HR Separator -->
     <div class="flex items-center justify-center py-8">
       <hr class="w-full max-w-4xl border-0 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent">
     </div>
-    
+
     <div class="mb-12">
-      <TopChannelsSection :loading="false" />
+      <TopChannelsSection :loading="false" :priority="3" />
     </div>
-    
+
     <!-- Submit Channel CTA -->
     <div class="max-w-4xl mx-auto px-4 mb-16">
       <div class="bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 rounded-2xl p-8 md:p-12 text-center border border-primary-200 dark:border-primary-800">
@@ -50,7 +50,6 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script setup>
@@ -113,5 +112,3 @@ useHead({
 })
 </script>
 
-<style>
-</style>

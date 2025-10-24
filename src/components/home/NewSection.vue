@@ -105,7 +105,7 @@ async function loadRecentVideos() {
     }))
   } finally {
     localLoading.value = false
-    console.log(`✅ NewSection (Priority ${props.priority}): Finished loading recent videos`)
+    (`✅ NewSection (Priority ${props.priority}): Finished loading recent videos`)
   }
 }
 </script>

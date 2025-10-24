@@ -118,7 +118,6 @@ async function loadTopChannels() {
     }))
   } finally {
     localLoading.value = false
-    console.log(`✅ TopChannelsSection (Priority ${props.priority}): Finished loading top channels`)
   }
 }
 </script>

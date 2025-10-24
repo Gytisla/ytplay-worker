@@ -106,7 +106,6 @@ async function loadTrendingVideos() {
     }))
   } finally {
     localLoading.value = false
-    console.log(`✅ TrendingSection (Priority ${props.priority}): Finished loading trending videos`)
   }
 }
 </script>

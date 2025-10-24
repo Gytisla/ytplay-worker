@@ -1,7 +1,7 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": ".output",
-  "framework": "nuxt",
+  "framework": "nuxtjs",
   "functions": {
     "src/server/api/**/*.ts": {
       "runtime": "@vercel/node"

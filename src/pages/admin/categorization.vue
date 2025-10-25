@@ -595,9 +595,24 @@ const loadRules = async () => {
     const response = await $fetch('/api/admin/categorization') as { rules: CategorizationRule[] }
     const rulesData = response.rules || []
 
-    // Parse conditions for each rule
+    // Collect all unique channel IDs from all rules
+    const channelIds = new Set<string>()
     for (const rule of rulesData) {
-      rule.parsedConditions = await parseConditions(rule.conditions)
+      for (const [key, value] of Object.entries(rule.conditions)) {
+        if (key === 'channel_id') {
+          channelIds.add(String(value))
+        }
+      }
+    }
+
+    // Fetch all channel names in one API call if we have any channel IDs
+    if (channelIds.size > 0) {
+      await loadChannelNames(Array.from(channelIds))
+    }
+
+    // Parse conditions for each rule using cached channel names
+    for (const rule of rulesData) {
+      rule.parsedConditions = parseConditionsSync(rule.conditions)
     }
 
     rules.value = rulesData
@@ -677,11 +692,8 @@ const handleChannelInput = () => {
 const handleChannelFocus = (condition?: Condition) => {
   // If focusing on a specific condition with a channel_id, populate the search query with its channel name
   if (condition && condition.type === 'channel_id' && condition.value && !channelSearchQuery.value) {
-    getChannelDisplayName(condition.value).then(channelName => {
-      channelSearchQuery.value = channelName
-    }).catch(error => {
-      console.error('Failed to fetch channel name on focus:', error)
-    })
+    const channelName = channelNames.value.get(condition.value) || condition.value
+    channelSearchQuery.value = channelName
   }
   debouncedSearchChannels('')
 }
@@ -705,16 +717,13 @@ const selectChannel = (condition: Condition, channel: Channel) => {
 }
 
 // Handle when condition type changes to channel_id
-const onConditionTypeChange = async (condition: Condition) => {
+const onConditionTypeChange = (condition: Condition) => {
   if (condition.type === 'channel_id') {
-    // If we have a channel ID but no search query, try to find the channel name
+    // If we have a channel ID but no search query, try to find the channel name from cache
     if (condition.value && !channelSearchQuery.value) {
-      try {
-        const channelName = await getChannelDisplayName(condition.value)
+      const channelName = channelNames.value.get(condition.value)
+      if (channelName) {
         channelSearchQuery.value = channelName
-      } catch (error) {
-        console.error('Failed to fetch channel name:', error)
-        channelSearchQuery.value = ''
       }
     }
   } else {
@@ -724,30 +733,28 @@ const onConditionTypeChange = async (condition: Condition) => {
   }
 }
 
-const getChannelDisplayName = async (channelId: string): Promise<string> => {
-  // Check cache first
-  if (channelNames.value.has(channelId)) {
-    return channelNames.value.get(channelId)!
-  }
-
+const loadChannelNames = async (channelIds: string[]) => {
   try {
-    // Fetch specific channel info from API
-    const response = await $fetch(`/api/admin/channels?id=${channelId}`) as { channels: Array<{ id: string, title: string }> }
-    const channel = response.channels[0]
-
-    if (channel) {
-      channelNames.value.set(channelId, channel.title)
-      return channel.title
-    }
+    // Make individual API calls for now (can be optimized later)
+    const promises = channelIds.map(async (channelId) => {
+      try {
+        const response = await $fetch(`/api/admin/channels?id=${channelId}`) as { channels: Array<{ id: string, title: string }> }
+        const channel = response.channels[0]
+        if (channel) {
+          channelNames.value.set(channel.id, channel.title)
+        }
+      } catch (error) {
+        console.error(`Failed to fetch channel ${channelId}:`, error)
+      }
+    })
+    
+    await Promise.all(promises)
   } catch (error) {
-    console.error('Failed to fetch channel name:', error)
+    console.error('Failed to load channel names:', error)
   }
-
-  // Fallback to ID if fetch fails
-  return channelId
 }
 
-const parseConditions = async (conditions: Record<string, unknown>): Promise<DisplayCondition[]> => {
+const parseConditionsSync = (conditions: Record<string, unknown>): DisplayCondition[] => {
   const result: DisplayCondition[] = []
   for (const [key, value] of Object.entries(conditions)) {
     let label = ''
@@ -756,7 +763,7 @@ const parseConditions = async (conditions: Record<string, unknown>): Promise<Dis
 
     switch (key) {
       case 'channel_id':
-        const channelName = await getChannelDisplayName(String(value))
+        const channelName = channelNames.value.get(String(value)) || String(value)
         label = `Channel: ${channelName} (${String(value)})`
         icon = '📺'
         color = 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
@@ -825,15 +832,11 @@ const editRule = async (rule: CategorizationRule) => {
   // Pre-populate channel names for channel_id conditions
   for (const condition of ruleForm.value.conditionsArray) {
     if (condition.type === 'channel_id' && condition.value) {
-      try {
-        const channelName = await getChannelDisplayName(condition.value)
-        // Set the search query to the first channel name found
-        // This will pre-populate the input for channel conditions
-        if (!channelSearchQuery.value) {
-          channelSearchQuery.value = channelName
-        }
-      } catch (error) {
-        console.error('Failed to fetch channel name for editing:', error)
+      const channelName = channelNames.value.get(condition.value)
+      // Set the search query to the first channel name found
+      // This will pre-populate the input for channel conditions
+      if (channelName && !channelSearchQuery.value) {
+        channelSearchQuery.value = channelName
       }
     }
   }

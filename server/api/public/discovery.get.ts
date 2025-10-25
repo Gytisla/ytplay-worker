@@ -42,6 +42,9 @@ export default defineEventHandler(async (event) => {
 
     if (sort === 'views') {
       sortColumn = 'view_count'
+    } else if (sort === 'avg_views') {
+      // For average views per video, we'll fetch and sort in JS since it's a computed field
+      sortColumn = 'subscriber_count' // fallback, we'll sort later
     }
 
     // Fetch popular channels ordered by specified criteria
@@ -58,8 +61,7 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Format channel data
-    const channels = (data || []).map((ch: any) => ({
+    let channels = (data || []).map((ch: any) => ({
       id: ch.id, // Use database ID for navigation
       slug: ch.slug, // Add slug for SEO-friendly URLs
       youtubeId: ch.youtube_channel_id, // Keep YouTube ID for reference
@@ -68,7 +70,14 @@ export default defineEventHandler(async (event) => {
       subs: ch.subscriber_count ? `${(ch.subscriber_count / 1000).toFixed(1)}K` : '—',
       recent: ch.video_count || 0,
       views: ch.view_count ? `${ch.view_count.toLocaleString()} views` : '—',
+      avgViews: ch.video_count > 0 ? Math.round(ch.view_count / ch.video_count) : 0,
+      totalViews: ch.view_count || 0,
     }))
+
+    // Sort by average views if requested
+    if (sort === 'avg_views') {
+      channels = channels.sort((a, b) => b.avgViews - a.avgViews)
+    }
 
     result = { channels, section, limit, sort }
   } else {

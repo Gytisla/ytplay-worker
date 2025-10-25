@@ -13,116 +13,80 @@
         </p>
       </div>
 
-      <!-- Categories Overview -->
+      <!-- Categories List -->
       <div v-if="!loading && categories.length > 0" class="mb-20">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-50 mb-6">{{ t('categoriesPage.overview') }}</h2>
-        <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7">
+
+        <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
           <NuxtLink
             v-for="category in categories"
             :key="`overview-${category.id}`"
             :to="`/categories/${category.key}`"
-            class="group bg-white dark:bg-gray-800 rounded-xl p-4 hover:shadow-lg transition-all duration-200 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+            class="group relative bg-white dark:bg-gray-800 rounded-2xl p-6 hover:shadow-2xl hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 hover:-translate-y-1 overflow-hidden"
           >
-            <div class="flex flex-col items-center text-center h-full justify-between py-2">
-              <!-- Top section: Icon and Name -->
-              <div class="flex flex-col items-center space-y-3 flex-1">
-                <!-- Category Icon -->
+            <!-- Background gradient overlay on hover -->
+            <div class="absolute inset-0 bg-gradient-to-br from-transparent to-gray-50/50 dark:to-gray-700/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+            <div class="relative flex flex-col items-center text-center h-full">
+              <!-- Category Icon with enhanced styling -->
+              <div class="relative mb-4">
                 <div
-                  class="w-12 h-12 rounded-lg flex items-center justify-center text-xl transition-transform group-hover:scale-110"
-                  :style="{ backgroundColor: category.color + '20', color: category.color }"
+                  class="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl"
+                  :style="{
+                    background: `linear-gradient(135deg, ${category.color}15, ${category.color}25)`,
+                    color: category.color,
+                    boxShadow: `0 8px 32px ${category.color}20`
+                  }"
                 >
                   {{ category.icon }}
                 </div>
-
-                <!-- Category Name -->
-                <h3 class="font-medium text-gray-900 dark:text-gray-50 text-sm leading-tight line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                  {{ category.name }}
-                </h3>
+                <!-- Subtle glow effect -->
+                <div
+                  class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl"
+                  :style="{ backgroundColor: category.color + '10' }"
+                ></div>
               </div>
 
-              <!-- Bottom section: Video Count (always at bottom) -->
-              <div class="text-xs text-muted dark:text-gray-400 mt-auto">
-                {{ category.video_count || 0 }} {{ t('categoriesPage.videosShort') }}
+              <!-- Category Name -->
+              <h3 class="font-semibold text-gray-900 dark:text-gray-50 text-base leading-tight mb-2 group-hover:text-gray-800 dark:group-hover:text-gray-100 transition-colors line-clamp-2">
+                {{ category.name }}
+              </h3>
+
+              <!-- Video Count with modern badge style -->
+              <div class="mt-auto">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
+                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                  </svg>
+                  {{ category.video_count || 0 }}
+                </span>
+              </div>
+
+              <!-- Hover arrow indicator -->
+              <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
               </div>
             </div>
           </NuxtLink>
         </div>
       </div>
 
-      <!-- Categories with Videos -->
-      <div v-if="loading" class="space-y-12">
-        <div v-for="i in 6" :key="`cat-skel-${i}`" class="space-y-6">
-          <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-48 animate-pulse"></div>
-          <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            <div v-for="j in 4" :key="`vid-skel-${i}-${j}`" class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm animate-pulse">
-              <div class="aspect-video bg-gray-200 dark:bg-gray-700"></div>
-              <div class="p-4">
-                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
-                <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
-              </div>
+      <!-- Loading State -->
+      <div v-if="loading" class="mb-20">
+        <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+          <div v-for="i in 18" :key="`cat-loading-${i}`" class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 animate-pulse">
+            <div class="flex flex-col items-center text-center">
+              <div class="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-2xl mb-4"></div>
+              <div class="h-5 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-2"></div>
+              <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16 mt-auto"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <div v-else-if="categories.length > 0" class="space-y-12">
-        <section v-for="category in categories" :key="category.id" class="space-y-6">
-          <!-- Category Header -->
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <div class="flex items-center gap-4">
-              <div
-                class="w-12 h-12 rounded-lg flex items-center justify-center text-xl"
-                :style="{ backgroundColor: category.color + '20', color: category.color }"
-              >
-                {{ category.icon }}
-              </div>
-              <div>
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-50">{{ category.name }}</h2>
-                <p class="text-sm text-muted dark:text-gray-400">{{ category.video_count || 0 }} {{ t('categoriesPage.videos') }}</p>
-              </div>
-            </div>
-            <NuxtLink
-              :to="`/categories/${category.key}`"
-              class="flex items-center gap-2 px-3 py-1 sm:px-4 sm:py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition text-xs sm:text-sm font-medium"
-            >
-              {{ t('categoriesPage.viewAll') }}
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-              </svg>
-            </NuxtLink>
-          </div>
-
-          <!-- Videos Grid -->
-          <div v-if="category.latest_videos && category.latest_videos.length > 0" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            <VideoCard
-              v-for="video in category.latest_videos"
-              :key="video.id"
-              :video="{
-                id: video.id,
-                slug: video.slug,
-                title: video.title,
-                thumb: video.thumbnail,
-                duration: video.duration,
-                channel: video.channel,
-                channelThumb: video.channelThumb,
-                channelSlug: video.channelSlug,
-                channelId: video.channelId,
-                views: video.views,
-                age: video.age,
-                category: category,
-                live_broadcast_content: video.live_broadcast_content
-              }"
-            />
-          </div>
-
-          <!-- No videos message -->
-          <div v-else class="text-center py-8">
-            <p class="text-muted dark:text-gray-400">{{ t('categoriesPage.noVideosInCategory') }}</p>
-          </div>
-        </section>
-      </div>
-
-      <div v-else class="text-center py-12">
+      <!-- No Categories -->
+      <div v-else-if="categories.length === 0" class="text-center py-12">
         <p class="text-muted dark:text-gray-400">{{ t('categoriesPage.noCategoriesFound') }}</p>
       </div>
     </main>

@@ -256,10 +256,13 @@
     "breadcrumb": "Top Channels",
     "sortBySubscribers": "By Subscribers",
     "sortByViews": "By Views",
+    "sortByAvgViews": "By Avg Views",
     "descriptionSubscribers": "Most popular channels by subscriber count",
     "descriptionViews": "Most popular channels by total views",
+    "descriptionAvgViews": "Channels with the highest average views per video",
     "subscribers": "subscribers",
     "views": "views",
+    "avgViews": "avg views",
     "videos": "videos",
     "noChannelsFound": "No channels found."
   },

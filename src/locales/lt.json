@@ -254,10 +254,13 @@
     "breadcrumb": "Top kanalai",
     "sortBySubscribers": "Pagal prenumeratorius",
     "sortByViews": "Pagal peržiūras",
+    "sortByAvgViews": "Pagal vid. peržiūras",
     "descriptionSubscribers": "Populiariausi kanalai pagal prenumeratorių skaičių",
     "descriptionViews": "Populiariausi kanalai pagal bendrą peržiūrų skaičių",
+    "descriptionAvgViews": "Kanalai su didžiausiu vidutiniu peržiūrų skaičiumi vienam vaizdo įrašui",
     "subscribers": "prenumeratoriai",
     "views": "peržiūros",
+    "avgViews": "vid. peržiūrų",
     "videos": "vaizdo įrašai",
     "noChannelsFound": "Kanalų nerasta."
   },

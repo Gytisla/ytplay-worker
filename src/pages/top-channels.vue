@@ -16,10 +16,13 @@
             <button @click="sortBy = 'views'" :class="['px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition whitespace-nowrap', sortBy === 'views' ? 'bg-primary-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
               {{ t('topChannelsPage.sortByViews') }}
             </button>
+            <button @click="sortBy = 'avg_views'" :class="['px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition whitespace-nowrap', sortBy === 'avg_views' ? 'bg-primary-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600']">
+              {{ t('topChannelsPage.sortByAvgViews') }}
+            </button>
           </div>
         </div>
         <p class="text-muted dark:text-gray-400">
-          {{ sortBy === 'subscribers' ? t('topChannelsPage.descriptionSubscribers') : t('topChannelsPage.descriptionViews') }}
+          {{ sortBy === 'subscribers' ? t('topChannelsPage.descriptionSubscribers') : sortBy === 'views' ? t('topChannelsPage.descriptionViews') : t('topChannelsPage.descriptionAvgViews') }}
         </p>
       </div>
 
@@ -57,7 +60,7 @@
               <div class="flex-1">
                 <h3 class="font-semibold text-gray-900 dark:text-gray-50 group-hover:text-primary-600 transition">{{ ch.name }}</h3>
                 <p class="text-sm text-muted dark:text-gray-400">
-                  {{ sortBy === 'subscribers' ? `${ch.subs} ${t('topChannelsPage.subscribers')}` : `${ch.views} ${t('topChannelsPage.views')}` }} • {{ ch.recent }} {{ t('topChannelsPage.videos') }}
+                  {{ sortBy === 'subscribers' ? `${ch.subs} ${t('topChannelsPage.subscribers')}` : sortBy === 'views' ? `${ch.views} ${t('topChannelsPage.views')}` : `${ch.avgViews?.toLocaleString() || 0} ${t('topChannelsPage.avgViews')}` }} • {{ ch.recent }} {{ t('topChannelsPage.videos') }}
                 </p>
               </div>
 
@@ -93,7 +96,7 @@ const { t } = useI18n()
 const channels = ref<any[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
-const sortBy = ref<'subscribers' | 'views'>('subscribers')
+const sortBy = ref<'subscribers' | 'views' | 'avg_views'>('subscribers')
 
 // Load channels data on client mount so navigation is instant
 onMounted(async () => {
@@ -121,6 +124,7 @@ async function loadChannels() {
       subs: ch.subs,
       views: ch.views,
       recent: ch.recent,
+      avgViews: ch.avgViews,
     }))
   } catch (err: any) {
     error.value = String(err?.message ?? err)

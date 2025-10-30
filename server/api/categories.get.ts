@@ -37,54 +37,11 @@ export default defineEventHandler(async (event: any) => {
           .select('*', { count: 'exact', head: true })
           .eq('category_id', category.id)
 
-        // Get latest 8 videos for this category
-        const { data: latestVideos, error: videosError } = await supabase
-          .from('videos')
-          .select(`
-            id,
-            youtube_video_id,
-            slug,
-            title,
-            thumbnail_url,
-            duration,
-            view_count,
-            published_at,
-            live_broadcast_content,
-            channels!inner (
-              id,
-              slug,
-              youtube_channel_id,
-              title,
-              thumbnail_url,
-              subscriber_count
-            )
-          `)
-          .eq('category_id', category.id)
-          .order('published_at', { ascending: false })
-          .limit(8)
 
-        if (videosError) {
-          console.error(`Failed to fetch videos for category ${category.name}:`, videosError)
-        }
 
         return {
           ...category,
-          video_count: videoCount || 0,
-          latest_videos: (latestVideos || []).map((video: any) => ({
-            id: video.youtube_video_id,
-            slug: video.slug,
-            title: video.title,
-            thumbnail: video.thumbnail_url,
-            duration: formatDuration(video.duration),
-            views: formatViewCount(video.view_count),
-            uploaded: formatUploadDate(video.published_at),
-            age: formatAge(video.published_at),
-            channel: (video.channels as any)?.title || 'Unknown',
-            channelThumb: (video.channels as any)?.thumbnail_url,
-            channelSlug: (video.channels as any)?.slug,
-            channelId: (video.channels as any)?.id,
-            live_broadcast_content: video.live_broadcast_content
-          }))
+          video_count: videoCount || 0
         }
       })
     )

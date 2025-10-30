@@ -183,7 +183,7 @@ export async function handleRSSPollChannel(
                   const statsPayload = videoRecords.map((video) => ({
                     video_id: video.id,
                     date: currentDate,
-                    hour: currentHour,
+                    hour: currentHour - 1,
                     view_count: 0,
                     like_count: 0,
                     comment_count: 0,

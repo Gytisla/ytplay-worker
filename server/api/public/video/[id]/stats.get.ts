@@ -60,6 +60,10 @@ export default defineEventHandler(async (event) => {
     const startDate = new Date()
     startDate.setDate(endDate.getDate() - days)
 
+    // For today view, include one extra day to calculate gains from previous day
+    const isTodayView = days === 1
+    const actualStartDate = isTodayView ? new Date(startDate.getTime() - 24 * 60 * 60 * 1000) : startDate
+
     // Get video stats for the date range
     const { data: stats, error: statsError } = await supabase
       .from('video_stats')
@@ -74,7 +78,7 @@ export default defineEventHandler(async (event) => {
         estimated_minutes_watched
       `)
       .eq('video_id', internalVideoId)
-      .gte('date', startDate.toISOString().split('T')[0])
+      .gte('date', actualStartDate.toISOString().split('T')[0])
       .lte('date', endDate.toISOString().split('T')[0])
       .order('date', { ascending: true })
       .order('hour', { ascending: true })
@@ -88,15 +92,21 @@ export default defineEventHandler(async (event) => {
     }
 
     // Group stats by date/hour (for today show hourly, otherwise daily)
-    const isTodayView = days === 1
+    // const isTodayView = days === 1
     const statsData = isTodayView ? groupByHour(stats) : groupByDay(stats)
 
     // Convert to array and sort
-    const formattedStats = Object.values(statsData).sort((a: any, b: any) => {
+    let formattedStats = Object.values(statsData).sort((a: any, b: any) => {
       const aTime = new Date(`${a.date}${a.hour ? ` ${a.hour}:00:00` : ''}`).getTime()
       const bTime = new Date(`${b.date}${b.hour ? ` ${b.hour}:00:00` : ''}`).getTime()
       return aTime - bTime
     })
+
+    // For today view, filter to only today's data
+    if (isTodayView) {
+      const todayDate = endDate.toISOString().split('T')[0]
+      formattedStats = formattedStats.filter((stat: any) => stat.date === todayDate)
+    }
 
     return {
       videoId,

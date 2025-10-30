@@ -85,9 +85,9 @@ export default defineEventHandler(async (event) => {
     if (section === 'popular') {
       // Popular videos based on period - videos getting most views in the period
       if (period === 'today') {
-        // Get videos with 24h gains from video_performance view
+        // Get videos with 24h gains from mv_video_performance materialized view
         const { data: performanceData, error: performanceError } = await supabase
-          .from('video_performance')
+          .from('mv_video_performance')
           .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_24h, live_broadcast_content, category_id, category_name, category_key, category_color, category_icon')
           .gt('gain_24h', 0)
           .order('gain_24h', { ascending: false })
@@ -126,9 +126,9 @@ export default defineEventHandler(async (event) => {
           }
         }
       } else if (period === '7') {
-        // Get videos with 7-day gains from video_performance view
+        // Get videos with 7-day gains from mv_video_performance materialized view
         const { data: performanceData, error: performanceError } = await supabase
-          .from('video_performance')
+          .from('mv_video_performance')
           .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_7d, live_broadcast_content, category_id, category_name, category_key, category_color, category_icon')
           .gt('gain_7d', 0)
           .order('gain_7d', { ascending: false })
@@ -167,9 +167,9 @@ export default defineEventHandler(async (event) => {
           }
         }
       } else if (period === '30') {
-        // Get videos with 30-day gains from video_performance view
+        // Get videos with 30-day gains from mv_video_performance materialized view
         const { data: performanceData, error: performanceError } = await supabase
-          .from('video_performance')
+          .from('mv_video_performance')
           .select('id, youtube_video_id, slug, title, thumbnail_url, channel_title, channel_slug, channel_thumbnail_url, view_count, duration, published_at, gain_30d, live_broadcast_content, category_id, category_name, category_key, category_color, category_icon')
           .gt('gain_30d', 0)
           .order('gain_30d', { ascending: false })
@@ -209,7 +209,7 @@ export default defineEventHandler(async (event) => {
         }
       }
 
-      // Fallback: if no results from video_performance, use regular query
+      // Fallback: if no results from mv_video_performance, use regular query
       if (!result.items || result.items.length === 0) {
         let dateFilter = new Date()
         if (period === 'today') {
@@ -275,7 +275,7 @@ export default defineEventHandler(async (event) => {
       // Trending: recent videos (last 30 days) with performance data
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
       const { data, error } = await supabase
-        .from('video_performance')
+        .from('mv_video_performance')
         .select(`
           youtube_video_id,
           slug,

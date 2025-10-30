@@ -87,6 +87,7 @@ async function loadRecentVideos() {
       age: item.age,
       duration: item.duration,
       category: item.category,
+      live_broadcast_content: item.live_broadcast_content,
     }))
   } catch (err: any) {
     error.value = String(err?.message ?? err)

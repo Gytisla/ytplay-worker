@@ -14,8 +14,44 @@ export default defineEventHandler(async (event) => {
   const sort = (query.sort as string) || 'subscriber_count'
   const direction = (query.direction as string) || 'desc'
   const channelId = query.id as string
+  const channelIds = query.ids as string
 
   try {
+    // If specific channel IDs are requested, fetch those channels
+    if (channelIds) {
+      const ids = channelIds.split(',').map(id => id.trim()).filter(id => id)
+      if (ids.length === 0) {
+        return { channels: [], total: 0 }
+      }
+
+      const { data, error } = await client
+        .from('channels')
+        .select('id, title, thumbnail_url, subscriber_count, slug, youtube_channel_id, video_count, updated_at, videos(count)')
+        .in('id', ids)
+
+      if (error) {
+        throw createError({
+          statusCode: 500,
+          statusMessage: error.message
+        })
+      }
+
+      return {
+        channels: data?.map(channel => ({
+          id: channel.id,
+          title: channel.title,
+          thumbnail_url: channel.thumbnail_url,
+          subscriber_count: channel.subscriber_count,
+          slug: channel.slug,
+          youtube_channel_id: channel.youtube_channel_id,
+          video_count: channel.video_count,
+          updated_at: channel.updated_at,
+          tracked_video_count: channel.videos?.[0]?.count || 0
+        })) || [],
+        total: data?.length || 0
+      }
+    }
+
     // If specific channel ID is requested, fetch only that channel
     if (channelId) {
       const { data, error } = await client

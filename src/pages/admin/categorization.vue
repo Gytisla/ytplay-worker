@@ -734,21 +734,17 @@ const onConditionTypeChange = (condition: Condition) => {
 }
 
 const loadChannelNames = async (channelIds: string[]) => {
+  if (channelIds.length === 0) return
+
   try {
-    // Make individual API calls for now (can be optimized later)
-    const promises = channelIds.map(async (channelId) => {
-      try {
-        const response = await $fetch(`/api/admin/channels?id=${channelId}`) as { channels: Array<{ id: string, title: string }> }
-        const channel = response.channels[0]
-        if (channel) {
-          channelNames.value.set(channel.id, channel.title)
-        }
-      } catch (error) {
-        console.error(`Failed to fetch channel ${channelId}:`, error)
-      }
-    })
+    const response = await $fetch('/api/admin/channels', {
+      query: { ids: channelIds.join(',') }
+    }) as { channels: Array<{ id: string, title: string }> }
     
-    await Promise.all(promises)
+    // Cache all channel names
+    for (const channel of response.channels || []) {
+      channelNames.value.set(channel.id, channel.title)
+    }
   } catch (error) {
     console.error('Failed to load channel names:', error)
   }

@@ -305,10 +305,10 @@
   },
   "seo": {
     "home": {
-      "title": "YTPlay.lt - Atrask lietuviškus vaizdo įrašus",
-      "description": "Atrask lietuviškus YouTube vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėk tendencijų turinį, geriausius kanalus ir naujus vaizdo įrašus vienoje vietoje.",
-      "ogTitle": "YTPlay.lt - Atrask lietuviškus vaizdo įrašus",
-      "ogDescription": "Atrask lietuviškus YouTube vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėk tendencijų turinį, geriausius kanalus ir naujus vaizdo įrašus vienoje vietoje."
+      "title": "ToPlay.lt - Atrask lietuviškus vaizdo įrašus",
+      "description": "Atrask lietuviškus YouTube vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėk populiariausius klipus, geriausius kanalus ir naujausius įrašus vienoje vietoje.",
+      "ogTitle": "ToPlay.lt - Atrask lietuviškus vaizdo įrašus",
+      "ogDescription": "Atrask lietuviškus YouTube vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėk populiariausius klipus, geriausius kanalus ir naujausius įrašus vienoje vietoje."
     },
     "categories": {
       "title": "Kategorijos - Lietuviški YouTube vaizdo įrašai",

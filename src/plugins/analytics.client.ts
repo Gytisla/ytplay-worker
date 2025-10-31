@@ -7,57 +7,15 @@ declare global {
 }
 
 export default defineNuxtPlugin(() => {
-  // Google Analytics ID
+  // Simple Google tag (gtag.js) insertion — exact snippet requested by user
   const GA_ID = 'G-CH9Z7W3PXR'
 
-  // Only load Google Analytics if GA_ID is set
-  if (!GA_ID) {
-    console.warn('Google Analytics ID not configured')
-    return
-  }
-
-  // Load Google Analytics script
   const script = document.createElement('script')
   script.async = true
   script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`
   document.head.appendChild(script)
 
-  // Initialize gtag
-  window.dataLayer = window.dataLayer || []
-  function gtag(...args: any[]) {
-    window.dataLayer.push(args)
-  }
-  window.gtag = gtag
-
-  // Set default consent to 'denied' initially
-  gtag('consent', 'default', {
-    analytics_storage: 'denied',
-    functionality_storage: 'denied',
-    personalization_storage: 'denied',
-    security_storage: 'granted'
-  })
-
-  // Configure Google Analytics
-  gtag('js', new Date())
-  gtag('config', GA_ID, {
-    anonymize_ip: true,
-    allow_google_signals: false,
-    allow_ad_features: false
-  })
-
-  // Check for existing cookie consent
-  const cookieConsent = localStorage.getItem('toplay_cookie_consent')
-  if (cookieConsent) {
-    const settings = JSON.parse(cookieConsent)
-    if (settings.analytics) {
-      gtag('consent', 'update', {
-        analytics_storage: 'granted'
-      })
-    }
-    if (settings.functional) {
-      gtag('consent', 'update', {
-        functionality_storage: 'granted'
-      })
-    }
-  }
+  const inline = document.createElement('script')
+  inline.innerHTML = `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${GA_ID}');`
+  document.head.appendChild(inline)
 })

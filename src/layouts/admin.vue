@@ -17,7 +17,7 @@
         <div class="flex items-center justify-center h-16 px-4 border-b border-gray-200 dark:border-gray-700">
           <NuxtLink to="/" class="flex items-center gap-3">
             <img
-              src="/assets/logo.png"
+              src="/assets/logo.svg"
               alt="ToPlay.lt"
               class="w-8 h-8"
             />

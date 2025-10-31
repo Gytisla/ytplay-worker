@@ -89,7 +89,7 @@
                 <div class="flex items-center">
                   <div class="flex-shrink-0 h-10 w-10">
                     <img
-                      :src="failedImages.has(channel.id) ? '/assets/logo.png' : (channel.thumbnail_url || '/assets/logo.png')"
+                      :src="failedImages.has(channel.id) ? '/assets/logo.svg' : (channel.thumbnail_url || '/assets/logo.svg')"
                       :alt="channel.title"
                       class="h-10 w-10 rounded-full object-cover"
                       @error="handleImageError(channel.id)"

@@ -4,7 +4,7 @@
       <div class="space-y-4">
         <div class="flex items-center gap-3">
           <img 
-            src="/assets/logo.png" 
+            src="/assets/logo.svg" 
             alt="ToPlay.lt" 
             class="h-12 w-auto"
           />

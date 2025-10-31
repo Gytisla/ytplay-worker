@@ -18,18 +18,19 @@ export default defineNuxtConfig({
         // Open Graph
         { property: 'og:title', content: 'ToPlay.lt' },
         { property: 'og:description', content: 'Atrask lietuviškus YouTube vaizdo įrašus ir kanalus' },
-        { property: 'og:image', content: '/assets/logo.png' },
+        { property: 'og:image', content: '/assets/logo.svg' },
         { property: 'og:url', content: 'https://toplay.lt' },
         { property: 'og:type', content: 'website' },
         // Twitter Card
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: 'ToPlay.lt' },
         { name: 'twitter:description', content: 'Atrask lietuviškus YouTube vaizdo įrašus ir kanalus' },
-        { name: 'twitter:image', content: '/assets/logo.png' }
+        { name: 'twitter:image', content: '/assets/logo.svg' }
       ],
       link: [
         // Favicon
         { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
+        { rel: 'icon', type: 'image/svg', href: '/favicon.svg' },
         { rel: 'icon', type: 'image/png', href: '/favicon.png' },
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },

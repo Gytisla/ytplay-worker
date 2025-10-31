@@ -7,7 +7,7 @@
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
       <NuxtLink to="/" class="flex items-center gap-3">
         <img 
-          src="/assets/logo.png" 
+          src="/assets/logo.svg" 
           alt="ToPlay.lt" 
           class="w-8 h-8"
         />

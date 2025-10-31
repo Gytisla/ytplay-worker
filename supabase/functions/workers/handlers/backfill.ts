@@ -236,13 +236,14 @@ export async function handleBackfillChannel(
                 // Continue processing even if stats insertion fails
               } else if (videoRecords && videoRecords.length > 0) {
                 const today = new Date()
-                const currentDate = today.toISOString().split('T')[0] // YYYY-MM-DD format
-                const currentHour = today.getHours()
+                const thirtyOneDaysAgo = new Date(today)
+                thirtyOneDaysAgo.setDate(today.getDate() - 31)
+                const currentDate = thirtyOneDaysAgo.toISOString().split('T')[0] // YYYY-MM-DD format
 
                 const statsPayload = videoRecords.map((video) => ({
                   video_id: video.id,
                   date: currentDate,
-                  hour: currentHour - 1,  // Store baseline as previous hour to avoid override
+                  hour: -1,  // Store baseline as -1 to know its backfilled
                   view_count: 0,
                   like_count: 0,
                   comment_count: 0,

@@ -1,10 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { handleBackfillChannel } from '../workers/handlers/backfill.ts'
-import { handleRefreshChannelStats } from '../workers/handlers/channel-stats.ts'
-import { handleRefreshHotVideos } from '../workers/handlers/hot-videos.ts'
-import { handleRefreshMediumVideos } from '../workers/handlers/refresh-medium-videos.ts'
-import { handleRefreshVideoStats } from '../workers/handlers/video-stats.ts'
-import { handleRSSPollChannel } from '../workers/handlers/rss-poll.ts'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -22,7 +17,6 @@ interface JobResult {
 interface RequestBody {
   workerId?: string
   maxJobs?: number
-  jobTypes?: string[]
 }
 
 interface ResponseBody {
@@ -38,8 +32,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Job type handlers - these will be implemented in separate files
-// Provide minimal typings for the Deno runtime when typechecking locally
+// Job type handlers - only BACKFILL_CHANNEL for this dedicated worker
 declare const Deno: any
 
 const jobHandlers: Record<string, (payload: any, supabase: any) => Promise<{ success: boolean; itemsProcessed?: number; error?: string }>> = {
@@ -50,57 +43,12 @@ const jobHandlers: Record<string, (payload: any, supabase: any) => Promise<{ suc
       return { success: false, error: error instanceof Error ? error.message : String(error), itemsProcessed: 0 }
     }
   },
-
-  'REFRESH_CHANNEL_STATS': async (payload, supabase) => {
-    try {
-      const res = await handleRefreshChannelStats(payload, supabase)
-      return { success: res.success, ...(res.error ? { error: res.error } : {}) }
-    } catch (error) {
-      return { success: false, error: error instanceof Error ? error.message : String(error) }
-    }
-  },
-
-  'REFRESH_HOT_VIDEOS': async (payload, supabase) => {
-    try {
-      const res = await handleRefreshHotVideos(payload, supabase)
-      return { success: res.success, ...(typeof res.itemsProcessed === 'number' ? { itemsProcessed: res.itemsProcessed } : {}), ...(res.error ? { error: res.error } : {}) }
-    } catch (error) {
-      return { success: false, error: error instanceof Error ? error.message : String(error) }
-    }
-  },
-
-  'REFRESH_MEDIUM_VIDEOS': async (payload, supabase) => {
-    try {
-      const res = await handleRefreshMediumVideos(payload, supabase)
-      return { success: res.success, ...(typeof res.itemsProcessed === 'number' ? { itemsProcessed: res.itemsProcessed } : {}), ...(res.error ? { error: res.error } : {}) }
-    } catch (error) {
-      return { success: false, error: error instanceof Error ? error.message : String(error) }
-    }
-  },
-
-  'REFRESH_VIDEO_STATS': async (payload, supabase) => {
-    try {
-      const res = await handleRefreshVideoStats(payload, supabase)
-      return { success: res.success, ...(typeof res.itemsProcessed === 'number' ? { itemsProcessed: res.itemsProcessed } : {}), ...(res.error ? { error: res.error } : {}) }
-    } catch (error) {
-      return { success: false, error: error instanceof Error ? error.message : String(error) }
-    }
-  },
-
-  'RSS_POLL_CHANNEL': async (payload, supabase) => {
-    try {
-      const res = await handleRSSPollChannel(payload, supabase)
-      return { success: res.success, ...(typeof res.itemsProcessed === 'number' ? { itemsProcessed: res.itemsProcessed } : {}), ...(res.error ? { error: res.error } : {}) }
-    } catch (error) {
-      return { success: false, error: error instanceof Error ? error.message : String(error) }
-    }
-  },
 }
 
 // Use the standard Request type for the handler parameter
 Deno.serve(async (req: Request) => {
   const startTime = Date.now()
-  const workerId = `edge-worker-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  const workerId = `backfill-worker-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -110,8 +58,8 @@ Deno.serve(async (req: Request) => {
   try {
     // Parse request body
     const body: RequestBody = await req.json().catch(() => ({}))
-    const maxJobs = Math.min(body.maxJobs ?? 1, 5) // Max 5 jobs per request
-    const jobTypes = ['REFRESH_CHANNEL_STATS', 'REFRESH_HOT_VIDEOS', 'REFRESH_MEDIUM_VIDEOS', 'REFRESH_VIDEO_STATS']
+    const maxJobs = Math.min(body.maxJobs ?? 1, 1) // Max 1 backfill jobs per request (backfill is resource intensive)
+    const jobTypes = ['BACKFILL_CHANNEL'] // Only process backfill jobs
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -145,7 +93,7 @@ Deno.serve(async (req: Request) => {
       )
     }
 
-    console.log(`Processing ${jobs.length} jobs with worker ${workerId}`)
+    console.log(`Backfill worker ${workerId} processing ${jobs.length} jobs`)
 
     // Process each job
     const results: JobResult[] = []
@@ -233,7 +181,7 @@ Deno.serve(async (req: Request) => {
     )
 
   } catch (error) {
-    console.error('Queue worker error:', error)
+    console.error('Backfill worker error:', error)
 
     const response: ResponseBody = {
       success: false,

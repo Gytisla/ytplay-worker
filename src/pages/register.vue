@@ -184,7 +184,7 @@ const handleRegister = async () => {
     }
 
     // Redirect to login or show success message
-    await router.push('/login?message=Patikrinkite el. paštą ir patvirtinkite paskyrą')
+    await router.push('/login?message=Patikrink el. paštą ir patvirtink paskyrą')
   } catch (err) {
     error.value = 'Įvyko netikėta klaida'
   } finally {

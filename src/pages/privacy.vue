@@ -390,9 +390,9 @@
           </div>
 
           <div class="mb-12">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">11. Susisiekite su mumis</h2>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">11. Susisiek su mumis</h2>
             <p class="text-base leading-relaxed mb-6">
-              Jei turite klausimų apie šią privatumo politiką, susisiekite su mumis:
+              Jei turite klausimų apie šią privatumo politiką, susisiek su mumis:
             </p>
             <ul class="space-y-3 ml-6">
               <li class="flex items-start">

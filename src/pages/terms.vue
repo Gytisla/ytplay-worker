@@ -216,9 +216,9 @@
           </div>
 
           <div class="mb-12">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">11. Susisiekite su mumis</h2>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">11. Susisiek su mumis</h2>
             <p class="text-base leading-relaxed mb-6">
-              Jei turite klausimų apie šias naudojimo sąlygas, susisiekite su mumis:
+              Jei turite klausimų apie šias naudojimo sąlygas, susisiek su mumis:
             </p>
             <ul class="space-y-3 ml-6">
               <li class="flex items-start">
@@ -246,7 +246,7 @@
                   Mes tik teikiame informaciją apie viešai prieinamą turinį pagal YouTube Data API naudojimo taisykles.
                 </p>
                 <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-                  <strong>Jei norite žiūrėti vaizdo įrašus, visada eikite į oficialią YouTube svetainę.</strong>
+                  <strong>Jei norite žiūrėti vaizdo įrašus, visada eik į oficialią YouTube svetainę.</strong>
                   Mes nesame atsakingi už turinio peržiūrą ar atsisiuntimą.
                 </p>
                 <div class="flex items-center space-x-4">
@@ -282,7 +282,7 @@ useHead({
   meta: [
     {
       name: 'description',
-      content: 'ToPlay.lt naudojimo sąlygos. Sužinokite apie mūsų paslaugas, API naudojimą ir teisines sąlygas.'
+      content: 'ToPlay.lt naudojimo sąlygos. Sužinok apie mūsų paslaugas, API naudojimą ir teisines sąlygas.'
     },
     {
       property: 'og:title',

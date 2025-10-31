@@ -92,7 +92,7 @@
               to="/privacy"
               class="text-xs text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 underline"
             >
-              Sužinokite daugiau apie slapukus
+              Sužinok daugiau apie slapukus
             </NuxtLink>
             <button
               @click="saveSettingsHandler"

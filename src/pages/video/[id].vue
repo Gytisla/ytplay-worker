@@ -381,14 +381,18 @@ const videoId = route.params['id'] as string
 
 // make TS happy in this file for useHead (Nuxt auto-import may already provide it)
 declare const useHead: any
+declare const useAsyncData: any
 // Provide a minimal declaration so the TS checker knows about the auto-imported `useI18n` in SFCs
 declare function useI18n(): { t: (key: string, ...args: any[]) => string; locale: string }
 
 const { t, locale } = useI18n()
 
+// SSR data fetching
+const { data: videoData, error: videoError } = await useAsyncData(`video-${videoId}`, () => $fetch(`/api/public/video/${videoId}`))
+
 // Video data
-const video = ref<any>(null)
-const loading = ref(true)
+const video = ref(videoData.value || null)
+const loading = ref(false) // Already loaded via SSR
 
 // Description collapse state
 const descriptionExpanded = ref(false)
@@ -522,8 +526,7 @@ const shouldShowTagsToggle = computed(() => {
 
 // Fetch video and stats on the client after navigation so route change is instant
 onMounted(async () => {
-  // Load video data for the current route id (client-side)
-  await loadVideo()
+  // Video data is already loaded via SSR, just load stats
 
   // Set initial stats period based on video age (if available)
   if (video.value?.publishedAt) {
@@ -613,13 +616,14 @@ async function loadVideoStats() {
 }
 
 // Reload data if the route id changes (client-side nav between videos)
-watch(() => route.params['id'], (newId, oldId) => {
+watch(() => route.params['id'], async (newId, oldId) => {
   if (newId === oldId) return
   video.value = null
   videoStats.value = null
   loading.value = true
-  // kick off new loads (don't await)
-  loadVideo()
+  // Load new video data
+  await loadVideo()
+  // kick off stats load
   loadVideoStats()
 })
 
@@ -819,8 +823,40 @@ function formatNumber(num: number): string {
 }
 
 // Meta tags
-useHead({
-  title: () => video.value ? `${video.value.title} - ToPlay.lt` : 'Video - ToPlay.lt'
+useHead(() => {
+  const videoData = video.value
+  const title = videoData ? `${videoData.title} | ToPlay.lt` : 'Video | ToPlay.lt'
+  const description = videoData ? `${videoData.channel.name}: ${videoData.title}. ${videoData.views} peržiūrų.` : 'Žiūrėk vaizdo įrašą ToPlay.lt'
+  const image = videoData?.thumbnail || '/assets/hero-thumb.svg'
+  const url = videoData ? `https://toplay.lt/video/${videoData.id}` : 'https://toplay.lt'
+
+  return {
+    title,
+    meta: [
+      {
+        name: 'description',
+        content: description
+      },
+      // Open Graph
+      {
+        property: 'og:title',
+        content: videoData?.title || 'Video'
+      },
+      {
+        property: 'og:description',
+        content: description
+      },
+      { property: 'og:image', content: image },
+      { property: 'og:url', content: url },
+      { property: 'og:type', content: 'video.other' },
+      { property: 'og:site_name', content: 'ToPlay.lt' },
+      // Twitter Card
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: videoData?.title || 'Video' },
+      { name: 'twitter:description', content: description },
+      { name: 'twitter:image', content: image }
+    ]
+  }
 })
 </script>
 

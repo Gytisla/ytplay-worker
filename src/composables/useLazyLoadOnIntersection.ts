@@ -29,7 +29,6 @@ export function useLazyLoadOnIntersection(
     observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          console.log(`👁️ IntersectionObserver: ${entry.target.id || 'unknown'} isIntersecting=${entry.isIntersecting}, isLoaded=${isLoaded.value}`)
           if (entry.isIntersecting && !isLoaded.value) {
             isIntersecting.value = true
             load()

@@ -368,15 +368,19 @@ const channelId = route.params['id'] as string
 
 // ensure useHead is recognized (Nuxt auto-imported in most files)
 declare const useHead: any
+declare const useAsyncData: any
 // Provide a minimal declaration so the TS checker knows about the auto-imported `useI18n` in SFCs
 declare function useI18n(): { t: (key: string, ...args: any[]) => string }
 
 const { t } = useI18n()
 
+// SSR data fetching
+const { data: channelData, error: channelError } = await useAsyncData(`channel-${channelId}`, () => $fetch(`/api/public/channel/${channelId}`))
+
 // Channel data
-const channel = ref<any>(null)
+const channel = ref(channelData.value || null)
 const videos = ref<any[]>([])
-const loading = ref(true)
+const loading = ref(false) // Already loaded via SSR
 const error = ref<string | null>(null)
 
 // Pagination state
@@ -423,9 +427,12 @@ const shouldShowDescriptionToggle = computed(() => {
   return channel.value.description.length > descriptionMaxLength
 })
 
-// Fetch channel data client-side after navigation so route change is instant
+// Fetch channel videos and stats client-side after navigation so route change is instant
 onMounted(async () => {
-  await loadChannel()
+  // Channel data is already loaded via SSR, load videos and stats
+
+  // Load initial videos
+  await loadVideos(true)
   loadChannelStats()
 
   // Add scroll listener for infinite scrolling
@@ -445,7 +452,7 @@ watch(channelStats, (newStats) => {
 })
 
 // Reload data when the route id changes (client-side nav between channels)
-watch(() => route.params['id'], (newId, oldId) => {
+watch(() => route.params['id'], async (newId, oldId) => {
   if (newId === oldId) return
   channel.value = null
   channelStats.value = null
@@ -453,8 +460,9 @@ watch(() => route.params['id'], (newId, oldId) => {
   loading.value = true
   videosOffset.value = 0
   hasMoreVideos.value = true
-  // kick off loads (don't await)
-  loadChannel()
+  // Load new channel data
+  await loadChannel()
+  // kick off stats load
   loadChannelStats()
 })
 
@@ -731,8 +739,40 @@ function formatNumber(num: number): string {
 }
 
 // Meta tags
-useHead({
-  title: () => channel.value ? `${channel.value.name} - ToPlay.lt` : 'Channel - ToPlay.lt'
+useHead(() => {
+  const channelData = channel.value
+  const title = channelData ? `${channelData.name} | ToPlay.lt` : 'Kanalas | ToPlay.lt'
+  const description = channelData ? `${channelData.name} Kanalas: ${channelData.subs} prenumeratorių, ${channelData.videos} vaizdo įrašų.` : 'Žiūrėk šio kanalo vaizdo įrašus ToPlay.lt'
+  const image = channelData?.avatar || '/assets/hero-thumb.svg'
+  const url = channelData ? `https://toplay.lt/channel/${channelData.slug || channelData.id}` : 'https://toplay.lt'
+
+  return {
+    title,
+    meta: [
+      {
+        name: 'description',
+        content: description
+      },
+      // Open Graph
+      {
+        property: 'og:title',
+        content: channelData?.name || 'Kanalas'
+      },
+      {
+        property: 'og:description',
+        content: description
+      },
+      { property: 'og:image', content: image },
+      { property: 'og:url', content: url },
+      { property: 'og:type', content: 'profile' },
+      { property: 'og:site_name', content: 'ToPlay.lt' },
+      // Twitter Card
+      { name: 'twitter:card', content: 'summary' },
+      { name: 'twitter:title', content: channelData?.name || 'Kanalas' },
+      { name: 'twitter:description', content: description },
+      { name: 'twitter:image', content: image }
+    ]
+  }
 })
 
 </script>

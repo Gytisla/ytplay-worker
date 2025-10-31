@@ -76,7 +76,7 @@
           class="text-center mt-8 py-4"
         >
           <div class="text-gray-500 dark:text-gray-400">
-            Pasiekta maksimali vaizdo įrašų riba ({{ maxVideos }}). Išbandykite kitą laikotarpį.
+            Pasiekta maksimali vaizdo įrašų riba ({{ maxVideos }}). Išbandyk kitą laikotarpį.
           </div>
         </div>
       </section>
@@ -85,7 +85,43 @@
 </template>
 
 <script setup lang="ts">
+// Provide a minimal declaration so the TS checker knows about the auto-imported `useI18n` in SFCs
+// Nuxt auto-imported helpers (declare so TS doesn't complain in script-setup)
+declare function useI18n(): { t: (key: string, ...args: any[]) => string }
+declare function useRoute(): any
+declare const useHead: any
+const { t } = useI18n()
+
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+
+// SEO meta
+useHead(() => ({
+  title: t('seo.topVideos.title') + ' | ' + t('seo.siteName'),
+  meta: [
+    {
+      name: 'description',
+      content: t('seo.topVideos.description')
+    },
+    // Open Graph
+    {
+      property: 'og:title',
+      content: t('seo.topVideos.ogTitle')
+    },
+    {
+      property: 'og:description',
+      content: t('seo.topVideos.ogDescription')
+    },
+    { property: 'og:image', content: '/assets/hero-thumb.svg' },
+    { property: 'og:url', content: 'https://toplay.lt/trending' },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: t('seo.siteName') || 'ToPlay.lt' },
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: t('seo.topVideos.ogTitle') },
+    { name: 'twitter:description', content: t('seo.topVideos.ogDescription') },
+    { name: 'twitter:image', content: '/assets/hero-thumb.svg' }
+  ]
+}))
 
 // Period options
 const periodOptions = [

@@ -13,11 +13,24 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Discover Lithuanian YouTube videos and channels' }
+        { name: 'description', content: 'Atrask lietuviškus YouTube vaizdo įrašus ir kanalus' },
+        { name: 'theme-color', content: '#1f2937' },
+        // Open Graph
+        { property: 'og:title', content: 'ToPlay.lt' },
+        { property: 'og:description', content: 'Atrask lietuviškus YouTube vaizdo įrašus ir kanalus' },
+        { property: 'og:image', content: '/assets/logo.png' },
+        { property: 'og:url', content: 'https://toplay.lt' },
+        { property: 'og:type', content: 'website' },
+        // Twitter Card
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: 'ToPlay.lt' },
+        { name: 'twitter:description', content: 'Atrask lietuviškus YouTube vaizdo įrašus ir kanalus' },
+        { name: 'twitter:image', content: '/assets/logo.png' }
       ],
       link: [
         // Favicon
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' },
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
         { rel: 'icon', type: 'image/png', sizes: '48x48', href: '/favicon-48x48.png' },
@@ -26,7 +39,9 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/favicon-192x192.png' },
         { rel: 'icon', type: 'image/png', sizes: '512x512', href: '/favicon-512x512.png' },
         // Apple Touch Icon
-        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' }
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+        // Web App Manifest
+        { rel: 'manifest', href: '/manifest.json' }
       ]
     }
   },
@@ -75,14 +90,8 @@ export default defineNuxtConfig({
     },
   },
 
-  supabase: {
-    redirect: false // ⛔ disables the module’s automatic auth redirects
-  },
-
-  // Server-side rendering configuration (disabled for API-only app)
-  ssr: {
-    noExternal: ['@supabase', '@nuxtjs/supabase', 'cookie']
-  },
+  // Server-side rendering enabled for SEO
+  ssr: true,
 
   // Modules
   modules: [

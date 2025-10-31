@@ -105,7 +105,6 @@ async function loadRecentVideos() {
     }))
   } finally {
     localLoading.value = false
-    console.log('✅ NewSection: Finished loading recent videos')
   }
 }
 </script>

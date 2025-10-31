@@ -71,7 +71,7 @@
         class="text-center mt-8 py-4"
       >
         <div class="text-gray-500 dark:text-gray-400">
-          Pasiekta maksimali vaizdo įrašų riba ({{ maxVideos }}). Išbandykite kitą laikotarpį.
+          Pasiekta maksimali vaizdo įrašų riba ({{ maxVideos }}). Išbandyk kitą laikotarpį.
         </div>
       </div>
     </main>

@@ -154,14 +154,14 @@
   },
   "liveUpcoming": {
     "title": "Tiesiogiai ir artimiausi",
-    "description": "Žiūrėkite tiesiogines transliacijas ir atraskite artimiausias suplanuotas transliacijas",
+    "description": "Žiūrėk tiesiogines transliacijas ir atrask artimiausias suplanuotas transliacijas",
     "tabs": {
       "live": "Tiesiogiai",
       "upcoming": "Artimiausi"
     },
     "noLive": {
       "title": "Nėra tiesioginių transliacijų",
-      "description": "Šiuo metu nėra tiesioginių transliacijų. Patikrinkite vėliau dėl artėjančių transliacijų."
+      "description": "Šiuo metu nėra tiesioginių transliacijų. Patikrink vėliau dėl artėjančių transliacijų."
     },
     "noUpcoming": {
       "title": "Nėra artėjančių vaizdo įrašų",
@@ -174,25 +174,25 @@
     "resultsFor": "Rezultatai pagal"
   },
   "error": {
-    "networkError": "Tinklo klaida. Patikrinkite ryšį.",
-    "serverError": "Serverio klaida. Bandykite vėliau.",
+    "networkError": "Tinklo klaida. Patikrink ryšį.",
+    "serverError": "Serverio klaida. Bandyk vėliau.",
     "notFound": "Turinys nerastas.",
-    "unauthorized": "Neturite teisės prieiti prie šio turinio.",
+    "unauthorized": "Neturi teisės prieiti prie šio turinio.",
     "404": {
       "title": "Puslapis nerastas",
       "description": "Atsiprašome, puslapis, kurio ieškote, neegzistuoja. Jis galėjo būti perkeltas, ištrintas arba įvedėte neteisingą URL.",
       "goHome": "Grįžti į pradžią",
       "goBack": "Grįžti atgal",
       "popularPages": "Populiarūs puslapiai",
-      "explore": "Tyrinėkite",
+      "explore": "Tyrinėk",
       "learnMore": "Sužinoti daugiau",
-      "footer": "Jei manote, kad tai klaida, susisiekite su mumis."
+      "footer": "Jei manote, kad tai klaida, susisiek su mumis."
     }
   },
   "hero": {
     "discover": "Atrask Lietuviškus",
     "videos": "Vaizdo įrašus",
-    "subtitle": "Rask naujausius ir geriausius „YouTube“ vaizdo įrašus iš savo mėgstamų kanalų, sekite tendencijas ir pažinkite naujus kūrėjus.",
+    "subtitle": "Rask naujausius ir geriausius „YouTube“ vaizdo įrašus iš savo mėgstamų kanalų, sek tendencijas ir pažink naujus kūrėjus.",
     "exploreVideos": "Vaizdo įrašai",
     "browseCategories": "Kategorijos",
     "stats": {
@@ -232,7 +232,7 @@
     "cta": {
       "submitChannel": {
         "title": "Nerandi savo mėgstamo kanalo?",
-        "description": "Padėkite mums išplėsti mūsų kanalų kolekciją!",
+        "description": "Padėk mums išplėsti mūsų kanalų kolekciją!",
         "button": "Pasiūlyti kanalą"
       },
       "viewAllChannels": "Žiūrėti visus kanalus"
@@ -276,7 +276,7 @@
   "categoriesPage": {
     "title": "Kategorijos",
     "breadcrumb": "Kategorijos",
-    "description": "Tyrinėkite vaizdo įrašus pagal kategoriją",
+    "description": "Tyrinėk vaizdo įrašus pagal kategoriją",
     "overview": "Naršyti kategorijas",
     "videos": "vaizdo įrašai",
     "videosShort": "vaizd.",
@@ -305,51 +305,57 @@
   },
   "seo": {
     "home": {
-      "title": "YouTube grotuvas - Atraskite nuostabius vaizdo įrašus",
-      "description": "Atraskite ir tyrinėkite nuostabius YouTube vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėkite tendencijų turinį, geriausius kanalus ir naujus vaizdo įrašus vienoje vietoje.",
-      "ogTitle": "YouTube grotuvas - Atraskite nuostabius vaizdo įrašus",
-      "ogDescription": "Atraskite ir tyrinėkite nuostabius YouTube vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėkite tendencijų turinį, geriausius kanalus ir naujus vaizdo įrašus vienoje vietoje."
+      "title": "YTPlay.lt - Atrask lietuviškus vaizdo įrašus",
+      "description": "Atrask lietuviškus YouTube vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėk tendencijų turinį, geriausius kanalus ir naujus vaizdo įrašus vienoje vietoje.",
+      "ogTitle": "YTPlay.lt - Atrask lietuviškus vaizdo įrašus",
+      "ogDescription": "Atrask lietuviškus YouTube vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėk tendencijų turinį, geriausius kanalus ir naujus vaizdo įrašus vienoje vietoje."
     },
     "categories": {
-      "title": "Kategorijos - YouTube grotuvas",
-      "description": "Tyrinėkite vaizdo įrašus pagal kategoriją",
-      "ogTitle": "Vaizdo įrašų kategorijos - YouTube grotuvas",
-      "ogDescription": "Tyrinėkite vaizdo įrašus pagal kategoriją. Atraskite turinį iš žaidimų, muzikos, technologijų ir daugiau."
+      "title": "Kategorijos - Lietuviški YouTube vaizdo įrašai",
+      "description": "Atrask lietuviškus vaizdo įrašus pagal kategoriją",
+      "ogTitle": "Kategorijos - Lietuviški YouTube vaizdo įrašai",
+      "ogDescription": "Atrask lietuviškus vaizdo įrašus pagal kategoriją. Turinys iš kelionių, žaidimų, muzikos, technologijų ir daugiau."
     },
     "topChannels": {
-      "title": "Geriausi kanalai - YouTube grotuvas",
-      "description": "Atraskite populiariausius YouTube kanalus pagal prenumeratorių skaičių ir bendrą peržiūrų skaičių",
-      "ogTitle": "Geriausi kanalai - YouTube grotuvas",
-      "ogDescription": "Atraskite populiariausius YouTube kanalus pagal prenumeratorių skaičių ir bendrą peržiūrų skaičių"
+      "title": "Geriausi lietuviški Youtube kanalai",
+      "description": "Atrask populiariausius lietuviškus YouTube kanalus pagal prenumeratorių skaičių ir bendrą peržiūrų skaičių",
+      "ogTitle": "Geriausi lietuviški Youtube kanalai",
+      "ogDescription": "Atrask populiariausius lietuviškus YouTube kanalus pagal prenumeratorių skaičių ir bendrą peržiūrų skaičių"
     },
     "topVideos": {
-      "title": "Geriausi vaizdo įrašai - YouTube grotuvas",
-      "description": "Atraskite populiariausius YouTube vaizdo įrašus pagal peržiūrų skaičių ir tendencijų turinį",
-      "ogTitle": "Geriausi vaizdo įrašai - YouTube grotuvas",
-      "ogDescription": "Atraskite populiariausius YouTube vaizdo įrašus pagal peržiūrų skaičių ir tendencijų turinį"
+      "title": "Žiūrimiausi lietuviški vaizdo įrašai YouTube",
+      "description": "Atrask žiūrimiausius YouTube vaizdo įrašus pagal peržiūrų skaičių ir tendencijas",
+      "ogTitle": "Žiūrimiausi lietuviški vaizdo įrašai YouTube",
+      "ogDescription": "Atrask žiūrimiausius YouTube vaizdo įrašus pagal peržiūrų skaičių ir tendencijas"
     },
     "category": {
-      "title": "{name} YouTube grotuvas",
-      "description": "Tyrinėkite {count} vaizdo įrašus {name} kategorijoje",
-      "ogTitle": "{name} YouTube grotuvas",
-      "ogDescription": "Tyrinėkite {count} vaizdo įrašus {name} kategorijoje. {description}"
+      "title": "{name} - Lietuviški YouTube vaizdo įrašai",
+      "description": "Atrask {count} vaizdo įrašus {name} kategorijoje",
+      "ogTitle": "{name} - Lietuviški YouTube vaizdo įrašai",
+      "ogDescription": "Atrask {count} vaizdo įrašus {name} kategorijoje. {description}"
     },
     "privacy": {
       "title": "Privatumo politika - ToPlay.lt",
-      "description": "Sužinokite, kaip ToPlay.lt renka, naudoja ir saugo jūsų duomenis. Privatumo politika apie Google Analytics ir būsimas funkcijas.",
+      "description": "Sužinok, kaip ToPlay.lt renka, naudoja ir saugo jūsų duomenis. Privatumo politika apie Google Analytics ir būsimas funkcijas.",
       "ogTitle": "Privatumo politika - ToPlay.lt",
-      "ogDescription": "Sužinokite, kaip ToPlay.lt renka, naudoja ir saugo jūsų duomenis. Privatumo politika apie Google Analytics ir būsimas funkcijas."
+      "ogDescription": "Sužinok, kaip ToPlay.lt renka, naudoja ir saugo jūsų duomenis. Privatumo politika apie Google Analytics ir būsimas funkcijas."
+    },
+    "liveUpcoming": {
+      "title": "Tiesiogiai ir artimiausi - ToPlay.lt",
+      "description": "Žiūrėk tiesiogines transliacijas ir atrask artimiausias suplanuotas transliacijas ToPlay.lt.",
+      "ogTitle": "Tiesiogiai ir artimiausi - ToPlay.lt",
+      "ogDescription": "Atrask tiesiogines transliacijas ir artėjančias suplanuotas transliacijas. Sek gyvą turinį iš mėgstamų kanalų."
     },
     "siteName": "ToPlay.lt"
   },
   "footer": {
     "brandLine1": "ToPlay.lt",
-    "brandLine2": "Atraskite vaizdo įrašus ir kanalus",
+    "brandLine2": "Atrask vaizdo įrašus ir kanalus",
     "tagline": "Atradimų vieta, skirta nuolatiniams ir populiariems vaizdo įrašams. Greita, gerbianti privatumą ir estetiška.",
     "explore": "Atrask",
     "resources": "Informacija",
-    "stayInLoop": "Sekite naujienas",
-    "subscribeText": "Prenumeruokite trumpą mėnesinį pranešimą apie geriausius vaizdo įrašus ir kanalus.",
+    "stayInLoop": "Sek naujienas",
+    "subscribeText": "Prenumeruok trumpą mėnesinį pranešimą apie geriausius vaizdo įrašus ir kanalus.",
     "emailLocal": "info",
     "emailDomain": "toplay.lt",
     "subscribe": "Prenumeruoti",
@@ -372,27 +378,27 @@
   "about": {
     "hero": {
       "title": "ToPlay.lt",
-      "subtitle": "Atraskite geriausius vaizdo įrašus ir kanalus",
+      "subtitle": "Atrask geriausius vaizdo įrašus ir kanalus",
       "description": "Moderni platforma, padedanti atrasti naujus, populiarius ir geriausius vaizdo įrašus bei kanalus lietuviškoje erdvėje."
     },
     "features": {
       "title": "Kaip naudotis platforma",
       "newVideos": {
         "title": "Nauji vaizdo įrašai",
-        "description": "Atraskite naujausius vaizdo įrašus iš lietuviškų kanalų. Sekite, kas ką tik buvo paskelbta ir nepraleiskite įdomiausio turinio."
+        "description": "Atrask naujausius vaizdo įrašus iš lietuviškų kanalų. Sek, kas ką tik buvo paskelbta ir nepraleisk įdomiausio turinio."
       },
       "trending": {
         "title": "Tendencijos",
-        "description": "Sužinokite, kurie vaizdo įrašai šiuo metu yra populiariausi. Matykite realiu laiku atnaujinamus populiarumo reitingus."
+        "description": "Sužinok, kurie vaizdo įrašai šiuo metu yra populiariausi. Matyk realiu laiku atnaujinamus populiarumo reitingus."
       },
       "topVideos": {
         "title": "Geriausi vaizdo įrašai",
-        "description": "Naršykite geriausiai įvertintus ir žiūrimiausius vaizdo įrašus. Atraskite aukščiausios kokybės turinį iš lietuviškų kanalų."
+        "description": "Naršyk geriausiai įvertintus ir žiūrimiausius vaizdo įrašus. Atrask aukščiausios kokybės turinį iš lietuviškų kanalų."
       }
     },
     "channels": {
       "title": "Geriausi kanalai",
-      "description": "Atraskite populiariausius lietuviškus kanalus pagal prenumeratorių skaičių, peržiūrų skaičių ir įsitraukimą. Sekite kanalus, kurie kuria kokybiškiausią turinį.",
+      "description": "Atrask populiariausius lietuviškus kanalus pagal prenumeratorių skaičių, peržiūrų skaičių ir įsitraukimą. Sek kanalus, kurie kuria kokybiškiausią turinį.",
       "categories": {
         "videos": "Vaizdo įrašai",
         "community": "Bendruomenė",
@@ -404,23 +410,23 @@
       "title": "Sutelktą į lietuvišką turinį",
       "language": {
         "title": "Lietuvių kalba",
-        "description": "Visi vaizdo įrašai ir kanalai yra lietuvių kalba. Atraskite turinį, kuris yra artimas ir suprantamas lietuviškai."
+        "description": "Visi vaizdo įrašai ir kanalai yra lietuvių kalba. Atrask turinį, kuris yra artimas ir suprantamas lietuviškai."
       },
       "community": {
         "title": "Vietinė bendruomenė",
-        "description": "Palaikome lietuviškus kūrėjus ir kanalus. Padėkite augti lietuviškam turiniui internete."
+        "description": "Palaikome lietuviškus kūrėjus ir kanalus. Padėk augti lietuviškam turiniui internete."
       }
     },
     "contact": {
-      "title": "Susisiekite su mumis",
-      "description": "Turite klausimų ar pasiūlymų? Susisiekite su mumis el. paštu arba per socialinius tinklus.",
+      "title": "Susisiek su mumis",
+      "description": "Turi klausimų ar pasiūlymų? Susisiek su mumis el. paštu arba per socialinius tinklus.",
       "info": {
         "title": "Kontaktinė informacija",
         "email": "El. paštas",
         "website": "Tinklalapis"
       },
       "form": {
-        "title": "Parašykite mums",
+        "title": "Parašyk mums",
         "name": "Vardas",
         "email": "El. paštas",
         "message": "Žinutė",
@@ -430,7 +436,7 @@
         "submit": "Siųsti žinutę (greitai)",
         "overlay": {
           "title": "Kontaktinė forma jau greitai",
-          "description": "Šiuo metu kontaktinė forma neveikia. Susisiekite su mumis tiesiogiai el. paštu.",
+          "description": "Šiuo metu kontaktinė forma neveikia. Susisiek su mumis tiesiogiai el. paštu.",
           "emailButton": "Rašyti el. paštu"
         }
       }
@@ -439,16 +445,16 @@
   "newVideosPage": {
     "title": "Nauji vaizdo įrašai",
     "breadcrumb": "Nauji vaizdo įrašai",
-    "description": "Atraskite naujausius vaizdo įrašus iš lietuviškų kanalų. Sekite, kas ką tik buvo paskelbta ir nepraleiskite įdomiausio turinio.",
+    "description": "Atrask naujausius vaizdo įrašus iš lietuviškų kanalų. Sek, kas ką tik buvo paskelbta ir nepraleisk įdomiausio turinio.",
     "noVideosFound": "Vaizdo įrašų nerasta.",
     "ogTitle": "Nauji vaizdo įrašai - ToPlay.lt",
-    "ogDescription": "Atraskite naujausius vaizdo įrašus iš lietuviškų kanalų. Sekite, kas ką tik buvo paskelbta ir nepraleiskite įdomiausio turinio."
+    "ogDescription": "Atrask naujausius vaizdo įrašus iš lietuviškų kanalų. Sek, kas ką tik buvo paskelbta ir nepraleisk įdomiausio turinio."
   },
   "submitChannelPage": {
     "title": "Pasiūlyti kanalą",
     "metaTitle": "Pasiūlyti kanalą | ToPlay.lt",
-    "metaDescription": "Turite mėgstamą YouTube kanalą? Pasiūlykite jį mūsų platformai!",
+    "metaDescription": "Turi mėgstamą YouTube kanalą? Pasiūlyk jį mūsų platformai!",
     "ogTitle": "Pasiūlyti kanalą | ToPlay.lt",
-    "ogDescription": "Pasiūlykite savo mėgstamus YouTube kanalus mūsų platformai."
+    "ogDescription": "Pasiūlyk savo mėgstamus YouTube kanalus mūsų platformai."
   }
 }

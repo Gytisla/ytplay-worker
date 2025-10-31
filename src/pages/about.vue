@@ -272,4 +272,33 @@
 
 <script setup>
 // About page component
+
+// SEO meta
+useHead({
+  title: 'Apie | ToPlay.lt',
+  meta: [
+    {
+      name: 'description',
+      content: 'Sužinok daugiau apie ToPlay.lt - modernią platformą, padedančią atrasti naujus, populiarius ir geriausius vaizdo įrašus bei kanalus lietuviškoje erdvėje.'
+    },
+    // Open Graph
+    {
+      property: 'og:title',
+      content: 'Apie ToPlay.lt'
+    },
+    {
+      property: 'og:description',
+      content: 'Moderni platforma, padedanti atrasti naujus, populiarius ir geriausius vaizdo įrašus bei kanalus lietuviškoje erdvėje.'
+    },
+    { property: 'og:image', content: '/assets/hero-thumb.svg' },
+    { property: 'og:url', content: 'https://toplay.lt/about' },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'ToPlay.lt' },
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Apie ToPlay.lt' },
+    { name: 'twitter:description', content: 'Moderni platforma, padedanti atrasti naujus, populiarius ir geriausius vaizdo įrašus bei kanalus lietuviškoje erdvėje.' },
+    { name: 'twitter:image', content: '/assets/hero-thumb.svg' }
+  ]
+})
 </script>

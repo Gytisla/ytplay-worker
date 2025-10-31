@@ -115,7 +115,27 @@ declare const useHead: any
 // Provide a minimal declaration so the TS checker knows about the auto-imported `useI18n` in SFCs
 declare function useI18n(): { t: (key: string, ...args: any[]) => string }
 
+// Vue composition helpers (these are normally auto-imported by Nuxt/Vite)
+import { ref, watch, onMounted } from 'vue'
+
 const { t } = useI18n()
+
+// Page meta (SEO + Open Graph)
+useHead({
+  title: t('seo.liveUpcoming.title') + ' | ' + t('seo.siteName'),
+  meta: [
+    { name: 'description', content: t('seo.liveUpcoming.description') },
+    { property: 'og:title', content: t('seo.liveUpcoming.ogTitle') },
+    { property: 'og:description', content: t('seo.liveUpcoming.ogDescription') },
+    { property: 'og:image', content: '/assets/hero-thumb.svg' },
+    { property: 'og:url', content: 'https://toplay.lt/live-upcoming' },
+    { property: 'og:type', content: 'website' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: t('seo.liveUpcoming.ogTitle') },
+    { name: 'twitter:description', content: t('seo.liveUpcoming.ogDescription') },
+    { name: 'twitter:image', content: '/assets/hero-thumb.svg' }
+  ]
+})
 
 // State
 const activeTab = ref<'live' | 'upcoming'>('live')

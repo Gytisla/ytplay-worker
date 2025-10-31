@@ -105,7 +105,6 @@ async function loadTrendingVideos() {
     }))
   } finally {
     localLoading.value = false
-    console.log('✅ TrendingSection: Finished loading trending videos')
   }
 }
 </script>

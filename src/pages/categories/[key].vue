@@ -142,6 +142,7 @@
 declare function useI18n(): { t: (key: string, ...args: any[]) => string }
 declare function useRoute(): any
 declare const useHead: any
+declare const useAsyncData: any
 const { t } = useI18n()
 
 import { ref, nextTick, onMounted, watch } from 'vue'
@@ -182,12 +183,15 @@ interface CategoryDetailResponse {
 const route = useRoute()
 const categoryKey = Array.isArray(route.params.key) ? route.params.key[0] : route.params.key as string
 
-const category = ref<Category | null>(null)
-const videos = ref<Video[]>([])
-const loading = ref(true)
-const error = ref<string | null>(null)
-const totalVideos = ref(0)
-const hasMore = ref(false)
+// SSR data fetching
+const { data: categoryData, error: categoryError } = await useAsyncData(`category-${categoryKey}`, () => $fetch<CategoryDetailResponse>(`/api/categories/${categoryKey}`))
+
+const category = ref(categoryData.value?.category || null)
+const videos = ref(categoryData.value?.videos || [])
+const totalVideos = ref(categoryData.value?.total_count || 0)
+const hasMore = ref(categoryData.value?.has_more || false)
+const loading = ref(false)
+const error = ref(categoryError.value ? 'Failed to load category' : null)
 const page = ref(1)
 const pageSize = 24
 
@@ -299,62 +303,43 @@ onMounted(() => {
   fetchCategory()
 })
 
-// SEO
-useHead(() => ({
-  title: category.value ? `${category.value.name} - ToPlay.lt` : 'Category - ToPlay.lt',
-  meta: [
-    {
-      name: 'description',
-      content: category.value ? `Explore ${totalVideos.value} videos in the ${category.value.name} category. ${category.value.description || ''}` : 'Browse videos by category'
-    },
-    // Open Graph
-    {
-      property: 'og:title',
-  content: category.value ? `${category.value.name} - ToPlay.lt` : 'Category - ToPlay.lt'
-    },
-    {
-      property: 'og:description',
-      content: category.value ? `Explore ${totalVideos.value} videos in the ${category.value.name} category. ${category.value.description || ''}` : 'Browse videos by category'
-    },
-    {
-      property: 'og:image',
-      content: '/assets/hero-thumb.svg'
-    },
-    {
-      property: 'og:url',
-      content: `https://toplay.lt/categories/${categoryKey}`
-    },
-    {
-      property: 'og:type',
-      content: 'website'
-    },
-    {
-      property: 'og:site_name',
-      content: 'ToPlay.lt'
-    },
-    // Twitter Card
-    {
-      name: 'twitter:card',
-      content: 'summary_large_image'
-    },
-    {
-      name: 'twitter:title',
-      content: category.value ? `${category.value.name} - ToPlay.lt` : 'Category - ToPlay.lt'
-    },
-    {
-      name: 'twitter:description',
-      content: category.value ? `Explore ${totalVideos.value} videos in the ${category.value.name} category. ${category.value.description || ''}` : 'Browse videos by category'
-    },
-    {
-      name: 'twitter:image',
-      content: '/assets/hero-thumb.svg'
-    }
-  ]
-}))
+// SEO using i18n (seo.category / seo.categories)
+useHead(() => {
+  const name = category.value?.name
+  const description = category.value?.description
+  const count = totalVideos.value
+
+  return {
+    title: t('seo.category.title', { name }),
+    meta: [
+      {
+        name: 'description',
+        content: t('seo.category.description', { name, count, description })
+      },
+      // Open Graph
+      {
+        property: 'og:title',
+        content: t('seo.category.ogTitle', { name })
+      },
+      {
+        property: 'og:description',
+        content: t('seo.category.ogDescription', { name, count, description })
+      },
+      { property: 'og:image', content: '/assets/hero-thumb.svg' },
+      { property: 'og:url', content: `https://toplay.lt/categories/${categoryKey}` },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:site_name', content: t('seo.siteName') || 'ToPlay.lt' },
+      // Twitter Card
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: t('seo.category.ogTitle', { name }) },
+      { name: 'twitter:description', content: t('seo.category.ogDescription', { name, count, description }) },
+      { name: 'twitter:image', content: '/assets/hero-thumb.svg' }
+    ]
+  }
+})
 
 onMounted(() => {
-  fetchCategory()
-  // Setup intersection observer after initial load
+  // Data is already loaded via SSR, just setup intersection observer
   nextTick(() => setupIntersectionObserver())
 })
 

@@ -15,12 +15,12 @@
     } else if (error.statusCode === 429) {
       submitError.value = error.statusMessage || 'Per daug pasiūlymų. Prašome palaukti.'
     } else if (error.statusCode === 400) {
-      submitError.value = error.statusMessage || 'Neteisingi duomenys. Patikrinkite įvestį.'
+      submitError.value = error.statusMessage || 'Neteisingi duomenys. Patikrin įvestį.'
     } else {
       submitError.value = 'Įvyko klaida siunčiant pasiūlymą. Prašome bandyti vėliau.'
     }
   } finally {k:text-gray-300 max-w-2xl mx-auto">
-          Turite mėgstamą YouTube kanalą? Pasiūlykite jį mūsų platformai!
+          Turite mėgstamą YouTube kanalą? Pasiūlyk jį mūsų platformai!
         </p>
         <p class="text-sm text-gray-500 dark:text-gray-400 mt-4">
           Mes peržiūrėsime ir patvirtinsime pasiūlymus rankiniu būdu
@@ -311,7 +311,7 @@ function getPlaceholderText() {
 
 function getHelpText() {
   switch (submissionType.value) {
-    case 'handle': return 'Įveskite kanalo @vardą iš YouTube (prasideda @ simboliu)'
+    case 'handle': return 'Įvesk kanalo @vardą iš YouTube (prasideda @ simboliu)'
     case 'id': return 'Channel ID galima rasti kanalo URL arba naudoti YouTube Data API'
     case 'url': return 'Pilnas kanalo URL iš YouTube'
     default: return ''
@@ -389,7 +389,7 @@ async function handleSubmit() {
     if (error.statusCode === 409) {
       submitError.value = 'Šis kanalas jau buvo pasiūlytas ir laukia peržiūros.'
     } else if (error.statusCode === 400) {
-      submitError.value = error.statusMessage || 'Neteisingi duomenys. Patikrinkite įvestį.'
+      submitError.value = error.statusMessage || 'Neteisingi duomenys. Patikrink įvestį.'
     } else {
       submitError.value = 'Įvyko klaida siunčiant pasiūlymą. Prašome bandyti vėliau.'
     }

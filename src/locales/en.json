@@ -342,6 +342,12 @@
       "ogTitle": "Privacy Policy - ToPlay.lt",
       "ogDescription": "Learn how ToPlay.lt collects, uses, and protects your data. Privacy policy about Google Analytics and future features."
     },
+    "liveUpcoming": {
+      "title": "Live & Upcoming - ToPlay.lt",
+      "description": "Watch live streams and discover upcoming scheduled broadcasts on ToPlay.lt.",
+      "ogTitle": "Live & Upcoming - ToPlay.lt",
+      "ogDescription": "Discover live streams and upcoming scheduled broadcasts. Stay up to date with live content from your favorite channels."
+    },
     "siteName": "ToPlay.lt"
   },
   "footer": {

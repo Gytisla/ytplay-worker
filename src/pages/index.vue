@@ -61,20 +61,20 @@ import TopChannelsSection from '~/components/home/TopChannelsSection.vue'
 
 // SEO and Open Graph meta tags
 useHead({
-  title: 'ToPlay.lt – atrask geriausius youtube vaizdo įrašus',
+  title: 'ToPlay.lt – Atrask geriausius lietuviškus youtube vaizdo įrašus',
   meta: [
     {
       name: 'description',
-      content: 'Atraskite ir peržiūrėkite geriausius „YouTube" vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėkite populiariausius įrašus, geriausius kanalus ir naujus vaizdo įrašus vienoje vietoje.'
+      content: 'Atrask geriausius lietuviškus YouTube vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėk populiariausius įrašus, geriausius kanalus ir naujus vaizdo įrašus vienoje vietoje.'
     },
     // Open Graph
     {
       property: 'og:title',
-      content: 'ToPlay.lt – atrask geriausius youtube vaizdo įrašus'
+      content: 'ToPlay.lt – Atrask geriausius lietuviškus youtube vaizdo įrašus'
     },
     {
       property: 'og:description',
-      content: 'Atraskite ir peržiūrėkite geriausius „YouTube" vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėkite populiariausius įrašus, geriausius kanalus ir naujus vaizdo įrašus vienoje vietoje.'
+      content: 'Atrask geriausius lietuviškus YouTube vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėk populiariausius įrašus, geriausius kanalus ir naujus vaizdo įrašus vienoje vietoje.'
     },
     {
       property: 'og:image',
@@ -103,7 +103,7 @@ useHead({
     },
     {
       name: 'twitter:description',
-      content: 'Atraskite ir peržiūrėkite nuostabius „YouTube" vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėkite populiariausius įrašus, geriausius kanalus ir naujus vaizdo įrašus vienoje vietoje.'
+      content: 'Atrask geriausius lietuviškus YouTube vaizdo įrašus, suskirstytus pagal kategorijas. Žiūrėk populiariausius įrašus, geriausius kanalus ir naujus vaizdo įrašus vienoje vietoje.'
     },
     {
       name: 'twitter:image',

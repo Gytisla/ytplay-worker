@@ -140,7 +140,7 @@ async function addBackfillJob(channelId, handle) {
         priority: 10,
         payload: {
           channelId: channelId,
-          maxVideos: 1000 // Reasonable limit for backfill
+          maxVideos: 200 // Reasonable limit for backfill
         },
         dedup_key: dedupKey,
         scheduled_at: new Date().toISOString()

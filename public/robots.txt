@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /login
+Disallow: /register
+Disallow: /auth/
+
+# Allow everything else
+Allow: /
+
+# Optional sitemap (uncomment and set correct URL if you have a sitemap)
+# Sitemap: https://toplay.lt/sitemap.xml

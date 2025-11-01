@@ -79,6 +79,18 @@
           </NuxtLink>
 
           <NuxtLink
+            to="/admin/channel-submissions"
+            @click="closeSidebar"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200"
+            :class="isActiveRoute('/admin/channel-submissions') ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'"
+          >
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3v6h6v-6c0-1.657-1.343-3-3-3z" />
+            </svg>
+            Submissions
+          </NuxtLink>
+
+          <NuxtLink
             to="/admin/jobs"
             @click="closeSidebar"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200"
@@ -218,6 +230,7 @@ const pageTitle = computed(() => {
   if (path === '/admin/users') return 'User Management'
   if (path === '/admin/categorization') return 'Categorization Rules'
   if (path === '/admin/jobs') return 'Job Queue'
+  if (path === '/admin/channel-submissions') return 'Channel Submissions'
   return 'Admin Panel'
 })
 

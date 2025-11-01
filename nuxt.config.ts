@@ -91,6 +91,11 @@ export default defineNuxtConfig({
     },
   },
 
+
+  supabase: {
+    redirect: false // ⛔ disables the module’s automatic auth redirects
+  },
+
   // Server-side rendering enabled for SEO
   ssr: true,
 

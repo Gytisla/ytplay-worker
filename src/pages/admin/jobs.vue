@@ -201,7 +201,7 @@
                   <span v-else class="text-gray-400 text-xs">-</span>
                 </td>
                 <td class="py-3 pr-4">
-                  <code class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded text-xs">{{ job.schedule }}</code>
+                  <code class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded text-xs" :title="parseCronSchedule(job.schedule)">{{ job.schedule }}</code>
                 </td>
                 <td class="py-3 pr-4">
                   <span :class="job.active ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200' : 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-200'"
@@ -428,6 +428,84 @@ function formatDate(d: string | null) {
 function formatNumber(n: number | null) {
   if (n == null) return '0'
   return Intl.NumberFormat().format(n)
+}
+
+function parseCronSchedule(schedule: string): string {
+  if (!schedule || typeof schedule !== 'string') return schedule
+
+  const parts = schedule.trim().split(/\s+/)
+  if (parts.length !== 5) return schedule
+
+  const minute = parts[0] || '*'
+  const hour = parts[1] || '*'
+  const day = parts[2] || '*'
+  const month = parts[3] || '*'
+  const weekday = parts[4] || '*'
+
+  const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+  // Common patterns
+  if (minute === '*' && hour === '*' && day === '*' && month === '*' && weekday === '*') {
+    return 'every minute'
+  }
+
+  if (minute.startsWith('*/')) {
+    const interval = parseInt(minute.substring(2))
+    if (!isNaN(interval)) {
+      if (interval === 1) return 'every minute'
+      return `every ${interval} minute${interval > 1 ? 's' : ''}`
+    }
+  }
+
+  if (minute === '0' && hour === '*' && day === '*' && month === '*' && weekday === '*') {
+    return 'every hour'
+  }
+
+  if (minute === '0' && hour.startsWith('*/')) {
+    const interval = parseInt(hour.substring(2))
+    if (!isNaN(interval)) {
+      return `every ${interval} hour${interval > 1 ? 's' : ''}`
+    }
+  }
+
+  if (minute === '0' && hour === '0' && day === '*' && month === '*' && weekday === '*') {
+    return 'daily'
+  }
+
+  if (minute === '0' && hour === '0' && day === '*' && month === '*' && weekday === '0') {
+    return 'weekly (Sunday)'
+  }
+
+  // Weekly at specific time
+  if (minute === '0' && hour !== '*' && day === '*' && month === '*' && weekday !== '*') {
+    const hr = parseInt(hour)
+    const wd = parseInt(weekday)
+    if (!isNaN(hr) && !isNaN(wd) && wd >= 0 && wd <= 6) {
+      const timeStr = new Date(2000, 0, 1, hr, 0).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      return `weekly at ${timeStr} (${weekdays[wd]})`
+    }
+  }
+
+  if (minute === '0' && hour === '0' && day === '1' && month === '*' && weekday === '*') {
+    return 'monthly'
+  }
+
+  if (minute === '0' && hour === '0' && day === '1' && month === '1' && weekday === '*') {
+    return 'yearly'
+  }
+
+  // Try to parse specific times
+  if (minute !== '*' && hour !== '*' && day === '*' && month === '*' && weekday === '*') {
+    const min = parseInt(minute)
+    const hr = parseInt(hour)
+    if (!isNaN(min) && !isNaN(hr)) {
+      const timeStr = new Date(2000, 0, 1, hr, min).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      return `daily at ${timeStr}`
+    }
+  }
+
+  // Fallback to original schedule
+  return schedule
 }
 
 function formatTime(seconds: number | null) {

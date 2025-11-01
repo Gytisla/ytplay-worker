@@ -80,86 +80,90 @@ export async function handleRefreshMediumVideos(
     }
 
     const idChunks = chunked(videoIds, batchSize).slice(0, maxBatches)
-    let videos: VideoResource[] = []
-    for (const idsChunk of idChunks) {
+
+    let totalProcessed = 0
+    for (const [chunkIndex, idsChunk] of idChunks.entries()) {
       const fetchOptions: FetchVideosOptions = { ...(fetchOptionsBase as FetchVideosOptions), ids: idsChunk }
+      let chunkVideos: VideoResource[] = []
+
       try {
-        const part = await videosClient.fetchVideos(fetchOptions)
-        videos = videos.concat(part)
+        chunkVideos = await videosClient.fetchVideos(fetchOptions)
       } catch (err) {
-        logger.error('youtube api chunk fetch failed', { error: err })
+        logger.error('youtube api chunk fetch failed', { chunkIndex, error: err })
+        continue // Skip this chunk but continue with others
       }
-    }
 
-    if (videos.length === 0) {
-      logger.info('no videos returned from youtube api after chunked fetch')
-      return { success: true, itemsProcessed: 0 }
-    }
+      if (chunkVideos.length === 0) {
+        logger.info('no videos returned from youtube api for chunk', { chunkIndex })
+        continue
+      }
 
-    logger.info('updating videos table with latest data (medium-aged)', { count: videos.length })
-    const videoUpdates = videos.map(video => ({
-      youtube_video_id: video.id,
-      channel_id: channelIdMap.get(video.id) || null,
-      published_at: video.snippet?.publishedAt || null,
-      view_count: video.statistics?.viewCount ? parseInt(video.statistics.viewCount) : 0,
-      like_count: video.statistics?.likeCount ? parseInt(video.statistics.likeCount) : 0,
-      comment_count: video.statistics?.commentCount ? parseInt(video.statistics.commentCount) : 0,
-      duration: video.contentDetails?.duration || null,
-      description: video.snippet?.description || null,
-      title: video.snippet?.title || null,
-      thumbnail_url: video.snippet?.thumbnails?.high?.url || video.snippet?.thumbnails?.medium?.url || video.snippet?.thumbnails?.default?.url || null,
-      tags: video.snippet?.tags || null,
-      youtube_category_id: video.snippet?.categoryId || null,
-      live_broadcast_content: video.snippet?.liveBroadcastContent || 'none',
-      default_audio_language: video.snippet?.defaultAudioLanguage || null,
-      default_language: video.snippet?.defaultLanguage || null,
-      projection: video.contentDetails?.projection || 'rectangular',
-      dimension: video.contentDetails?.dimension || '2d',
-      definition: video.contentDetails?.definition || 'hd',
-      caption: video.contentDetails?.caption === 'true',
-      status: video.status?.uploadStatus || null,
-      privacy_status: video.status?.privacyStatus || null,
-      embeddable: video.status?.embeddable || false,
-      licensed_content: video.contentDetails?.licensedContent || false,
-      last_fetched_at: new Date().toISOString(),
-    }))
+      // Update videos table for this chunk
+      logger.info('updating videos table for chunk (medium-aged)', { chunkIndex, count: chunkVideos.length })
 
-    const { error: updateError } = await supabase
-      .from('videos')
-      .upsert(videoUpdates, { onConflict: 'youtube_video_id' })
-
-    if (updateError) {
-      logger.error('failed to update videos table (medium-aged)', { error: updateError })
-      return { success: false, error: `Failed to update videos: ${updateError.message}` }
-    }
-
-    const statsData = videos
-      .filter(video => video.statistics)
-      .map(video => ({
-        video_id: video.id,
-        captured_at: new Date().toISOString(),
-        view_count: video.statistics?.viewCount ?? 0,
-        like_count: video.statistics?.likeCount ?? 0,
-        comment_count: video.statistics?.commentCount ?? 0,
+      const videoUpdates = chunkVideos.map(video => ({
+        youtube_video_id: video.id,
+        channel_id: channelIdMap.get(video.id) || null,
+        published_at: video.snippet?.publishedAt || null,
+        view_count: video.statistics?.viewCount ? parseInt(video.statistics.viewCount) : 0,
+        like_count: video.statistics?.likeCount ? parseInt(video.statistics.likeCount) : 0,
+        comment_count: video.statistics?.commentCount ? parseInt(video.statistics.commentCount) : 0,
+        duration: video.contentDetails?.duration || null,
+        description: video.snippet?.description || null,
+        title: video.snippet?.title || null,
+        thumbnail_url: video.snippet?.thumbnails?.high?.url || video.snippet?.thumbnails?.medium?.url || video.snippet?.thumbnails?.default?.url || null,
+        tags: video.snippet?.tags || null,
+        youtube_category_id: video.snippet?.categoryId || null,
+        live_broadcast_content: video.snippet?.liveBroadcastContent || 'none',
+        default_audio_language: video.snippet?.defaultAudioLanguage || null,
+        default_language: video.snippet?.defaultLanguage || null,
+        projection: video.contentDetails?.projection || 'rectangular',
+        dimension: video.contentDetails?.dimension || '2d',
+        definition: video.contentDetails?.definition || 'hd',
+        caption: video.contentDetails?.caption === 'true',
+        status: video.status?.uploadStatus || null,
+        privacy_status: video.status?.privacyStatus || null,
+        embeddable: video.status?.embeddable || false,
+        licensed_content: video.contentDetails?.licensedContent || false,
+        last_fetched_at: new Date().toISOString(),
       }))
 
-    if (statsData.length === 0) {
-      logger.info('no videos with statistics to capture (medium-aged)')
-      return { success: true, itemsProcessed: 0 }
+      // Upsert videos table for this chunk
+      const { error: updateError } = await supabase
+        .from('videos')
+        .upsert(videoUpdates, { onConflict: 'youtube_video_id' })
+
+      if (updateError) {
+        logger.error('failed to update videos table (medium-aged) for chunk', { chunkIndex, error: updateError })
+        continue // Skip stats for this chunk but continue with others
+      }
+
+      // Prepare and capture statistics for this chunk using RPC
+      const statsData = chunkVideos
+        .filter(video => video.statistics)
+        .map(video => ({
+          video_id: video.id,
+          view_count: video.statistics?.viewCount ?? 0,
+          like_count: video.statistics?.likeCount ?? 0,
+          comment_count: video.statistics?.commentCount ?? 0,
+        }))
+
+      if (statsData.length > 0) {
+        const { error: statsError } = await supabase
+          .rpc('capture_video_stats', {
+            video_stats_array: statsData
+          })
+
+        if (statsError) {
+          logger.error('failed to capture video stats for chunk (medium-aged)', { chunkIndex, error: statsError })
+        }
+      }
+
+      totalProcessed += chunkVideos.length
+      logger.info('completed chunk processing (medium-aged)', { chunkIndex, processedInChunk: chunkVideos.length, totalProcessed })
     }
 
-    logger.info('capturing video statistics (medium-aged)', { count: statsData.length })
-    const { error: captureError } = await supabase
-      .rpc('capture_video_stats', {
-        video_stats_array: statsData
-      })
-
-    if (captureError) {
-      logger.error('failed to capture video stats (medium-aged)', { error: captureError })
-      return { success: false, error: `Failed to store video statistics: ${captureError.message}` }
-    }
-
-    logger.info('successfully refreshed medium-aged videos (batch)', { itemsProcessed: statsData.length })
+    logger.info('completed all video processing (medium-aged)', { totalProcessed })
 
     // enqueue next job if there are more rows to process
     const totalCount = typeof count === 'number' ? count : null
@@ -185,7 +189,7 @@ export async function handleRefreshMediumVideos(
       }
     }
 
-    return { success: true, itemsProcessed: statsData.length }
+    return { success: true, itemsProcessed: totalProcessed }
 
   } catch (error) {
     logger.error('error in REFRESH_MEDIUM_VIDEOS handler', { error })

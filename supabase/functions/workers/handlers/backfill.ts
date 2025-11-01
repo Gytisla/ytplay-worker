@@ -115,7 +115,7 @@ export async function handleBackfillChannel(
     } else {
       const playlistOptions: FetchPlaylistItemsOptions = {
         playlistId: uploadsPlaylistId,
-        maxPages: 20 // Allow fetching up to 1000 videos (20 pages * 50 videos)
+        maxPages: 4 // Allow fetching up to 200 videos (4 pages * 50 videos)
       }
 
   const playlistItems = await playlistsClient.fetchPlaylistItems(playlistOptions)

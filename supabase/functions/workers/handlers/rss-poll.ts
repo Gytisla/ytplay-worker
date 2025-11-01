@@ -177,13 +177,15 @@ export async function handleRSSPollChannel(
 
                 if (videoRecords && videoRecords.length > 0) {
                   const today = new Date()
-                  const currentDate = today.toISOString().split('T')[0] // YYYY-MM-DD format
-                  const currentHour = today.getHours()
+                  const thirtyOneDaysAgo = new Date(today)
+                  thirtyOneDaysAgo.setDate(today.getDate() - 32)
+                  const currentDate = thirtyOneDaysAgo.toISOString().split('T')[0] // YYYY-MM-DD format
+                  // const currentHour = today.getHours()
 
                   const statsPayload = videoRecords.map((video) => ({
                     video_id: video.id,
                     date: currentDate,
-                    hour: currentHour - 1,
+                    hour: -2, // so we know it was from rss-polling
                     view_count: 0,
                     like_count: 0,
                     comment_count: 0,

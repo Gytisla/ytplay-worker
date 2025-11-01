@@ -95,18 +95,13 @@ export default defineEventHandler(async (event) => {
     // const isTodayView = days === 1
     const statsData = isTodayView ? groupByHour(stats) : groupByDay(stats)
 
+
     // Convert to array and sort
     let formattedStats = Object.values(statsData).sort((a: any, b: any) => {
       const aTime = new Date(`${a.date}${a.hour ? ` ${a.hour}:00:00` : ''}`).getTime()
       const bTime = new Date(`${b.date}${b.hour ? ` ${b.hour}:00:00` : ''}`).getTime()
       return aTime - bTime
     })
-
-    // For today view, filter to only today's data
-    if (isTodayView) {
-      const todayDate = endDate.toISOString().split('T')[0]
-      formattedStats = formattedStats.filter((stat: any) => stat.date === todayDate)
-    }
 
     return {
       videoId,
@@ -160,9 +155,13 @@ function groupByDay(stats: any[]) {
     const current: any = sortedDays[i]
     const previous: any = i > 0 ? sortedDays[i - 1] : null
 
-    // If view_gained is not provided or is 0, calculate from view difference
+    // If view_gained is not provided or is 0, calculate from view difference.
+    // IMPORTANT: do NOT treat the first record as 'gained' views equal to the
+    // cumulative total (e.g. an old video starting at 60k views). For the
+    // first datapoint we set viewGained to 0 so we don't report a huge spike
+    // on the first hour/day shown.
     if (!current.viewGained || current.viewGained === 0) {
-      current.viewGained = previous ? Math.max(0, current.views - previous.views) : current.views
+      current.viewGained = previous ? Math.max(0, current.views - previous.views) : 0
     }
   }
 
@@ -199,9 +198,11 @@ function groupByHour(stats: any[]) {
     const current: any = sortedHours[i]
     const previous: any = i > 0 ? sortedHours[i - 1] : null
 
-    // If view_gained is not provided or is 0, calculate from view difference
+    // If view_gained is not provided or is 0, calculate from view difference.
+    // For the very first hour we set viewGained to 0 to avoid claiming the
+    // entire cumulative view_count as a newly gained amount.
     if (!current.viewGained || current.viewGained === 0) {
-      current.viewGained = previous ? Math.max(0, current.views - previous.views) : current.views
+      current.viewGained = previous ? Math.max(0, current.views - previous.views) : 0
     }
   }
 

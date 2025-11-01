@@ -130,6 +130,82 @@
       </div>
     </div>
 
+    <!-- CRON Jobs Section -->
+    <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 my-6">
+      <div class="p-4 sm:p-6 flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-8 w-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <h1 class="text-xl font-semibold text-gray-900 dark:text-white">Scheduled CRON Jobs</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Monitor automated background tasks and their schedules</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            @click="fetchCronJobs"
+            :disabled="cronLoading"
+            class="inline-flex items-center justify-center px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 disabled:opacity-50"
+            :title="cronLoading ? 'Refreshing...' : 'Refresh CRON jobs'">
+            <svg v-if="!cronLoading" class="h-5 w-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            <svg v-else class="h-5 w-5 text-gray-600 dark:text-gray-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-4 sm:p-6 border-t border-gray-100 dark:border-gray-700">
+        <div v-if="cronJobs.length === 0 && !cronLoading" class="text-center py-4 text-gray-500 dark:text-gray-400">
+          No CRON jobs found or unable to load CRON job information.
+        </div>
+        <div v-else-if="cronLoading" class="text-center py-4 text-gray-500 dark:text-gray-400">
+          Loading CRON jobs...
+        </div>
+        <div v-else class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-600">
+                <th class="pr-4 py-2">Job Name</th>
+                <th class="pr-4 py-2">Schedule</th>
+                <th class="pr-4 py-2">Status</th>
+                <th class="pr-4 py-2">Command</th>
+                <th class="pr-4 py-2">ID</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="job in cronJobs" :key="job.jobname" class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-800/50">
+                <td class="py-3 pr-4">
+                  <div class="font-medium text-gray-900 dark:text-white">{{ job.jobname }}</div>
+                </td>
+                <td class="py-3 pr-4">
+                  <code class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded text-xs">{{ job.schedule }}</code>
+                </td>
+                <td class="py-3 pr-4">
+                  <span :class="job.active ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200' : 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-200'"
+                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium">
+                    {{ job.active ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td class="py-3 pr-4 max-w-xs">
+                  <code class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded text-xs break-all block truncate" :title="job.command">{{ job.command }}</code>
+                </td>
+                <td class="py-3 pr-4">
+                  <span class="text-xs text-gray-500 dark:text-gray-400">{{ job.jobid }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <p class="mt-4 text-sm text-gray-600">Auto-refreshes every 15s.</p>
 
     <!-- Failed jobs modal (single template) -->
@@ -226,6 +302,11 @@ type JobRow = {
 const rows = ref<JobRow[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
+
+// CRON jobs data
+const cronJobs = ref<any[]>([])
+const cronLoading = ref(false)
+const cronError = ref<string | null>(null)
 
 const totalJobs = computed(() => rows.value.reduce((s, r) => s + (r.count || 0), 0))
 const totalPending = computed(() => rows.value.filter(r => r.status === 'pending').reduce((s, r) => s + (r.count || 0), 0))
@@ -366,9 +447,29 @@ async function fetchRows() {
   }
 }
 
+async function fetchCronJobs() {
+  cronLoading.value = true
+  cronError.value = null
+  try {
+    const res = await $fetch('/api/admin/jobs/cron')
+    if ((res as any).error) {
+      cronError.value = (res as any).error
+      cronJobs.value = []
+    } else {
+      cronJobs.value = (res as any).data ?? []
+    }
+  } catch (err: any) {
+    cronError.value = err?.message ?? String(err)
+    cronJobs.value = []
+  } finally {
+    cronLoading.value = false
+  }
+}
+
 let timer: number | null = null
 onMounted(() => {
   fetchRows()
+  fetchCronJobs() // Also fetch CRON jobs on mount
   timer = window.setInterval(fetchRows, 15000)
 })
 

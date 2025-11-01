@@ -77,6 +77,18 @@
             </svg>
             Channels
           </NuxtLink>
+
+          <NuxtLink
+            to="/admin/jobs"
+            @click="closeSidebar"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200"
+            :class="isActiveRoute('/admin/jobs') ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'"
+          >
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" />
+            </svg>
+            Jobs
+          </NuxtLink>
           <!--
           <NuxtLink
             to="/admin/analytics"
@@ -205,6 +217,7 @@ const pageTitle = computed(() => {
   if (path === '/admin') return 'Dashboard'
   if (path === '/admin/users') return 'User Management'
   if (path === '/admin/categorization') return 'Categorization Rules'
+  if (path === '/admin/jobs') return 'Job Queue'
   return 'Admin Panel'
 })
 

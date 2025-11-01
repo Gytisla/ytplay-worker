@@ -118,15 +118,17 @@ WHERE vs.date = (
 -- View for job queue monitoring
 CREATE OR REPLACE VIEW job_queue_status AS
 SELECT
+    COALESCE(job_type, 'unknown') AS job_type,
     status,
-    COUNT(*) as count,
-    COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '1 hour') as last_hour,
-    COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '24 hours') as last_24h,
-    AVG(EXTRACT(EPOCH FROM (updated_at - created_at))) FILTER (WHERE status IN ('completed', 'failed')) as avg_processing_time_seconds,
-    MIN(created_at) as oldest_pending,
-    MAX(updated_at) as last_updated
+    COUNT(*) AS count,
+    COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '1 hour') AS last_hour,
+    COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '24 hours') AS last_24h,
+    AVG(EXTRACT(EPOCH FROM (updated_at - created_at))) FILTER (WHERE status IN ('completed', 'failed')) AS avg_processing_time_seconds,
+    MIN(created_at) FILTER (WHERE status = 'pending') AS oldest_pending,
+    MAX(updated_at) AS last_updated
 FROM jobs
-GROUP BY status;
+GROUP BY COALESCE(job_type, 'unknown'), status
+ORDER BY job_type, status;
 
 -- View for API usage monitoring
 CREATE OR REPLACE VIEW api_usage_summary AS

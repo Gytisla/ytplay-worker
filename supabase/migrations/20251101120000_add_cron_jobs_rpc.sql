@@ -12,13 +12,14 @@ RETURNS TABLE (
   nodeport integer,
   database text,
   username text,
-  active boolean
+  active boolean,
+  last_run timestamptz
 )
 LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
-  -- Return CRON job information from pg_cron
+  -- Return CRON job information from pg_cron with run details
   RETURN QUERY
   SELECT
     cj.jobid,
@@ -29,10 +30,16 @@ BEGIN
     cj.nodeport,
     cj.database,
     cj.username,
-    cj.active
+    cj.active,
+    -- Get the most recent run start time
+    (SELECT jr.start_time
+     FROM cron.job_run_details jr
+     WHERE jr.jobid = cj.jobid
+     ORDER BY jr.start_time DESC
+     LIMIT 1) as last_run
   FROM cron.job cj
   ORDER BY cj.jobname;
 END;
 $$;
 
-COMMENT ON FUNCTION public.get_cron_jobs() IS 'Returns information about scheduled CRON jobs from pg_cron.';
+COMMENT ON FUNCTION public.get_cron_jobs() IS 'Returns information about scheduled CRON jobs from pg_cron with run details.';

@@ -175,6 +175,8 @@
                 <th class="pr-4 py-2">Job Name</th>
                 <th class="pr-4 py-2">Type</th>
                 <th class="pr-4 py-2">Schedule</th>
+                <th class="pr-4 py-2">Last Run</th>
+                <th class="pr-4 py-2">Next Run</th>
                 <th class="pr-4 py-2">Status</th>
                 <th class="pr-4 py-2">Command</th>
                 <th class="pr-4 py-2">ID</th>
@@ -202,6 +204,12 @@
                 </td>
                 <td class="py-3 pr-4">
                   <code class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded text-xs" :title="parseCronSchedule(job.schedule)">{{ job.schedule }}</code>
+                </td>
+                <td class="py-3 pr-4">
+                  <span class="text-xs text-gray-500 dark:text-gray-400">{{ job.last_run ? formatDate(job.last_run) : '-' }}</span>
+                </td>
+                <td class="py-3 pr-4">
+                  <span class="text-xs text-gray-500 dark:text-gray-400">{{ calculateNextRun(job.schedule) ? formatDate(calculateNextRun(job.schedule)!.toISOString()) : 'Unknown' }}</span>
                 </td>
                 <td class="py-3 pr-4">
                   <span :class="job.active ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200' : 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-200'"
@@ -506,6 +514,115 @@ function parseCronSchedule(schedule: string): string {
 
   // Fallback to original schedule
   return schedule
+}
+
+function calculateNextRun(schedule: string): Date | null {
+  if (!schedule || typeof schedule !== 'string') return null
+
+  const parts = schedule.trim().split(/\s+/)
+  if (parts.length !== 5) return null
+
+  const minute = parts[0] || '*'
+  const hour = parts[1] || '*'
+  const day = parts[2] || '*'
+  const month = parts[3] || '*'
+  const weekday = parts[4] || '*'
+
+  const now = new Date()
+
+  // Handle simple patterns
+  if (minute === '*' && hour === '*' && day === '*' && month === '*' && weekday === '*') {
+    // Every minute
+    const next = new Date(now)
+    next.setMinutes(next.getMinutes() + 1, 0, 0)
+    return next
+  }
+  if (minute.startsWith('*/')) {
+    const interval = parseInt(minute.substring(2))
+    if (!isNaN(interval)) {
+      const next = new Date(now)
+      const currentMinute = now.getMinutes()
+      const nextMinute = Math.ceil((currentMinute + 1) / interval) * interval
+      if (nextMinute >= 60) {
+        next.setHours(next.getHours() + 1, nextMinute - 60, 0, 0)
+      } else {
+        next.setMinutes(nextMinute, 0, 0)
+      }
+      return next
+    }
+  }
+
+  if (minute === '0' && hour === '*' && day === '*' && month === '*' && weekday === '*') {
+    // Every hour at minute 0
+    const next = new Date(now)
+    if (now.getMinutes() > 0) {
+      next.setHours(next.getHours() + 1, 0, 0, 0)
+    } else {
+      next.setMinutes(0, 0, 0)
+    }
+    return next
+  }
+
+  if (minute === '0' && hour === '0' && day === '*' && month === '*' && weekday === '*') {
+    // Daily at midnight
+    const next = new Date(now)
+    next.setDate(next.getDate() + 1)
+    next.setHours(0, 0, 0, 0)
+    return next
+  }
+
+  if (minute === '0' && hour !== '*' && day === '*' && month === '*' && weekday === '*') {
+    // Daily at specific hour
+    const hr = parseInt(hour)
+    if (!isNaN(hr)) {
+      const next = new Date(now)
+      next.setHours(hr, 0, 0, 0)
+      if (next <= now) {
+        next.setDate(next.getDate() + 1)
+      }
+      return next
+    }
+  }
+
+  if (minute === '0' && hour === '0' && day === '*' && month === '*' && weekday !== '*') {
+    // Weekly on specific weekday at midnight
+    const wd = parseInt(weekday)
+    if (!isNaN(wd) && wd >= 0 && wd <= 6) {
+      const next = new Date(now)
+      const currentWeekday = now.getDay()
+      let daysUntilNext = (wd - currentWeekday + 7) % 7
+      if (daysUntilNext === 0 && (now.getHours() > 0 || now.getMinutes() > 0)) {
+        daysUntilNext = 7
+      }
+      next.setDate(next.getDate() + daysUntilNext)
+      next.setHours(0, 0, 0, 0)
+      return next
+    }
+  }
+
+  // Weekly at specific time on specific weekday
+  if (minute === '0' && hour !== '*' && day === '*' && month === '*' && weekday !== '*') {
+    const hr = parseInt(hour)
+    const wd = parseInt(weekday)
+    if (!isNaN(hr) && !isNaN(wd) && wd >= 0 && wd <= 6) {
+      const next = new Date(now)
+      const currentWeekday = now.getDay()
+      let daysUntilNext = (wd - currentWeekday + 7) % 7
+
+      // If it's the same weekday, check if the time has passed
+      if (daysUntilNext === 0) {
+        if (now.getHours() > hr || (now.getHours() === hr && now.getMinutes() > 0)) {
+          daysUntilNext = 7
+        }
+      }
+
+      next.setDate(next.getDate() + daysUntilNext)
+      next.setHours(hr, 0, 0, 0)
+      return next
+    }
+  }
+
+  return null // Unknown pattern
 }
 
 function formatTime(seconds: number | null) {

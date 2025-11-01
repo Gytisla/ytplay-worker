@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="p-4 sm:p-6 border-t border-gray-100 dark:border-gray-700">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="text-center bg-white dark:bg-slate-800">
             <div class="text-xs text-gray-500">Total Jobs</div>
             <div class="text-2xl font-bold dark:text-blue-100">{{ totalJobs }}</div>
@@ -42,6 +42,10 @@
           <div class="text-center bg-white dark:bg-slate-800">
             <div class="text-xs text-gray-500">Running</div>
             <div class="text-2xl font-bold text-green-600">{{ totalRunning }}</div>
+          </div>
+          <div class="text-center bg-white dark:bg-slate-800">
+            <div class="text-xs text-gray-500">Failed</div>
+            <div class="text-2xl font-bold text-red-600">{{ totalFailed }}</div>
           </div>
         </div>
       </div>
@@ -62,6 +66,7 @@
                 <div class="ml-3 min-w-0">
                   <div class="text-sm font-semibold text-gray-900 dark:text-white truncate"><code class="truncate">{{ job.job_type }}</code></div>
                   <div class="text-xs text-gray-500 mt-0.5 truncate">Last updated: {{ formatDate(job.last_updated) }}</div>
+                  <div v-if="job.avg_processing_time_seconds != null" class="text-sm font-medium text-gray-700 dark:text-gray-200 mt-0.5 truncate">Avg: {{ formatTime(job.avg_processing_time_seconds) }} • Completed 1h: {{ formatNumber(job.last_hour || 0) }}</div>
                 </div>
               </div>
 
@@ -73,8 +78,7 @@
                 </div>
 
                 <div class="flex items-center gap-3 flex-wrap">
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200">Total: {{ formatNumber(job.total) }}</span>
-                  <div v-if="job.avg_processing_time_seconds != null" class="inline-flex items-center text-xs px-2 py-0.5 rounded bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300">Avg: <span class="ml-2 font-medium">{{ formatTime(job.avg_processing_time_seconds) }}</span></div>
+                  <span v-if="expanded.has(job.job_type)" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200">Total: {{ formatNumber(job.total) }}</span>
                 </div>
 
                 <button @click="toggle(job.job_type)" class="p-1 rounded hover:bg-gray-100 dark:hover:bg-slate-700">
@@ -258,7 +262,10 @@
                     <div class="mt-2 text-sm text-red-700 dark:text-red-300">{{ j.last_error || '-' }}</div>
                   </div>
                   <div class="flex-shrink-0 text-right">
-                    <button @click="j.showPayload = !j.showPayload" class="text-xs px-2 py-1 rounded bg-gray-100 dark:bg-slate-700 text-gray-900 dark:text-white">{{ j.showPayload ? 'Hide' : 'Show' }} payload</button>
+                    <div class="flex gap-2">
+                      <button @click="acceptFailedJob(j)" class="text-xs px-2 py-1 rounded bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800">Accept</button>
+                      <button @click="j.showPayload = !j.showPayload" class="text-xs px-2 py-1 rounded bg-gray-100 dark:bg-slate-700 text-gray-900 dark:text-white">{{ j.showPayload ? 'Hide' : 'Show' }} payload</button>
+                    </div>
                   </div>
                 </div>
                 <div v-if="j.showPayload" class="mt-2 bg-white dark:bg-slate-900 border rounded p-2 text-xs font-mono overflow-auto max-h-48 text-gray-900 dark:text-gray-100">
@@ -351,6 +358,7 @@ const cronJobCategories = computed(() => {
 const totalJobs = computed(() => rows.value.reduce((s, r) => s + (r.count || 0), 0))
 const totalPending = computed(() => rows.value.filter(r => r.status === 'pending').reduce((s, r) => s + (r.count || 0), 0))
 const totalRunning = computed(() => rows.value.filter(r => r.status === 'running').reduce((s, r) => s + (r.count || 0), 0))
+const totalFailed = computed(() => rows.value.filter(r => r.status === 'failed' || r.status === 'dead_letter').reduce((s, r) => s + (r.count || 0), 0))
 
 const groupedRows = computed(() => {
   const map = new Map<string, any>()
@@ -376,7 +384,11 @@ const groupedRows = computed(() => {
     const cur = map.get(key)
     cur.total += r.count || 0
     cur.last_hour += r.last_hour || 0
-    cur.last_updated = r.last_updated || cur.last_updated
+    if (r.last_updated) {
+      if (!cur.last_updated || new Date(r.last_updated) > new Date(cur.last_updated)) {
+        cur.last_updated = r.last_updated
+      }
+    }
     // keep the raw row for per-status breakdown
     cur.status_rows.push(r)
     if (r.status === 'pending') {
@@ -632,16 +644,16 @@ function formatTime(seconds: number | null) {
 }
 
 function estBacklogSeconds(job: any) {
-  // use avg_processing_time_seconds (seconds) * pending count
+  // use avg_processing_time_seconds (seconds) * pending count, but cap aggressively
   const avg = job.avg_processing_time_seconds || 0
-  const pending = job.pending || 0
-  return avg * pending
+  const pending = Math.min(job.pending || 0, 100) // Cap pending jobs to 10 for backlog calculation
+  return Math.min(avg * pending, 600) // Cap total backlog to 10 minutes max
 }
 
 function estBacklogPercent(job: any) {
-  // represent backlog as percent of 24h (86400s), cap at 100
+  // represent backlog severity as percent of 150 seconds (2.5 minutes) = 100%
   const secs = estBacklogSeconds(job)
-  const pct = Math.min(100, Math.round((secs / 86400) * 100))
+  const pct = Math.min(100, Math.round((secs / 150) * 100))
   return pct
 }
 
@@ -725,6 +737,24 @@ async function openFailed(jobType: string | null) {
     failedModal.value.jobs = []
   } finally {
     failedModal.value.loading = false
+  }
+}
+
+async function acceptFailedJob(job: any) {
+  try {
+    const res = await $fetch(`/api/admin/jobs/accept/${job.id}`, {
+      method: 'POST'
+    })
+    if ((res as any).success) {
+      // Remove the job from the modal
+      failedModal.value.jobs = failedModal.value.jobs.filter(j => j.id !== job.id)
+      // Refresh the main data
+      fetchRows()
+    } else {
+      console.error('Failed to accept job:', (res as any).error)
+    }
+  } catch (err) {
+    console.error('Error accepting job:', err)
   }
 }
 

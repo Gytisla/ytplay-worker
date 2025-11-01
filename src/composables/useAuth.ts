@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import type { AuthError, User } from '@supabase/supabase-js'
+import type { AuthError, User, Session } from '@supabase/supabase-js'
 import type { Database } from '~/types/supabase'
 
 type UserProfile = Database['public']['Tables']['user_profiles']['Row']
@@ -11,29 +11,48 @@ export const useAuth = () => {
   const loading = ref(false)
   const profile = ref<UserProfile | null>(null)
 
-  // Listen to auth state changes
-  supabase.auth.onAuthStateChange(async (event: string) => {
-    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-      // Use getUser() for secure user data
-      const { data: { user: authenticatedUser }, error } = await supabase.auth.getUser()
-      if (error) {
-        console.error('Error getting authenticated user:', error)
+  // Prevent multiple auth listeners
+  let authListener: any = null
+
+  // Set up auth state change listener only once
+  if (!authListener) {
+    authListener = supabase.auth.onAuthStateChange(async (event: string, session: Session | null) => {
+      console.log('Auth state changed:', event)
+
+      try {
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          // For token refresh, we can use the session data directly (more reliable)
+          if (event === 'TOKEN_REFRESHED' && session?.user) {
+            user.value = session.user
+            await loadProfile()
+            return
+          }
+
+          // For sign in, get fresh user data
+          const { data: { user: authenticatedUser }, error } = await supabase.auth.getUser()
+          if (error) {
+            console.error('Error getting authenticated user:', error)
+            user.value = null
+            profile.value = null
+            return
+          }
+          user.value = authenticatedUser
+          if (user.value) {
+            await loadProfile()
+          } else {
+            profile.value = null
+          }
+        } else if (event === 'SIGNED_OUT') {
+          user.value = null
+          profile.value = null
+        }
+      } catch (error) {
+        console.error('Auth state change error:', error)
         user.value = null
         profile.value = null
-        return
       }
-      user.value = authenticatedUser
-      if (user.value) {
-        await loadProfile()
-      } else {
-        profile.value = null
-      }
-    } else {
-      // For other events (SIGNED_OUT, etc.), clear the user
-      user.value = null
-      profile.value = null
-    }
-  })
+    })
+  }
 
   // Computed properties
   const isAuthenticated = computed(() => !!user.value)
@@ -195,22 +214,42 @@ export const useAuth = () => {
 
   // Initialize auth state
   const initialize = async () => {
-    // Get authenticated user securely
-    const { data: { user: authenticatedUser }, error } = await supabase.auth.getUser()
-    if (error) {
-      // Don't log AuthSessionMissingError as it's expected when not authenticated
-      if (error.message !== 'Auth session missing!') {
-        console.error('Error getting authenticated user:', error)
+    // Prevent multiple initializations
+    if (loading.value) return
+    loading.value = true
+
+    try {
+      // Get authenticated user securely
+      const { data: { user: authenticatedUser }, error } = await supabase.auth.getUser()
+      if (error) {
+        // Don't log AuthSessionMissingError as it's expected when not authenticated
+        if (error.message !== 'Auth session missing!') {
+          console.error('Error getting authenticated user:', error)
+        }
+        user.value = null
+        profile.value = null
+        return
       }
+
+      user.value = authenticatedUser
+
+      if (user.value) {
+        await loadProfile()
+      }
+    } catch (error) {
+      console.error('Error initializing auth:', error)
       user.value = null
       profile.value = null
-      return
+    } finally {
+      loading.value = false
     }
+  }
 
-    user.value = authenticatedUser
-
-    if (user.value) {
-      await loadProfile()
+  // Cleanup function for auth listener
+  const cleanup = () => {
+    if (authListener) {
+      authListener.unsubscribe?.()
+      authListener = null
     }
   }
 
@@ -231,6 +270,7 @@ export const useAuth = () => {
     loadProfile,
     upsertProfile,
     hasRole,
-    initialize
+    initialize,
+    cleanup
   }
 }

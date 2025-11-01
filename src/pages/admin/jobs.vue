@@ -116,7 +116,7 @@
                         <td class="py-2 pr-4 font-medium">{{ formatNumber(sr.count) }}</td>
                         <td class="py-2 pr-4">{{ sr.last_hour || 0 }}</td>
                         <td class="py-2 pr-4">{{ sr.last_24h || 0 }}</td>
-                        <td class="py-2 pr-4">{{ sr.avg_processing_time_seconds ? formatTime(Number(sr.avg_processing_time_seconds) / 1000) : '-' }}</td>
+                        <td class="py-2 pr-4">{{ sr.avg_processing_time_seconds ? formatTime(sr.avg_processing_time_seconds) : '-' }}</td>
                         <td class="py-2 pr-4">{{ sr.oldest_pending ? formatDate(sr.oldest_pending) : '-' }}</td>
                         <td class="py-2 pr-4">{{ sr.last_updated ? formatDate(sr.last_updated) : '-' }}</td>
                       </tr>
@@ -401,8 +401,8 @@ const groupedRows = computed(() => {
   // finalize avg (currently we're summing per-status averages; keep as-is or divide by count if you prefer)
   for (const v of map.values()) {
     if (v.processed_count_for_avg && v.processed_count_for_avg > 0) {
-      // incoming per-row avg values are in milliseconds; convert to seconds for display
-      v.avg_processing_time_seconds = (v.sum_processing_time_seconds / v.processed_count_for_avg) / 1000
+      // incoming per-row avg values are in seconds from database
+      v.avg_processing_time_seconds = v.sum_processing_time_seconds / v.processed_count_for_avg
     } else {
       v.avg_processing_time_seconds = null
     }
@@ -628,10 +628,7 @@ function calculateNextRun(schedule: string): Date | null {
 function formatTime(seconds: number | null) {
   if (seconds == null) return '-'
   if (seconds < 1) return Math.round(seconds * 1000) + 'ms'
-  if (seconds < 60) return Number(seconds).toFixed(1) + 's'
-  const mins = Math.floor(seconds / 60)
-  const rem = Math.round(seconds % 60)
-  return `${mins}m ${rem}s`
+  return Number(seconds).toFixed(1) + ' sec'
 }
 
 function estBacklogSeconds(job: any) {

@@ -123,7 +123,7 @@ SELECT
     COUNT(*) AS count,
     COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '1 hour') AS last_hour,
     COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '24 hours') AS last_24h,
-    AVG(EXTRACT(EPOCH FROM (updated_at - created_at))) FILTER (WHERE status IN ('completed', 'failed')) AS avg_processing_time_seconds,
+    AVG(EXTRACT(EPOCH FROM (completed_at - started_at))) FILTER (WHERE status = 'completed' AND completed_at IS NOT NULL AND started_at IS NOT NULL) AS avg_processing_time_seconds,
     MIN(created_at) FILTER (WHERE status = 'pending') AS oldest_pending,
     MAX(updated_at) AS last_updated
 FROM jobs

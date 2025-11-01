@@ -173,6 +173,7 @@
             <thead>
               <tr class="text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-600">
                 <th class="pr-4 py-2">Job Name</th>
+                <th class="pr-4 py-2">Type</th>
                 <th class="pr-4 py-2">Schedule</th>
                 <th class="pr-4 py-2">Status</th>
                 <th class="pr-4 py-2">Command</th>
@@ -183,6 +184,21 @@
               <tr v-for="job in cronJobs" :key="job.jobname" class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-800/50">
                 <td class="py-3 pr-4">
                   <div class="font-medium text-gray-900 dark:text-white">{{ job.jobname }}</div>
+                </td>
+                <td class="py-3 pr-4">
+                  <span v-if="cronJobCategories[job.jobname] === 'worker'"
+                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200">
+                    worker
+                  </span>
+                  <span v-else-if="cronJobCategories[job.jobname] === 'enqueue'"
+                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-200">
+                    enqueue
+                  </span>
+                  <span v-else-if="cronJobCategories[job.jobname] === 'mv refresh'"
+                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-200">
+                    mv refresh
+                  </span>
+                  <span v-else class="text-gray-400 text-xs">-</span>
                 </td>
                 <td class="py-3 pr-4">
                   <code class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded text-xs">{{ job.schedule }}</code>
@@ -307,6 +323,22 @@ const error = ref<string | null>(null)
 const cronJobs = ref<any[]>([])
 const cronLoading = ref(false)
 const cronError = ref<string | null>(null)
+
+// CRON job categories
+const cronJobCategories = computed(() => {
+  const categories: Record<string, string> = {
+    'backfill_worker_every_2_minutes': 'worker',
+    'process_queue_every_minute': 'worker',
+    'rss_worker_every_minute': 'worker',
+    'rss_poll_every_15_minutes': 'enqueue',
+    'refresh_video_stats_weekly': 'enqueue',
+    'refresh_medium_videos_daily': 'enqueue',
+    'refresh_hot_videos_hourly': 'enqueue',
+    'refresh_channel_stats_daily': 'enqueue',
+    'refresh_mv_video_performance': 'mv refresh'
+  }
+  return categories
+})
 
 const totalJobs = computed(() => rows.value.reduce((s, r) => s + (r.count || 0), 0))
 const totalPending = computed(() => rows.value.filter(r => r.status === 'pending').reduce((s, r) => s + (r.count || 0), 0))
